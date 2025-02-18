@@ -1,74 +1,80 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { GiftedChat, IMessage } from 'react-native-gifted-chat';
+import {View, StyleSheet, Text } from 'react-native';
+import axios from 'axios';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+const API_URL = 'http://10.0.2.2:5000/chat';
 
-export default function HomeScreen() {
+const ChatScreen = () => {
+  const [messages, setMessages] = useState<IMessage[]>([]);
+
+  //connecting to backend chat api
+  const sendMessage = async (userMessage: IMessage) => {
+    if (!userMessage.text.trim()) return;
+    try {
+      const res = await axios.post(API_URL, {userInput: userMessage.text });
+
+      console.log("res: " + res.data.response)
+      const newMessage: IMessage = {
+        _id: String(new Date().getTime()),  // Unique ID based on timestamp
+        text: res.data.response,            // Message from API response
+        createdAt: new Date(),             // Timestamp of message creation
+        user: {                            // User details
+          _id: 1,                          // The user ID (current user)
+          name: 'Klein',                   // The user name (current user)
+        },
+      };
+      setMessages(previousMessages => GiftedChat.append(previousMessages, [newMessage]));
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  // ✅ Load initial messages
+  // useEffect(() => {
+  // }, []);
+
+  // ✅ Fix the `onSend` type issue
+  const onSend = useCallback((newMessages: IMessage[] = []) => {
+    //new message refers to the latest message sent by user
+    if (newMessages.length == 0) return;
+
+    console.log(messages)
+    setMessages(messages => GiftedChat.append(messages, newMessages));
+    console.log(messages)
+    console.log(newMessages[0])
+    
+    // send message to backend
+    sendMessage(newMessages[0]);
+  }, []);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View style={styles.container}>
+      <View style={styles.banner}>
+        <Text style={styles.bannerText}>ChatGPT</Text> {/* Ensure `style={styles.bannerText}` is used */}
+      </View>
+
+      <GiftedChat
+        messages={messages}
+        onSend={(messages) => onSend(messages)} // Ensure correct function signature
+        user={{ _id: 2, name: 'Klein' }} // Current user, stands for "who is reading the chat"
+      />
+    </View>
   );
-}
+};
+
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
+  container: { flex: 1 },
+  banner: {
+    backgroundColor: '#2E86C1', // Blue header like most chat apps
+    padding: 15,
     alignItems: 'center',
-    gap: 8,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  bannerText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });
+
+export default ChatScreen;
