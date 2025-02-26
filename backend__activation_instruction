@@ -1,0 +1,30 @@
+The backend files are all python for now. I used python flask to run them. So, obviously, u need to have flask installed.
+The app.py contains routes to all other backend files. This is designed in a way such that when multiple functions are needed, only one file needs to be run.
+So, to activate the backend, open a new terminal session. then type
+
+python app.py
+
+u shud see this:
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.43.114:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 139-760-549
+this means that the backend is running now. The broadcast address setup is essential to run it on another device ie using expo go
+
+The following session is only needed if you need API services:
+Now, navigate into the frontend file that you wish to test/use and find the API_URL constant
+you can see that 
+//const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+const API_URL = "http://192.168.1.8:5000"; //using expogo
+
+the top one is for emulators, and it should be constant
+the lower one is for physical devices ie running expo go on ur phone
+However, u need to channge the url and ensure that both your pc and ur phone is under the same LAN ie connected to same wifi
+If unable, use hotspot of ur phone and pc connect to it
+u need to find the ip of ur phone, do so by pressing M after npm start, you can find the device url, it shud be 192.168.x.x, then copy it and paste into the url and then add the :5000
+the :5000 is essential as it is the port for service. 
+if you see axios: network error then ur api url is wrong, or something set up wrongly 
