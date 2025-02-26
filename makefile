@@ -1,4 +1,4 @@
-.PHONY: hello
+.PHONY: hello git
 
 hello:
 	@echo "Hello world"

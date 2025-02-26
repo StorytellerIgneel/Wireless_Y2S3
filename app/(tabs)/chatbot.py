@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)  # Allow requests from React Native
 
 # Set up Gemini API
-genai.configure(api_key="AIzaSyASukWnV1JCx4_M3l_W3c55Nq_z95h0za8")
+genai.configure(api_key="AIzaSyAMXmbCIKxIWeV_OlqwFnLIXsyE1EeL9Ho")
 
 # Chat endpoint
 @app.route("/chat", methods=["POST"])
@@ -19,7 +19,7 @@ def chat():
         return jsonify({"error": "Message is required"}), 400
 
     try:  
-        model = genai.GenerativeModel("gemini-pro")  
+        model = genai.GenerativeModel("gemini-1.5-pro-001")  
         response = model.generate_content(user_input) 
         print(response.text)
         return jsonify({"response": response.text})
@@ -32,4 +32,5 @@ def initialize():
     return jsonify({"response": "Welcome!"})
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
+    #app.run()
