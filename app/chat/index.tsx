@@ -3,8 +3,8 @@ import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import {View, StyleSheet, Text } from 'react-native';
 import axios from 'axios';
 
-//const API_URL = 'http://10.0.2.2:5000';
-const API_URL = 'http://192.168.43.114:5000';
+const API_URL = 'http://10.0.2.2:5000';
+// const API_URL = 'http://192.168.43.114:5000';
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);

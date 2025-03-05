@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import axios from 'axios';
 
-//const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
-const API_URL = "http://192.168.1.8:5000"; //using expogo
+const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+// const API_URL = "http://192.168.1.8:5000"; //using expogo
 
 export default function Login() {
   const [username, setUsername] = useState("");
