@@ -5,16 +5,21 @@ import { send, EmailJSResponseStatus } from '@emailjs/react-native';
 const FeedbackScreen = () => {
   const [email, setEmail] = useState<string>();
   const [name, setName] = useState<string>();
+  const [message, setMessage] = useState<string>();
 
   const onSubmit = async () => {
+    if (!email || !name) {
+      console.log('Email and Name are required!');
+      return;
+    }
     try {
       await send(
         'service_v442tdd',
         'template_yqxtmac',
         {
-          name,
-          email,
-          message: 'This is a static message',
+          name: name,
+          email: email,
+          message: message,
         },
         {
           publicKey: '3n8xXSvm4KPDChxv-',
@@ -33,7 +38,7 @@ const FeedbackScreen = () => {
 
   return (
     <View>
-      <TextInput style={{color: 'white'}}
+      <TextInput style={{backgroundColor: "blue",  color: 'white'}}
         inputMode="email"
         keyboardType="email-address"
         textContentType="emailAddress"
@@ -41,11 +46,17 @@ const FeedbackScreen = () => {
         value={email}
         onChangeText={setEmail}
       />
-      <TextInput style={{color: 'white'}}
+      <TextInput style={{backgroundColor: "blue", color: 'white'}}
         inputMode="text"
         placeholder="Name"
         value={name}
         onChangeText={setName}
+      />
+      <TextInput style={{backgroundColor: "blue", color: 'white'}}
+        inputMode="text"
+        placeholder="Message"
+        value={message}
+        onChangeText={setMessage}
       />
       <Button title="Submit" onPress={onSubmit} />
     </View>
