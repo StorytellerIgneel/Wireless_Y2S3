@@ -1,6 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 import google.generativeai as genai
+
+chatbot_bp = Blueprint("chatbot", __name__)
 
 app = Flask(__name__)
 CORS(app)  # Allow requests from React Native
@@ -19,7 +21,7 @@ def chat():
         return jsonify({"error": "Message is required"}), 400
 
     try:  
-        model = genai.GenerativeModel("gemini-1.5-pro-001")  
+        model = genai.GenerativeModel("gemini-1.5-pro-001")
         response = model.generate_content(user_input) 
         print(response.text)
         return jsonify({"response": response.text})
