@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { View, Text, Button } from 'react-native';
-import UserContext from '../(tabs)/UserContext';
+import UserContext from '../../context/UserContext';
 
 const ProfileScreen = () => {
   const userContext = useContext(UserContext);
