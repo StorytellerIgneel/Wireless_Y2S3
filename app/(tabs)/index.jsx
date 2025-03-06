@@ -10,26 +10,26 @@ const App = () => {
         <Text style={{backgroundColor:'yellow'}}>
             Ik this is ugly af
         </Text>
-      <Link href="/login">
-        <Pressable>
-          <Text style={{backgroundColor:'blue'}}>Login Button Lol</Text>
-        </Pressable>
-      </Link>
-      <Link href="/chat">
-        <Pressable>
+      <Pressable>
+        <Link href="/login">
+            <Text style={{backgroundColor:'blue'}}>Login Button Lol</Text>
+        </Link>
+      </Pressable>
+      <Pressable>
+        <Link href="/chat">
           <Text style={{backgroundColor:'blue'}}>Chat Button Lol</Text>
-        </Pressable>
-      </Link>
-      <Link href="/feedback">
-        <Pressable>
+        </Link>
+      </Pressable>
+      <Pressable>
+        <Link href="/feedback">
           <Text style={{backgroundColor:'blue'}}>Feedback Button Lol</Text>
-        </Pressable>
-      </Link>
-      <Link href="/profile">
-        <Pressable>
+        </Link>
+      </Pressable>
+      <Pressable>
+        <Link href="/profile">
           <Text style={{backgroundColor:'blue'}}>Profile Button Lol</Text>
-        </Pressable>
-      </Link>
+          </Link>
+      </Pressable>
     </View>
   );
 };
