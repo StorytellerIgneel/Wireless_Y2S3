@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 
-auth_bp = Blueprint("auth", __name__)
+#auth_bp = Blueprint("auth", __name__)
 
 # Database connection function
 def get_db_connection():
@@ -14,7 +14,7 @@ def get_db_connection():
     )
 
 #for login route
-@auth_bp.route("/login", methods = ["POST"])
+#@auth_bp.route("/login", methods = ["POST"])
 def login():
     data = request.get_json()  # Get JSON data from request
     if not data:
@@ -43,7 +43,7 @@ def login():
         return jsonify({"response": "Error: Incorrect password"}), 401
 
 #register route
-@auth_bp.route("/register", methods = ["POST"])
+#@auth_bp.route("/register", methods = ["POST"])
 def register():
     data = request.get_json()
     if not data:

@@ -17,11 +17,12 @@
   "dependencies": {
     "@emailjs/react-native": "^4.2.2",
     "@expo/vector-icons": "^14.0.2",
+    "@react-native-google-signin/google-signin": "^13.2.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
     "axios": "^1.7.9",
     "chat-feat": "file:",
-    "expo": "^52.0.37",
+    "expo": "^52.0.38",
     "expo-blur": "~14.0.3",
     "expo-constants": "~17.0.6",
     "expo-font": "~13.0.3",

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from auth import auth_bp
+from auth_sqlite import auth_bp
 from chatbot import chatbot_bp
 from feedback import feedback_bp
 

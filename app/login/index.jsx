@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import axios from 'axios';
 
-const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
-// const API_URL = "http://192.168.1.8:5000"; //using expogo
+//mconst API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+const API_URL = "http://192.168.43.114:5000"; //using expogo
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -43,10 +43,10 @@ export default function Login() {
     <View style={styles.container}>
       <Text style={styles.title}>React Native DB Test</Text>
 
-      <TextInput style={styles.input} placeholder="Username" onChangeText={setUsername} value={username} />
-      <TextInput style={styles.input} placeholder="Password" secureTextEntry onChangeText={setPassword} value={password} />
-      <TextInput style={styles.input} placeholder="Email (for register)" onChangeText={setEmail} value={email} />
-      <TextInput style={styles.input} placeholder="Phone (for register)" onChangeText={setPhone} value={phone} />
+      <TextInput style={styles.input} backgroundColor="white" placeholder="Username" onChangeText={setUsername} value={username} />
+      <TextInput style={styles.input} backgroundColor="white" placeholder="Password" secureTextEntry onChangeText={setPassword} value={password} />
+      <TextInput style={styles.input} backgroundColor="white" placeholder="Email (for register)" onChangeText={setEmail} value={email} />
+      <TextInput style={styles.input} backgroundColor="white" placeholder="Phone (for register)" onChangeText={setPhone} value={phone} />
 
       <Button title="Login" onPress={handleLogin} />
       <View style={{ height: 10 }} />
@@ -59,7 +59,7 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: "center", alignItems: "center", padding: 20 },
   title: { fontSize: 20, fontWeight: "bold", marginBottom: 20, color: "white" },
-  input: { width: "80%", padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5, color: "white"},
+  input: { width: "80%", padding: 10, borderWidth: 1, marginBottom: 10, borderRadius: 5, color: "black"},
   buttonContainer: {
     width: "80%",
     marginTop: 10, 

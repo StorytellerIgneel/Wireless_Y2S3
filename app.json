@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.teohweihong.chatfeat",
+      "config":{
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.954083427661-cu2f8aaao880t2i48q5ql3cg1tvneuil"
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -36,6 +41,15 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "c32e3745-fcef-4061-8d68-1bf18f88e0c4"
+      }
     }
   }
+}
 }
