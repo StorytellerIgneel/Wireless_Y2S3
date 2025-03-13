@@ -12,6 +12,16 @@ CREATE TABLE IF NOT EXISTS users (
     phone_number TEXT NOT NULL
 )
 """)
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS feedbacks (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        feedback_type TEXT NOT NULL,
+        feedback_description TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+    )
+""")
 
 conn.commit()
 conn.close()

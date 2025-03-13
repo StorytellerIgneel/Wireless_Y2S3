@@ -1,31 +1,56 @@
 import { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import { send, EmailJSResponseStatus } from '@emailjs/react-native';
+import axios from 'axios';
+
+//const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+const API_URL = "http://192.168.43.114:5000"; //using expogo
 
 const FeedbackScreen = () => {
-  const [email, setEmail] = useState<string>();
-  const [name, setName] = useState<string>();
+  const [ID, setID] = useState<string>();
+  const [type, setType] = useState<string>();
+  const [subject, setSubject] = useState<string>();
   const [message, setMessage] = useState<string>();
+  const [user_email, setUserEmail] = useState<string>();
+  const [response, setResponse] = useState<string>();
 
+  const handleFeedback = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/feedback/feedback`, {
+        user_id: ID,
+        type: type,
+        description: message
+      });
+      console.log(response.data);
+      setResponse(response.data.response);
+      setUserEmail(response.data.user_email);
+      console.log(user_email);
+    }catch (err) {
+        console.log('ERROR', err);
+      }
+    };
+      
   const onSubmit = async () => {
-    if (!email || !name) {
-      console.log('Email and Name are required!');
+    if (!type) { //subejct can be left empty
+      console.log('Email and subject are required!');
       return;
     }
-    try {
-      await send(
-        'service_v442tdd',
-        'template_yqxtmac',
-        {
-          name: name,
-          email: email,
-          message: message,
-        },
-        {
-          publicKey: '3n8xXSvm4KPDChxv-',
-        },
-      );
-
+    try{
+      const backendSuccess  = await handleFeedback();
+      if (response === "Feedback submitted successfully") {
+        await send(
+          'service_v442tdd',
+          'template_yqxtmac',
+          {
+            email: user_email,
+            subject: subject,
+            type: type,
+            message: message,
+          },
+          {
+            publicKey: '3n8xXSvm4KPDChxv-',
+          },)
+      };
       console.log('SUCCESS!');
     } catch (err) {
       if (err instanceof EmailJSResponseStatus) {
@@ -39,18 +64,23 @@ const FeedbackScreen = () => {
   return (
     <View>
       <TextInput style={{backgroundColor: "blue",  color: 'white'}}
-        inputMode="email"
-        keyboardType="email-address"
-        textContentType="emailAddress"
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
+        keyboardType="numeric"
+        placeholder="id"
+        value={ID}
+        onChangeText={setID}
+      />
+      <TextInput style={{backgroundColor: "blue",  color: 'white'}}
+        inputMode="text"
+        keyboardType="default"
+        placeholder="type"
+        value={type}
+        onChangeText={setType}
       />
       <TextInput style={{backgroundColor: "blue", color: 'white'}}
         inputMode="text"
-        placeholder="Name"
-        value={name}
-        onChangeText={setName}
+        placeholder="subject"
+        value={subject}
+        onChangeText={setSubject}
       />
       <TextInput style={{backgroundColor: "blue", color: 'white'}}
         inputMode="text"

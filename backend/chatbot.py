@@ -15,7 +15,6 @@ genai.configure(api_key="AIzaSyAMXmbCIKxIWeV_OlqwFnLIXsyE1EeL9Ho")
 def chat():
     data = request.json
     user_input = data.get("userInput", "")
-    print(f"user input: {user_input}")
 
     if not user_input:
         return jsonify({"error": "Message is required"}), 400
@@ -23,7 +22,6 @@ def chat():
     try:  
         model = genai.GenerativeModel("gemini-1.5-pro-001")
         response = model.generate_content(user_input) 
-        print(response.text)
         return jsonify({"response": response.text})
     except Exception as e:
         print(f"Error generating response: {e}")

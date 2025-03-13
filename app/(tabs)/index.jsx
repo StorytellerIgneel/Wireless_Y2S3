@@ -7,7 +7,7 @@ import Login from "../login";
 
 const App = () => {
   return (
-    <Login />
+    <FeedbackScreen />
   )
 };
 
