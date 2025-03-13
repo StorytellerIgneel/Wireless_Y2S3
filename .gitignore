@@ -38,4 +38,10 @@ yarn-error.*
 # virtual environment for django
 backend/venv/
 
+#pycache_files
+backend/__pycache__/
+
+#db files
+backend/db.sqlite3
+
 app-example

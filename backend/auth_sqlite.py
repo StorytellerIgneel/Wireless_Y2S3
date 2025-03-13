@@ -42,7 +42,6 @@ def login():
 # Register route
 @auth_bp.route("/register", methods=["POST"])
 def register():
-    print("register invoked")
     data = request.get_json()
     if not data:
         return jsonify({"response": "Error: Invalid request body"}), 400
