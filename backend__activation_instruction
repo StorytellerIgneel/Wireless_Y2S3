@@ -28,3 +28,24 @@ If unable, use hotspot of ur phone and pc connect to it
 u need to find the ip of ur phone, do so by pressing M after npm start, you can find the device url, it shud be 192.168.x.x, then copy it and paste into the url and then add the :5000
 the :5000 is essential as it is the port for service. 
 if you see axios: network error then ur api url is wrong, or something set up wrongly 
+
+
+//gutendex activation manual
+If u wish to activate gutendex in backend
+1. launch your psql
+- if u dk how, search ur pc for services in system, find postgresql-x64-17 in the list of services and launch
+
+2. cd into the backend (not backend/gutendex)
+
+3. run venv\Scripts\activate in ur cmd on windows
+- this activate the virtual environment for django to run
+
+4. inside the virtual environment, run python manage.py runserver
+- this activates the backend server
+- if everything is fine, u shud see this:
+
+System check identified no issues (0 silenced).
+March 19, 2025 - 16:00:25
+Django version 5.1.7, using settings 'gutendex.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
