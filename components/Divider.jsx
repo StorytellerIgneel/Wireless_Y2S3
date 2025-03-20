@@ -1,8 +1,11 @@
+import { useThemeColor } from '@/hooks/useThemeColor';
 import {
     View,
-    Text,
     StyleSheet
 } from 'react-native';
+import {
+    Text
+} from '@/components';
 
 const styles = StyleSheet.create({
     container: {
@@ -13,7 +16,6 @@ const styles = StyleSheet.create({
     line: {
         flexGrow: 1,
         height: 1,
-        backgroundColor: "#000000",
         margin: 12
     },
     text: {
@@ -23,11 +25,14 @@ const styles = StyleSheet.create({
 });
 
 const Divider = (props) => {
+    const backgroundColor = useThemeColor({}, 'text');
+    const color = backgroundColor;
+
     return (
         <View style={styles.container}>
-            <View style={styles.line}></View>
-            <Text style={styles.text}>{props.text}</Text>
-            <View style={styles.line}></View>
+            <View style={[{backgroundColor}, styles.line]}></View>
+            <Text style={[{color}, styles.text]}>{props.text}</Text>
+            <View style={[{backgroundColor}, styles.line]}></View>
         </View>
     );
 }
