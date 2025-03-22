@@ -1,9 +1,11 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import {
-    Text,
     Pressable,
     StyleSheet
 } from 'react-native';
+import {
+    Icon,
+    Text
+} from '@/components';
 
 const styles = StyleSheet.create({
     button: {
@@ -16,34 +18,42 @@ const styles = StyleSheet.create({
     },
     text: {
         flex: 1,
-        color: "#FFFFFF",
         textAlign: "center",
         fontWeight: "500",
     },
     icon: {
-        color: "#FFFFFF"
+        color: 'rgba(255, 255, 255, 1)',
+        margin: 0
     }
 });
 
-const Button = (props) => {
+const Button = ({ title, active, activeBackgroundColor, backgroundColor, activeColor, color, icon, style, ...props }) => {    
     return (
         <Pressable
             android_ripple={{color: "rgba(255, 255, 255, 0.25)", borderless: false}}
             disabled={false}
             style={[
+                (active) ?
+                    {backgroundColor: activeBackgroundColor, opacity: 1} :
+                    {backgroundColor: backgroundColor, opacity: 0.5},
                 styles.button,
-                {backgroundColor: props.active ? props.activeColor : props.color}
-            ]}>
-            <Ionicons
-                name={props.icon}
-                size={18}
+                style,
+            ]}
+            {...props}
+        >
+            <Icon
+                name={icon}
                 style={styles.icon}
             />
             <Text
-                {...props}
-                style={styles.text}
+                style={[
+                    (active) ?
+                        {color: activeColor} :
+                        {color: color},
+                    styles.text
+                ]}
             >
-                {props.title}
+                {title}
             </Text>
         </Pressable>
     );

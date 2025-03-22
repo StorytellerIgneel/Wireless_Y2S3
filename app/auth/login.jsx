@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import PageView from '../../components/PageView';
-import FormView from '../../components/FormView';
-import FormFooterView from '../../components/FormFooterView';
-import FormField from '../../components/FormField';
-import Button from '../../components/Button';
-import Divider from '../../components/Divider';
-import { Link } from 'expo-router';
 import axios from 'axios';
 import {
   View,
-  Text,
   Alert,
-  StyleSheet
+  StyleSheet,
+  useColorScheme
 } from 'react-native';
+import {
+  Text,
+  Link,
+  Button,
+  Divider,
+  PageView,
+  FormView,
+  FormFooterView,
+  FormField
+} from '@/components';
 
 const styles = StyleSheet.create({
   error: {
@@ -21,7 +24,6 @@ const styles = StyleSheet.create({
     marginTop: 14
   },
   hyperlink: {
-    color: "#4286F5",
     flexGrow: 1,
     textDecorationLine: "underline",
     textAlign: "right"
@@ -36,6 +38,8 @@ const styles = StyleSheet.create({
 const API_URL = "http://192.168.1.115:5000"; //using expogo
 
 export default function Login() {
+  const colorScheme = useColorScheme();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
@@ -84,35 +88,40 @@ export default function Login() {
         <FormField
           label="Username"
           icon="person-outline"
+          placeholder="Bob"
           maxLength={30}
           value={username}
           invalid={status || (message && !username)}
-          onChangeText={setUsername} />
+          onChangeText={setUsername}
+        />
         <FormField
           hideable
           label="Password"
           icon="lock-closed-outline"
+          placeholder="*****"
           maxLength={30}
           value={password}
           invalid={status || (message && !password)}
-          onChangeText={setPassword} />
+          onChangeText={setPassword}
+        />
 
         <Link
           href="/auth/forgot-password"
-          style={styles.hyperlink}>
+          style={styles.hyperlink}
+        >
           Forgot password?
         </Link>
 
-        <Text
-          style={styles.error}>
+        <Text style={styles.error}>
           {message}
         </Text>
         <Button
           title="Log in"
-          color="#6D787E"
-          activeColor="#03314B"
+          backgroundColor="rgba(109, 120, 126, 1)"
+          activeBackgroundColor="rgba(237, 180, 59, 1)"
           active={![username, password].includes("")}
-          onPress={handleLogin} />
+          onPress={handleLogin}
+        />
       </FormView>
       <FormFooterView>
         <Divider text="or" />
@@ -120,19 +129,20 @@ export default function Login() {
         <Button
           title="Log in with Google"
           icon="logo-google"
-          activeColor="#4286F5"
+          activeBackgroundColor="rgba(66, 134, 245, 1)"
+          activeColor="rgba(255, 255, 255, 1)"
           active
-          onPress={handleLogin} />
+          onPress={handleLogin}
+        />
 
-        <View
-          style={styles.footer}>
-          <Text
-            style={{opacity: 0.5}}>
+        <View style={styles.footer}>
+          <Text style={{opacity: 0.5}}>
             Don't have an account?
           </Text>
           <Link
             href="/auth/signup"
-            style={styles.hyperlink}>
+            style={styles.hyperlink}
+          >
             Create account
           </Link>
         </View>

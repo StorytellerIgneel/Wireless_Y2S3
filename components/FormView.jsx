@@ -1,22 +1,27 @@
+import { useThemeColor } from '@/hooks/useThemeColor';
 import {
-    Text,
     View,
     StyleSheet
 } from 'react-native';
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#F6F8FA",
         borderRadius: 16,
         padding: 24,
     }
 });
 
-const FormView = (props) => {
+const FormView = ({ style, ...props }) => {
+    const backgroundColor = useThemeColor({}, 'secondaryBackground');
+
     return (
         <View
+            style={[
+                {backgroundColor},
+                styles.container,
+                style
+            ]}
             {...props}
-            style={styles.container}
         />
     );
 }
