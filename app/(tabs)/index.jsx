@@ -4,10 +4,11 @@ import ChatScreen from "../chat";
 import FeedbackScreen from "../feedback";
 import { Link } from "expo-router";
 import Login from "../login";
+import SocketTest from "../SocketTest";
 
 const App = () => {
   return (
-    <FeedbackScreen />
+    <SocketTest />
   )
 };
 
