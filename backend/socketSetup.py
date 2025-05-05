@@ -15,7 +15,7 @@ def home():
 # Handle client connection
 @socketio.on('connect')
 def handle_connect():
-    print(f"Client {request.sid} connected")
+    print(f"Client {request.sid} connected") #request sid is auto assigned by socketio
     emit('message', {'msg': 'Connected to server'})
 
 # Handle joining a room
@@ -44,15 +44,29 @@ def handle_leave(data):
     print(f"{username} left room: {room}")
 
 # Handle chat messages
-@socketio.on('message')
-def handle_message(data):
+@socketio.on('broadcast_message')
+def broadcast_message(data):
     print(data)
+    print(f"request.sid = {request.sid}")
     #room = data['room']
     #msg = data['msg']
     msg = data
     #username = data['username']
 
-    emit('message', {'msg': msg}, broadcast=True)
+    emit('message', {'msg': data["msg"] + f"by {request.sid}"}, broadcast=True, skip_sid="mOfKhP86gKFnBbPsAAAB")
+    print(f"Message: {msg}")
+
+@socketio.on('message')
+def handle_message(data):
+    print(data)
+    print(f"request.sid = {request.sid}")
+    #room = data['room']
+    #msg = data['msg']
+    msg = data
+    #username = data['username']
+    room = rooms.get(request.sid);
+
+    emit('message', {'msg': data["msg"] + f"by {request.sid}"},room=room, skip_sid=request.sid)
     print(f"Message: {msg}")
 
 # Handle client disconnect

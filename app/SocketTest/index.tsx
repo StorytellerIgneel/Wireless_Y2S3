@@ -10,6 +10,8 @@ const socket = io("http://192.168.43.114:5000", {
 const SocketTest = () => {
   const [messages, setMessages] = useState<string[]>([]);
   const [message, setMessage] = useState("");
+  const [room, setRoom] = useState("");
+  const [username, setUsername] = useState("");
 
   useEffect(() => {
     // When a message is received
@@ -24,7 +26,7 @@ const SocketTest = () => {
 
   const sendMessage = () => {
     if (message.trim() !== "") {
-      socket.emit("message", message);
+      socket.emit("message", {room, msg: message});
       setMessage(""); // Clear input field
     }
   };
@@ -43,6 +45,20 @@ const SocketTest = () => {
         placeholder="Type a message..."
         style={{backgroundColor:"blue" ,borderBottomWidth: 1, padding: 10, color: "white" }}
       />
+      <TextInput
+        value={room}
+        onChangeText={setRoom}
+        placeholder="Enter your room..."
+        style={{backgroundColor:"blue" ,borderBottomWidth: 1, padding: 10, color: "white" }}
+      />
+      <TextInput
+        value={username}
+        onChangeText={setUsername}
+        placeholder="Enter your username..."
+        style={{backgroundColor:"blue" ,borderBottomWidth: 1, padding: 10, color: "white" }}
+      ></TextInput>
+      <Button title="Join Room" onPress={() => socket.emit("join_room", {"room":room, "username": username})} />
+      <Button title="Leave Room" onPress={() => socket.emit("leave_room", {"room":room, "username": username})}/>
       <Button title="Send" onPress={sendMessage} />
     </View>
   );
