@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
 
 //mconst API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
 const API_URL = "http://192.168.1.115:5000"; //using expogo
+// const API_URL = process.env.EXPO_PUBLIC_API_URL; // using expo go env
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -61,8 +62,7 @@ export default function ForgotPassword() {
         </Text>
         <Button
           title="Send code"
-          backgroundColor="rgba(109, 120, 126, 1)"
-          activeBackgroundColor="rgba(237, 180, 59, 1)"
+          type="primary"
           active={![email].includes("")}
         />
       </FormView>
