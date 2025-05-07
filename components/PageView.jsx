@@ -8,7 +8,9 @@ import Text from '@/components/Text.jsx';
 
 const styles = StyleSheet.create({
     viewHeader: {
-        padding: 12,
+        padding: 10,
+        paddingLeft: 20,
+        marginTop: 10
     },
     viewBody: {
         flex: 1,

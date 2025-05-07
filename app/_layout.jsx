@@ -1,40 +1,44 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { UserProvider } from '@/context/UserContext';
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect, createContext } from 'react';
-import 'react-native-reanimated';
-
+import { useEffect, useState } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import Welcome from './welcome'; 
+import { UserProvider } from '@/context/UserContext'; 
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const [isSplashVisible, setIsSplashVisible] = useState(true);
 
   useEffect(() => {
-    if (loaded) {
+    if (fontsLoaded) {
       SplashScreen.hideAsync();
-    }
-  }, [loaded]);
 
-  if (!loaded) {
-    return null;
+      const timer = setTimeout(() => {
+        setIsSplashVisible(false);
+      }, 4000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded || isSplashVisible) {
+    return <Welcome />;
   }
 
   return (
-    <UserProvider>
+    <UserProvider> 
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack
-          screenOptions={{headerShown: false}}>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="auth" />
+          <Stack.Screen name="(tabs)" />
         </Stack>
         <StatusBar style="auto" />
       </ThemeProvider>
