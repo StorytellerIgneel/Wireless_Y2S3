@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
 });
 
 const FormView = ({ style, ...props }) => {
-    const backgroundColor = useThemeColor({}, 'secondaryBackground');
+    const backgroundColor = useThemeColor({}, 'bg_secondary');
 
     return (
         <View

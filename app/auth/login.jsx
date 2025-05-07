@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import UserContext from '@/context/UserContext';
+import { useRouter } from 'expo-router';
 import axios from 'axios';
 import {
   View,
   Alert,
-  StyleSheet,
-  useColorScheme
+  StyleSheet
 } from 'react-native';
 import {
   Text,
@@ -19,7 +20,6 @@ import {
 
 const styles = StyleSheet.create({
   error: {
-    color: "red",
     textAlign: "center",
     marginTop: 14
   },
@@ -34,11 +34,15 @@ const styles = StyleSheet.create({
   }
 });
 
-//mconst API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+//const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
 const API_URL = "http://192.168.1.115:5000"; //using expogo
+// const API_URL = process.env.EXPO_PUBLIC_API_URL; // using expo go env
+const homePath = "/demo-user-context/home";
 
 export default function Login() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+
+  const {user, loginUser} = useContext(UserContext);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -64,7 +68,9 @@ export default function Login() {
       const response = await axios.post(`${API_URL}/auth/login`, { username, password });
       
       // Create user context
-      Alert.alert("Success", "Create user context");
+      loginUser({ username: username });
+
+      router.navigate(homePath);
 
     } catch (error) {
       const code = error.response.status;
@@ -112,13 +118,11 @@ export default function Login() {
           Forgot password?
         </Link>
 
-        <Text style={styles.error}>
-          {message}
-        </Text>
+        <Text type="error" style={styles.error}>{message}</Text>
+        
         <Button
           title="Log in"
-          backgroundColor="rgba(109, 120, 126, 1)"
-          activeBackgroundColor="rgba(237, 180, 59, 1)"
+          type="primary"
           active={![username, password].includes("")}
           onPress={handleLogin}
         />
@@ -129,8 +133,7 @@ export default function Login() {
         <Button
           title="Log in with Google"
           icon="logo-google"
-          activeBackgroundColor="rgba(66, 134, 245, 1)"
-          activeColor="rgba(255, 255, 255, 1)"
+          type="link"
           active
           onPress={handleLogin}
         />

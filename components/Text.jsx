@@ -3,13 +3,16 @@ import {
     Text
 } from 'react-native';
 
-const CustomText = ({ style, ...props }) => {
+const CustomText = ({ type, style, ...props }) => {
   const color = useThemeColor({}, 'text');
+  const error = useThemeColor({}, 'error');
 
   return (
     <Text
       style={[
-        { color },
+        {
+          color: type == 'error' ? error : color
+        },
         style,
       ]}
       {...props}
