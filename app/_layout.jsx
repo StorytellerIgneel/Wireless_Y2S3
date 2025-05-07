@@ -36,7 +36,7 @@ export default function RootLayout() {
   return (
     <UserProvider> 
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}> {/*initialRouteName="feedback">*/}
+        <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="auth" />
           <Stack.Screen name="(tabs)" />
         </Stack>

@@ -73,8 +73,6 @@ export default function BookDetailsScreen() {
 
   const languageList = languages?.join(', ') || '';
   const translatorNames = translators?.map((t) => t.name).join(', ') || '';
-  const bookshelf = bookshelves?.[0]?.replace(/^Browsing\s*:\s*/i, '') || '';
-  const summaryText = summaries?.join('\n\n') || '';
   const wordCount =
     formats?.['text/plain; charset=utf-8']?.length
       ? `${(formats['text/plain; charset=utf-8'].length / 5).toLocaleString()} words`
@@ -124,14 +122,21 @@ export default function BookDetailsScreen() {
               {translatorNames ? ` / Translated by ${translatorNames}` : ''}
             </Text>
           )}
-          {bookshelf ? (
-            <View style={styles.bookshelfBox}>
-              <Text style={styles.bookshelfText}>{bookshelf}</Text>
+
+          {bookshelves?.length ? (
+            <View style={styles.bookshelfIconRow}>
+              {bookshelves.map((shelf, index) => (
+                <View key={index} style={styles.bookshelfIcon}>
+                  <Ionicons name="book-outline" size={18} color="#333" />
+                  <Text style={styles.bookshelfLabel}>
+                    {shelf.replace(/^Browsing\s*:\s*/i, '')}
+                  </Text>
+                </View>
+              ))}
             </View>
           ) : null}
         </View>
 
-        {/* Sticky container placeholder (gets layout Y position) */}
         <View
           onLayout={(event) => {
             const layoutY = event.nativeEvent.layout.y;
@@ -141,10 +146,9 @@ export default function BookDetailsScreen() {
           <View style={styles.divider} />
         </View>
 
-        {/* Summary */}
         <View style={styles.summaryContainer}>
           <Text style={styles.summaryTitle}>What’s it about?</Text>
-          <Text style={styles.summaryText}>{summaryText}</Text>
+          <Text style={styles.summaryText}>{summaries?.join('\n\n') || ''}</Text>
         </View>
       </Animated.ScrollView>
 
@@ -157,18 +161,16 @@ export default function BookDetailsScreen() {
           },
         ]}
       >
-        <Pressable
-          onPress={() => setBookmarked((prev) => !prev)}
-          style={styles.iconButton}
-        >
+        <Pressable onPress={() => router.push(`reader?id=${id}`)} style={styles.readButton}>
+          <Text style={styles.readButtonText}>Start Reading</Text>
+        </Pressable>
+
+        <Pressable onPress={() => setBookmarked((prev) => !prev)} style={styles.iconButton}>
           <Ionicons
             name={bookmarked ? 'bookmark' : 'bookmark-outline'}
             size={24}
             color="gold"
           />
-        </Pressable>
-        <Pressable onPress={() => router.push(`reader?id=${id}`)} style={styles.readButton}>
-          <Text style={styles.readButtonText}>Start Reading</Text>
         </Pressable>
       </Animated.View>
     </View>
@@ -177,7 +179,7 @@ export default function BookDetailsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
-  scrollContent: { paddingBottom: 60 },
+  scrollContent: { paddingBottom: 80 },
   coverImage: {
     width: width,
     height: width * 1.2,
@@ -212,31 +214,40 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     textAlign: 'left',
   },
-  bookshelfBox: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    backgroundColor: '#ffeb99',
-    borderRadius: 12,
-    marginTop: 6,
+  bookshelfIconRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+    marginTop: 8,
+    alignItems: 'center',
   },
-  bookshelfText: {
-    fontSize: 14,
-    fontWeight: '600',
+  bookshelfIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fffae5',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginRight: 8,
+    marginBottom: 6,
+  },
+  bookshelfLabel: {
+    fontSize: 13,
     color: '#333',
+    marginLeft: 4,
   },
   stickyContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: '',
+    justifyContent: 'space-between',
     padding: 12,
     paddingHorizontal: 20,
     backgroundColor: '#fff',
     borderTopWidth: 1,
     borderBottomWidth: 1,
     borderColor: '#ddd',
-    // position: 'absolute',
-   // top: 600,
+    position: 'absolute',
+    bottom: 0,
     left: 0,
     right: 0,
   },
@@ -248,7 +259,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 6,
-    marginLeft: 12,
   },
   readButtonText: {
     fontSize: 16,

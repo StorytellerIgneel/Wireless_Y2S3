@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {
-  StyleSheet
-} from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
+import Constants from 'expo-constants';
+
 import {
   Text,
   Button,
@@ -29,38 +29,29 @@ const styles = StyleSheet.create({
   }
 });
 
-import { Platform } from 'react-native';
-import Constants from 'expo-constants';
-
+// Determine API URL based on platform
 let API_URL;
 
 if (Platform.OS === 'ios') {
-  API_URL = `http://localhost:5000`; // iOS Simulator
+  API_URL = `http://localhost:5000`; // iOS simulator
 } else if (Platform.OS === 'android') {
-  API_URL = `http://10.0.2.2:5000`; // Android Emulator
+  API_URL = `http://10.0.2.2:5000`; // Android emulator
 } else {
-  const localIp = Constants.manifest.debuggerHost.split(':').shift(); // Physical device
+  const localIp = Constants.manifest.debuggerHost?.split(':').shift();
   API_URL = `http://${localIp}:5000`;
 }
 
-console.log(API_URL); // Check API URL used
-//mconst API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
-<<<<<<< HEAD
-// const API_URL = "http://192.168.1.115:5000"; //using expogo
-=======
-const API_URL = "http://192.168.1.115:5000"; //using expogo
-// const API_URL = process.env.EXPO_PUBLIC_API_URL; // using expo go env
->>>>>>> origin/main
+console.log('API_URL:', API_URL);
 
 export default function ForgotPassword() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("");
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState('');
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    setEmail("");
-    setStatus("");
-    setMessage("");
+    setEmail('');
+    setStatus('');
+    setMessage('');
   }, []);
 
   return (
@@ -71,18 +62,24 @@ export default function ForgotPassword() {
           icon="mail-outline"
           maxLength={30}
           value={email}
-          invalid={status || (message && !email)}
+          invalid={!!status || (message && !email)}
           onChangeText={setEmail}
         />
 
-        <Text
-          style={styles.error}>
-          {message}
-        </Text>
+        {!!message && (
+          <Text style={styles.error}>
+            {message}
+          </Text>
+        )}
+
         <Button
           title="Send code"
           type="primary"
-          active={![email].includes("")}
+          active={email.trim() !== ''}
+          onPress={() => {
+            // Handle sending code here
+            console.log("Send code clicked with email:", email);
+          }}
         />
       </FormView>
     </PageView>
