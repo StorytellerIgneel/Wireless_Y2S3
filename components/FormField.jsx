@@ -5,10 +5,8 @@ import {
     View,
     StyleSheet
 } from 'react-native';
-import {
-    Text,
-    Icon
-} from '@/components';
+import Icon from '@/components/Icon.jsx';
+import Text from '@/components/Text.jsx';
 
 const styles = StyleSheet.create({
     container: {
@@ -26,10 +24,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         padding: 4
     },
-    invalid: {
-        backgroundColor: "rgba(255, 0, 0, 0.2)",
-        borderColor: "rgba(255, 0, 0, 0.5)",
-    },
     label: {
         fontSize: 14,
         fontWeight: 500
@@ -44,8 +38,11 @@ const styles = StyleSheet.create({
 
 const FormField = ({ icon, label, hideable, invalid, onChangeText, ...props }) => {
     const borderColor = useThemeColor({}, 'border');
-    const backgroundColor = useThemeColor({}, 'primaryBackground');
+    const backgroundColor = useThemeColor({}, 'bg_primary');
     const color = useThemeColor({}, 'text');
+    const error = useThemeColor({}, 'error');
+    const error_bg = useThemeColor({}, 'error_bg');
+    const error_border = useThemeColor({}, 'error_border');
 
     const [hide, setHide] = useState(hideable);
     const [value, setValue] = useState('');
@@ -61,7 +58,18 @@ const FormField = ({ icon, label, hideable, invalid, onChangeText, ...props }) =
                     {label}
                 </Text>
             </View>
-            <View style={[(invalid) ? styles.invalid : {backgroundColor, borderColor}, styles.containerInput]}>
+            <View style={[
+                (invalid) ?
+                    {
+                        backgroundColor: error_bg,
+                        borderColor: error_border
+                    } :
+                    {
+                        backgroundColor,
+                        borderColor
+                    },
+                styles.containerInput
+            ]}>
                 <TextInput
                     style={[{color, opacity: (value) ? 1 : 0.2}, styles.input]}
                     secureTextEntry={hide}
