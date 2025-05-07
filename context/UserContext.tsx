@@ -27,7 +27,8 @@ export const UserProvider = ({children}: {children: ReactNode}) => {
 
   return (
     <UserContext.Provider value={{user, loginUser, logoutUser}}>
-        {children} {/* the children here is a special react prop that refers to all comps inside the provider, making it flexible*/ }
+        {children} 
+        {/* the children here is a special react prop that refers to all comps inside the provider, making it flexible*/ }
     </UserContext.Provider>
   )
 }

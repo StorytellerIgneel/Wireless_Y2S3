@@ -1,11 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
+import { useRouter } from 'expo-router';
 import axios from 'axios';
-import {
-  View,
-  Alert,
-  StyleSheet,
-  useColorScheme
-} from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+
 import {
   Text,
   Link,
@@ -16,6 +13,26 @@ import {
   FormFooterView,
   FormField
 } from '@/components';
+
+import UserContext from '@/context/UserContext';
+import { Platform } from 'react-native';
+import Constants from 'expo-constants';
+
+let API_URL;
+
+if (Platform.OS === 'ios') {
+  API_URL = `http://localhost:5000`; // iOS Simulator
+} else if (Platform.OS === 'android') {
+  API_URL = `http://10.0.2.2:5000`; // Android Emulator
+} else {
+  const localIp = Constants.manifest.debuggerHost.split(':').shift(); // Physical device
+  API_URL = `http://${localIp}:5000`;
+}
+
+console.log(API_URL); // Check API URL used
+
+//mconst API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+// const API_URL = "http://192.168.1.115:5000"; //using expogo
 
 const styles = StyleSheet.create({
   error: {
@@ -34,53 +51,67 @@ const styles = StyleSheet.create({
   }
 });
 
-//mconst API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
-const API_URL = "http://192.168.1.115:5000"; //using expogo
-
 export default function Login() {
-  const colorScheme = useColorScheme();
+  const router = useRouter();
+  const context = useContext(UserContext);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [status, setStatus] = useState("");
   const [message, setMessage] = useState("");
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (context?.user) {
+      router.replace("/"); // redirect to home if user already logged in
+    }
+  }, [context?.user]);
+
+  console.log("context.user on login screen:", context.user);
 
   useEffect(() => {
     setUsername("");
     setPassword("");
-    setStatus("");
     setMessage("");
   }, []);
 
-  // Login function
   const handleLogin = async () => {
-    if (username == "") {
-      return setMessage("Please enter username");
-    } else if (password == "") {
-      return setMessage("Please enter password");
-    }
+    console.log("Login button clicked");
 
-    try {      
-      const response = await axios.post(`${API_URL}/auth/login`, { username, password });
-      
+    if (!username) return setMessage("Please enter username");
+    if (!password) return setMessage("Please enter password");
+
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        username,
+        password
+      });
+
+      console.log("Login success:", response.data);
+
+      const userInfo = {
+        name: username,
+        email: `${username}@example.com`,
+      };
+
+      if (!context) {
+        console.error("UserContext is undefined");
+        return;
+      }
+
+      context.loginUser(userInfo); // this must not be undefined
       // Create user context
-      Alert.alert("Success", "Create user context");
+      // Alert.alert("Success", "Create user context");
 
+      // Simulated user info — replace with real response if your backend returns user data
+      router.replace('/');
     } catch (error) {
-      const code = error.response.status;
-
-      setStatus(code);
-
-      switch(code) {
-        case 401:
-        case 404:
-          setMessage("Please enter correct username and password");
-          break;
-        default:
-          setMessage("Soemthing went wrong, try again later");
-      }      
+      console.error("Login error:", error);
+      setMessage("Login failed. Please check credentials or try again later.");
     }
   };
+
+  // Prevent flashing login screen if already authenticated
+  if (context?.user) return null;
 
   return (
     <PageView header="Login">
@@ -89,9 +120,7 @@ export default function Login() {
           label="Username"
           icon="person-outline"
           placeholder="Bob"
-          maxLength={30}
           value={username}
-          invalid={status || (message && !username)}
           onChangeText={setUsername}
         />
         <FormField
@@ -99,22 +128,16 @@ export default function Login() {
           label="Password"
           icon="lock-closed-outline"
           placeholder="*****"
-          maxLength={30}
           value={password}
-          invalid={status || (message && !password)}
           onChangeText={setPassword}
         />
 
-        <Link
-          href="/auth/forgot-password"
-          style={styles.hyperlink}
-        >
+        <Link href="/auth/forgot-password" style={styles.hyperlink}>
           Forgot password?
         </Link>
 
-        <Text style={styles.error}>
-          {message}
-        </Text>
+        <Text style={styles.error}>{message}</Text>
+
         <Button
           title="Log in"
           backgroundColor="rgba(109, 120, 126, 1)"
@@ -123,6 +146,7 @@ export default function Login() {
           onPress={handleLogin}
         />
       </FormView>
+
       <FormFooterView>
         <Divider text="or" />
 
@@ -131,18 +155,14 @@ export default function Login() {
           icon="logo-google"
           activeBackgroundColor="rgba(66, 134, 245, 1)"
           activeColor="rgba(255, 255, 255, 1)"
-          active
-          onPress={handleLogin}
+          onPress={() => Alert.alert("Not implemented")}
         />
 
         <View style={styles.footer}>
-          <Text style={{opacity: 0.5}}>
+          <Text style={{ opacity: 0.5 }}>
             Don't have an account?
           </Text>
-          <Link
-            href="/auth/signup"
-            style={styles.hyperlink}
-          >
+          <Link href="/auth/signup" style={styles.hyperlink}>
             Create account
           </Link>
         </View>
