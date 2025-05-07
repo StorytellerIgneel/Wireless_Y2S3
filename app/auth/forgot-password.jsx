@@ -44,6 +44,11 @@ export default function ForgotPassword() {
     setMessage("");
   }, []);
 
+  //
+  const handleEmail = () => {
+
+  }
+
   return (
     <PageView header="Reset Password">
       <FormView>
@@ -64,6 +69,7 @@ export default function ForgotPassword() {
           title="Send code"
           type="primary"
           active={![email].includes("")}
+          onPress={handleEmail}
         />
       </FormView>
     </PageView>
