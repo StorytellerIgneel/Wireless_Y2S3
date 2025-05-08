@@ -3,7 +3,7 @@ import { StyleSheet, View, Image } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import { PrimaryButton } from "@/components/Button";
+import Button from "@/components/Button";
 
 const bookCoverImage = require("@/assets/images/bookImage.jpg");
 
@@ -33,7 +33,7 @@ const ContinueReading = (props) => {
             <View
               style={[
                 styles.progressBarFill,
-                { width: `${props.percentage}%` },
+                { width: `${props.percentage}%`, backgroundColor: colors.btn_bg_primary},
               ]}
             />
           </View>
@@ -42,7 +42,9 @@ const ContinueReading = (props) => {
           </ThemedText>
         </View>
 
-        <PrimaryButton
+        <Button
+          type='primary'
+          active={true}
           title="Continue"
           onPress={() => {
             /* TO-DO: Handle continue reading */
@@ -66,7 +68,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   coverImage: {
-    width: 125,
+    width: 135,
     aspectRatio: 2 / 3,
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
@@ -94,7 +96,6 @@ const styles = StyleSheet.create({
   },
   progressBarFill: {
     borderRadius: 4,
-    backgroundColor: "#FEB802",
     height: 8,
   },
   percentageText: {

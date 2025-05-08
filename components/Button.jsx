@@ -1,5 +1,11 @@
-import { Pressable, StyleSheet, View } from "react-native";
-import { Icon, Text } from "@/components";
+import { useThemeColor } from '@/hooks/useThemeColor';
+import {
+    Pressable,
+    StyleSheet,
+    View
+} from 'react-native';
+import Icon from '@/components/Icon.jsx';
+import Text from '@/components/Text.jsx';
 import { Colors } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
 
@@ -11,6 +17,11 @@ const styles = StyleSheet.create({
     padding: 12,
     marginTop: 8,
     marginBottom: 8,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
+    elevation: 4,
   },
   text: {
     flex: 1,
@@ -21,87 +32,86 @@ const styles = StyleSheet.create({
     color: "rgba(255, 255, 255, 1)",
     margin: 0,
   },
-  buttonPrimary: {
-    paddingVertical: 8,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-    alignItems: "center",
-},
-primaryButtonWrapper: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 4,
-    borderRadius: 20,
-    overflow: "hidden",
-    alignSelf: "flex-end",
-  },
 });
 
 const Button = ({
-  title,
-  active,
-  activeBackgroundColor,
-  backgroundColor,
-  activeColor,
-  color,
-  icon,
-  style,
-  ...props
-}) => {
-  return (
-    <Pressable
-      android_ripple={{ color: "rgba(255, 255, 255, 0.25)", borderless: false }}
-      disabled={false}
-      style={[
-        active
-          ? { backgroundColor: activeBackgroundColor, opacity: 1 }
-          : { backgroundColor: backgroundColor, opacity: 0.5 },
-        styles.button,
-        style,
-      ]}
-      {...props}
-    >
-      <Icon name={icon} style={styles.icon} />
-      <Text
-        style={[
-          active ? { color: activeColor } : { color: color },
-          styles.text,
-        ]}
-      >
-        {title}
-      </Text>
-    </Pressable>
-  );
-};
+    type = 'primary',
+    title,
+    active,
+    activeBackgroundColor,
+    backgroundColor,
+    activeColor,
+    color,
+    icon,
+    style,
+    ...props
+ }) => {
+    const btn_primary = useThemeColor({}, 'btn_primary');
+    const btn_primary_inactive = useThemeColor({}, 'btn_primary_inactive');
+    const btn_bg_primary = useThemeColor({}, 'btn_bg_primary');
+    const btn_bg_primary_inactive = useThemeColor({}, 'btn_bg_primary_inactive');
 
-const PrimaryButton = ({ title, icon, style, ...props }) => {
-  return (
-    <View style={styles.primaryButtonWrapper}>
-      <Pressable
-        android_ripple={{
-          color: Colors.light.buttonPrimaryRipple,
-          borderless: false,
-        }}
-        style={[
-          styles.buttonPrimary,
-          { backgroundColor: Colors.light.buttonPrimary },
-          style,
-        ]}
-        {...props}
-      >
-        {icon && <Icon name={icon} style={styles.icon} />}
-        <ThemedText
-          type="defaultSemiBold"
-          style={{ color: Colors.light.text }}
+    const btn_secondary = useThemeColor({}, 'btn_secondary');
+    const btn_secondary_inactive = useThemeColor({}, 'btn_secondary_inactive');
+    const btn_bg_secondary = useThemeColor({}, 'btn_bg_secondary');
+    const btn_bg_secondary_inactive = useThemeColor({}, 'btn_bg_secondary_inactive');
+
+    const btn_link = useThemeColor({}, 'btn_link');
+    const btn_link_inactive = useThemeColor({}, 'btn_link_inactive');
+    const btn_bg_link = useThemeColor({}, 'btn_bg_link');
+    const btn_bg_link_inactive = useThemeColor({}, 'btn_bg_link_inactive');
+
+    return (
+        <Pressable
+            android_ripple={{color: "rgba(255, 255, 255, 0.25)", borderless: false}}
+            disabled={false}
+            style={[
+                (active) ?
+                    {
+                        opacity: 1,
+                        backgroundColor: activeBackgroundColor ??
+                            type == 'primary' ? btn_bg_primary :
+                            type == 'secondary' ? btn_bg_secondary : 
+                            type == 'link' ? btn_bg_link : btn_bg_primary,
+                    } :
+                    {
+                        opacity: 0.5,
+                        backgroundColor: backgroundColor ??
+                            type == 'primary' ? btn_bg_primary_inactive :
+                            type == 'secondary' ? btn_bg_secondary_inactive : 
+                            type == 'link' ? btn_bg_link_inactive : btn_bg_primary_inactive
+                    },
+                styles.button,
+                style,
+            ]}
+            {...props}
         >
-          {title}
-        </ThemedText>
-      </Pressable>
-    </View>
-  );
-};
+            <Icon
+                name={icon}
+                style={styles.icon}
+            />
+            <Text
+                style={[
+                    (active) ?
+                        {
+                            color: activeColor ??
+                                type == 'primary' ? btn_primary :
+                                type == 'secondary' ? btn_secondary : 
+                                type == 'link' ? btn_link : btn_primary,
+                        } :
+                        {
+                            color: color ??
+                                type == 'primary' ? btn_primary_inactive :
+                                type == 'secondary' ? btn_secondary_inactive : 
+                                type == 'link' ? btn_link_inactive : btn_primary_inactive,
+                        },
+                    styles.text
+                ]}
+            >
+                {title}
+            </Text>
+        </Pressable>
+    );
+}
 
-export { PrimaryButton };
 export default Button;

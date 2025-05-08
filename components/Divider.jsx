@@ -3,9 +3,7 @@ import {
     View,
     StyleSheet
 } from 'react-native';
-import {
-    Text
-} from '@/components';
+import Text from '@/components/Text.jsx';
 
 const styles = StyleSheet.create({
     container: {

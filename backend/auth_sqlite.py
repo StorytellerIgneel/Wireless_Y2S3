@@ -1,16 +1,11 @@
 import sqlite3
 import os
+import db;
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash  # Secure passwords
 
 auth_bp = Blueprint("auth", __name__)
-
-# Database connection function
-DATABASE = os.path.join(os.getcwd(), "database.sqlite3")
-
-def get_db_connection():
-    return sqlite3.connect(DATABASE, check_same_thread=False)
 
 # Login route
 @auth_bp.route("/login", methods=["POST"])
@@ -26,11 +21,7 @@ def login():
         return jsonify({"response": "Error: Missing fields"}), 400
 
     sql = "SELECT password FROM users WHERE username = ?"
-    
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(sql, (username,)) #prevent sql injection
-        result = cursor.fetchone()
+    result = db.fetch_one(sql, (username,))
 
     if result is None:
         return jsonify({"response": "Error: User does not exist"}), 404
@@ -57,19 +48,15 @@ def register():
     sql_check = "SELECT password FROM users WHERE username = ?"
     sql_insert = "INSERT INTO users (username, email, password, phone_number) VALUES (?, ?, ?, ?)"
 
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(sql_check, (username,))
-        result = cursor.fetchone()
-
-        if result:
-            return jsonify({"response": "Error: Username already exists"}), 409
-
+    # Check if the username already exists
+    user_exists = db.fetch_one(sql_check, (username,))
+    if user_exists:
+        return jsonify({"response": "Error: Username already exists"}), 409
+    else:
         try:
             hashed_password = generate_password_hash(password)  # ✅ Hash password
             values = (username, email, hashed_password, phone_number)
-            cursor.execute(sql_insert, values)
-            conn.commit()
+            db.execute_query(sql_insert, values)
             return jsonify({"response": "Registration successful"}), 201
         except sqlite3.IntegrityError:
             return jsonify({"response": "Error: Database constraint violation"}), 400
