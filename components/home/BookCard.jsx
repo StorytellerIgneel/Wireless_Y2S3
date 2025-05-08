@@ -50,10 +50,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     marginBottom: 2,
   },
-  author: {
-    fontSize: 14,
-    color: "#687076", // Grey color for author
-  },
 });
 
 export default BookCard;
