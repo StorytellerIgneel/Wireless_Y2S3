@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleSheet, Text, View, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ContinueReading from "../../../components/home/ContinueReading";
 import { ThemedText } from "@/components/ThemedText";
@@ -7,61 +7,85 @@ import PageView from "../../../components/PageView";
 import { Colors } from "@/constants/Colors";
 import BookCard from "../../../components/home/BookCard";
 
-// Sample book data (replace with your actual data source later)
-const bestBooksData = [
-  {
-    id: "1",
-    title: "Harry Potter and the Philosopher's Stone",
-    author: "J.K. Rowling",
-  },
-  {
-    id: "2",
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-  },
-  {
-    id: "3",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-  },
-  {
-    id: "4",
-    title: "Pride and Prejudice",
-    author: "Jane Austen",
-  },
-];
-
-const fictionBooksData = [
-  {
-    id: "5",
-    title: "1984",
-    author: "George Orwell",
-  },
-  {
-    id: "6",
-    title: "The Hobbit",
-    author: "J.R.R. Tolkien",
-  },
-  {
-    id: "7",
-    title: "The Catcher in the Rye",
-    author: "J.D. Salinger",
-  },
-  {
-    id: "8",
-    title: "Brave New World",
-    author: "Aldous Huxley",
-  },
-];
-
 const Home = () => {
   const colors = Colors.light;
+  const [bestBooks, setBestBooks] = useState([]);
+  const [fictionBooks, setFictionBooks] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchBooks = async () => {
+      try {
+        setIsLoading(true);
+        
+        const bestBooksResponse = await fetch('https://gutendex.com/books/?sort=popular');
+        const fictionBooksResponse = await fetch('https://gutendex.com/books/?topic=fiction');
+        
+        const bestBooksData = await bestBooksResponse.json();
+        const fictionBooksData = await fictionBooksResponse.json();
+        
+        // Format the data to match your component's expected structure
+        const formattedBestBooks = bestBooksData.results.map(book => ({
+          id: book.id.toString(),
+          title: book.title,
+          author: book.authors[0]?.name || 'Unknown Author',
+          coverImage: book.formats['image/jpeg'] || null
+        }));
+        
+        const formattedFictionBooks = fictionBooksData.results.map(book => ({
+          id: book.id.toString(),
+          title: book.title,
+          author: book.authors[0]?.name || 'Unknown Author',
+          coverImage: book.formats['image/jpeg'] || null
+        }));
+        
+        setBestBooks(formattedBestBooks);
+        setFictionBooks(formattedFictionBooks);
+      } catch (err) {
+        console.error("Error fetching books:", err);
+        setError("Failed to load books. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchBooks();
+  }, []); // Empty dependency array means this runs once when component mounts
+
+  // Show loading indicator while fetching data
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <PageView header="For You">
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color={Colors.light.buttonPrimary} />
+            <Text style={styles.loadingText}>Loading books...</Text>
+          </View>
+        </PageView>
+      </SafeAreaView>
+    );
+  }
+
+  // Show error message if fetch failed
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <PageView header="For You">
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{error}</Text>
+          </View>
+        </PageView>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
       <PageView header="For You" bodyStyle={{ flex: 1 }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           <View style={styles.contentContainer}>
+            {/* Continue Reading section */}
             <View>
               <ThemedText
                 type="subtitle"
@@ -69,7 +93,6 @@ const Home = () => {
               >
                 Continue Reading
               </ThemedText>
-              {/* TO-DO: Replace with real data */}
               <View style={styles.continueReading}>
                 <ContinueReading
                   title={"The Lord of The Rings"}
@@ -79,6 +102,8 @@ const Home = () => {
                 />
               </View>
             </View>
+            
+            {/* Best Books section */}
             <View style={styles.featuredSection}>
               <ThemedText
                 type="subtitle"
@@ -91,13 +116,19 @@ const Home = () => {
                 style={styles.sectionContainer}
                 showsHorizontalScrollIndicator={false}
               >
-                {bestBooksData.map((book) => (
-                  <View key={book.id}>
-                    <BookCard title={book.title} author={book.author} />
+                {bestBooks.map((book) => (
+                  <View key={book.id} style={styles.bookCardContainer}>
+                    <BookCard 
+                      title={book.title} 
+                      author={book.author}
+                      source={book.coverImage ? { uri: book.coverImage } : null} 
+                    />
                   </View>
                 ))}
               </ScrollView>
             </View>
+            
+            {/* Fiction Books section*/}
             <View style={styles.featuredSection}>
               <ThemedText
                 type="subtitle"
@@ -110,9 +141,13 @@ const Home = () => {
                 style={styles.sectionContainer}
                 showsHorizontalScrollIndicator={false}
               >
-                {fictionBooksData.map((book) => (
-                  <View key={book.id}>
-                    <BookCard title={book.title} author={book.author} />
+                {fictionBooks.map((book) => (
+                  <View key={book.id} style={styles.bookCardContainer}>
+                    <BookCard 
+                      title={book.title} 
+                      author={book.author} 
+                      source={book.coverImage ? { uri: book.coverImage } : null}
+                    />
                   </View>
                 ))}
               </ScrollView>
@@ -147,6 +182,29 @@ const styles = StyleSheet.create({
   },
   continueReading: { 
     paddingHorizontal: 16 
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  bookCardContainer: {
+    marginRight: 10,
   },
 });
 
