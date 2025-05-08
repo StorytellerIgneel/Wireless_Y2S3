@@ -1,11 +1,14 @@
+import { useThemeColor } from '@/hooks/useThemeColor';
 import { useState } from 'react';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import {
-    Text,
     TextInput,
     View,
     StyleSheet
 } from 'react-native';
+import {
+    Text,
+    Icon
+} from '@/components';
 
 const styles = StyleSheet.create({
     container: {
@@ -19,23 +22,15 @@ const styles = StyleSheet.create({
     containerInput: {
         flexDirection: "row",
         alignItems: "center",
-        color: "#07314A",
-        backgroundColor: "#FFFFFF",
-        borderColor: "#07314A",
         borderRadius: 8,
         borderWidth: 1,
         padding: 4
     },
     invalid: {
-        backgroundColor: "rgba(255, 0, 0, 0.05)",
+        backgroundColor: "rgba(255, 0, 0, 0.2)",
         borderColor: "rgba(255, 0, 0, 0.5)",
     },
-    icon: {
-        color: "#07314A",
-        margin: 4
-    },
     label: {
-        color: "#07314A",
         fontSize: 14,
         fontWeight: 500
     },
@@ -47,35 +42,40 @@ const styles = StyleSheet.create({
     }
 });
 
-const FormField = (props) => {
-    const [hide, setHide] = useState(props.hideable);
+const FormField = ({ icon, label, hideable, invalid, onChangeText, ...props }) => {
+    const borderColor = useThemeColor({}, 'border');
+    const backgroundColor = useThemeColor({}, 'primaryBackground');
+    const color = useThemeColor({}, 'text');
+
+    const [hide, setHide] = useState(hideable);
+    const [value, setValue] = useState('');
 
     return (
         <View style={styles.container}>
             <View style={styles.containerLabel}>
-                <Ionicons
-                    name={props.icon}
-                    size={18}
-                    style={styles.icon}/>
+                <Icon name={icon}/>
                 <Text
+                    style={styles.label}
                     {...props}
-                    style={styles.label}>
-                    {props.label}
+                >
+                    {label}
                 </Text>
             </View>
-            <View style={[styles.containerInput, (props.invalid) ? styles.invalid : {}]}>
+            <View style={[(invalid) ? styles.invalid : {backgroundColor, borderColor}, styles.containerInput]}>
                 <TextInput
-                    style={styles.input}
+                    style={[{color, opacity: (value) ? 1 : 0.2}, styles.input]}
                     secureTextEntry={hide}
-                    maxLength={props.maxLength}
-                    value={props.value}
-                    onChangeText={props.onChangeText}/>
+                    placeholderTextColor={color}
+                    onChangeText={(newValue) => {
+                        setValue(newValue);
+                        onChangeText(newValue);
+                    }}
+                    {...props}
+                />
                 {
-                    props.hideable ? (
-                        <Ionicons
+                    hideable ? (
+                        <Icon
                             name={hide ? "eye-off-outline" : "eye-outline"}
-                            size={18}
-                            style={styles.icon}
                             onPress={() => setHide(hide => !hide)}
                         />
                     ) : (

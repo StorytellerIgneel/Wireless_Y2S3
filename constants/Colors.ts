@@ -3,30 +3,35 @@
  * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
  */
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const textColorLight = 'rgba(7, 49, 74, 1)';
+const bgPrimaryColorLight = 'rgba(255, 255, 255, 1)';
+const bgSecondaryColorLight = 'rgba(0, 0, 0, 0.05)';
+
+const textColorDark = 'rgba(255, 255, 255, 1)';
+const bgPrimaryColorDark = 'rgba(3, 35, 48, 1)';
+const bgSecondaryColorDark = textColorLight;
+// const tintColorLight = '#0a7ea4';
+// const tintColorDark = '#fff';
 
 export const Colors = {
   light: {
-    text: '#07314A',
-    background: '#FFFFFF',
-    tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
-    tabIconSelected: tintColorLight,
-    accent: '#FEB802',
-    darkText: '#FFFFFF',
-    darkBackground: '#032330',
-    darkPrimary: '#03314B',
-    buttonPrimary: '#FFB700',
-    buttonSecondary: '#FFD360',
+    text: textColorLight,
+    link: 'rgba(66, 134, 245, 1)',
+    primaryBackground: bgPrimaryColorLight,
+    secondaryBackground: bgSecondaryColorLight,
+    icon: textColorLight,
+    border: textColorLight
+    // tabIconDefault: '#687076',
+    // tabIconSelected: tintColorLight,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
-    tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
-    tabIconSelected: tintColorDark,
+    text: textColorDark,
+    link: 'rgba(66, 134, 245, 1)',
+    primaryBackground: bgPrimaryColorDark,
+    secondaryBackground: bgSecondaryColorDark,
+    icon: textColorDark,
+    border: textColorDark
+    // tabIconDefault: '#9BA1A6',
+    // tabIconSelected: tintColorDark,
   },
 };
