@@ -1,14 +1,13 @@
 import React from "react";
-import { StyleSheet, View, Text, Pressable, Image } from "react-native";
-import { ThemedView } from "@/components/ThemedView"; // Use ThemedView
-import { ThemedText } from "@/components/ThemedText"; // Use ThemedText
-import { Colors } from "@/constants/Colors"; // Import Colors for theme
+import { StyleSheet, View, Image } from "react-native";
+import { ThemedView } from "@/components/ThemedView";
+import { ThemedText } from "@/components/ThemedText";
+import { Colors } from "@/constants/Colors";
+import { PrimaryButton } from "@/components/Button"; 
 
-// Assuming you have the image locally or a URI
-const bookCoverImage = require("@/assets/images/bookImage.png"); // Adjust path as needed
+const bookCoverImage = require("@/assets/images/bookImage.png");
 
 const ContinueReading = (props) => {
-  // Use light theme colors directly for this example, or use a theme hook if available
   const colors = Colors.light;
 
   return (
@@ -19,14 +18,13 @@ const ContinueReading = (props) => {
           type="defaultSemiBold"
           style={[styles.title, { color: colors.text }]}
           numberOfLines={1}
-          ellipsizeMode="tail"
         >
           {props.title}
         </ThemedText>
         <ThemedText
-          style={styles.author}
+          type="subtitleGrey"
           numberOfLines={1}
-          ellipsizeMode="tail"
+          style= {styles.author}
         >
           {props.author}
         </ThemedText>
@@ -45,11 +43,10 @@ const ContinueReading = (props) => {
           </ThemedText>
         </View>
 
-        <Pressable
-          style={[styles.button, { backgroundColor: colors.buttonPrimary }]}
-        >
-          <ThemedText type="defaultSemiBold" style={[styles.buttonText, {color: colors.text}]} >Continue</ThemedText>
-        </Pressable>
+        <PrimaryButton
+          title="Continue"
+          onPress={() => {/* TO-DO: Handle continue reading */}}
+        />
       </View>
     </ThemedView>
   );
@@ -57,9 +54,9 @@ const ContinueReading = (props) => {
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: "row", // Arrange image and content side-by-side
+    flexDirection: "row",
     borderRadius: 10,
-    backgroundColor: "#F0F0F0", // White card background
+    backgroundColor: "#F0F0F0",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
@@ -74,7 +71,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   contentContainer: {
-    flex: 1, // Take remaining space
+    flex: 1, 
     paddingHorizontal: 20,
     paddingVertical: 25,
   },
@@ -83,16 +80,14 @@ const styles = StyleSheet.create({
     marginBottom: 2,
   },
   author: {
-    fontSize: 14,
-    color: "#687076", // Grey color for author
-    marginBottom: 8,
+    marginBottom: 10,
   },
   progressRow: {
     flexDirection: "column",
     flex: 1,
   },
   progressBarContainer: {
-    backgroundColor: "#E0E0E0", // Light grey background for progress bar
+    backgroundColor: "#E0E0E0", 
     borderRadius: 4,
     height: 8,
   },
@@ -103,24 +98,9 @@ const styles = StyleSheet.create({
   },
   percentageText: {
     fontSize: 12,
-    color: "#687076", // Grey color for percentage
-    minWidth: 35, // Ensure space for "100%"
+    color: "#687076",
+    minWidth: 35, 
     textAlign: "right",
-  },
-  button: {
-    paddingVertical: 8,
-    paddingHorizontal: 30,
-    borderRadius: 20, // Rounded button
-    alignItems: "center",
-    alignSelf: "flex-end", // Align button to the start
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 4,
-  },
-  buttonText: {
-    fontSize: 17,
   },
 });
 

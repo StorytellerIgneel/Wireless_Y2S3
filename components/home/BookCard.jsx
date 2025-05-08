@@ -19,7 +19,7 @@ const BookCard = (props) => {
             style={styles.coverImage} 
           />
           <ThemedText type="default" style={[styles.title, { color: colors.text }]} numberOfLines={2}>{props.title}</ThemedText>
-          <Text style={styles.author} numberOfLines={1}>{props.author}</Text>
+          <ThemedText type='subtitleGrey' numberOfLines={1}>{props.author}</ThemedText>
         </View>
       </Pressable>
     </View>
