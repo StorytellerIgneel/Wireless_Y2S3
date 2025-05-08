@@ -1,10 +1,7 @@
 import sqlite3
 import os
-<<<<<<< Updated upstream
-=======
 import db;
 import requests
->>>>>>> Stashed changes
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash  # Secure passwords
