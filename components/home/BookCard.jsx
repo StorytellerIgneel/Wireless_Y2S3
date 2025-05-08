@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   cardWrapper: {
     width: 167,
     borderRadius: 6,
-    overflow: 'hidden', // This is crucial for clipping the ripple
+    overflow: 'hidden',
   },
   card: {
     width: '100%',

@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Icon, Text } from "@/components";
 import { Colors } from "@/constants/Colors";
 import { ThemedText } from "@/components/ThemedText";
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
   buttonPrimary: {
     paddingVertical: 8,
     paddingHorizontal: 30,
-    borderRadius: 20, 
+    borderRadius: 20,
     alignItems: "center",
     alignSelf: "flex-end",
     shadowColor: "#000",
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 3,
     elevation: 4,
-  }
+  },
 });
 
 const Button = ({
@@ -74,25 +74,28 @@ const Button = ({
 
 const PrimaryButton = ({ title, icon, style, ...props }) => {
   return (
-    <Pressable
-      android_ripple={{
-        color: Colors.light.buttonPrimaryRipple,
-        borderless: false,
-      }}
-      style={[
-        styles.buttonPrimary,
-        { backgroundColor: Colors.light.buttonPrimary },
-        style,
-      ]}
-      {...props}
-    >
-      {icon && <Icon name={icon} style={styles.icon} />}
-      <ThemedText 
-        type="defaultSemiBold" style={[styles.buttonText, {color: Colors.light.text}]}
+    <View style={{ borderRadius: 20, overflow: "hidden" }}>
+      <Pressable
+        android_ripple={{
+          color: Colors.light.buttonPrimaryRipple,
+          borderless: false,
+        }}
+        style={[
+          styles.buttonPrimary,
+          { backgroundColor: Colors.light.buttonPrimary },
+          style,
+        ]}
+        {...props}
       >
-        {title}
-      </ThemedText>
-    </Pressable>
+        {icon && <Icon name={icon} style={styles.icon} />}
+        <ThemedText
+          type="defaultSemiBold"
+          style={[styles.buttonText, { color: Colors.light.text }]}
+        >
+          {title}
+        </ThemedText>
+      </Pressable>
+    </View>
   );
 };
 
