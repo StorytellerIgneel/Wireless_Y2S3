@@ -45,6 +45,6 @@ __pycache__/
 *$py.class
 
 #db files
-backend/db.sqlite3
+backend/database.sqlite3
 
 app-example

@@ -37,6 +37,16 @@
             "resizeMode": "contain",
             "backgroundColor": "#ffffff"
           }
+        ],
+        "expo-router",
+        [
+          "expo-splash-screen",
+          {
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 200,
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+          }
         ]
       ],
       "experiments": {
@@ -49,10 +59,24 @@
         "eas": {
           "projectId": "c32e3745-fcef-4061-8d68-1bf18f88e0c4"
         }
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "09ca4b0a-55f1-4aef-a505-9f24e99db3d5"
+      }
+    },
+    "android": {
+      "package": "com.teohweihong.chatfeat"
+    }
   }
 }
