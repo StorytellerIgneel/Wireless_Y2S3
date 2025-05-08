@@ -1,20 +1,32 @@
-import React from "react";
-import { View, StyleSheet, Pressable, Text } from "react-native";
-import ChatScreen from "../chat";
-import FeedbackScreen from "../feedback";
-import { Link } from "expo-router";
-import Login from "../login";
-import SocketTest from "../SocketTest";
-import Rooms from "../testgrounds/Rooms"
+import React from 'react';
+import { TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
 
-const App = () => {
+const GoToTestPageButton = () => {
+  const router = useRouter();
+
   return (
-    <Login />
-  )
+    <TouchableOpacity
+      style={styles.button}
+      onPress={() => router.push('/profile')}
+    >
+      <Text style={styles.buttonText}>Go to Profile Page</Text>
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  button: {
+    marginTop: 20,
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+  },
 });
 
-export default App;
+export default GoToTestPageButton;

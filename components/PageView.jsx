@@ -4,13 +4,13 @@ import {
     View,
     StyleSheet
 } from 'react-native';
-import {
-    Text
-} from '@/components';
+import Text from '@/components/Text.jsx';
 
 const styles = StyleSheet.create({
     viewHeader: {
-        padding: 12,
+        padding: 10,
+        paddingLeft: 20,
+        marginTop: 10
     },
     viewBody: {
         flex: 1,
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 });
 
 const PageView = ({ style, ...props}) => {
-    const backgroundColor = useThemeColor({}, 'primaryBackground');
+    const backgroundColor = useThemeColor({}, 'bg_primary');
 
     return (
         <SafeAreaProvider>
