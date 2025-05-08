@@ -1,39 +1,44 @@
 import React from "react";
 import { StyleSheet, View, Text, Pressable, Image } from "react-native";
-import { ThemedText } from "@/components/ThemedText"; // Use ThemedText
-import { ThemedView } from "@/components/ThemedView"; // Use ThemedView
-import { Colors } from "@/constants/Colors"; // Import Colors for theme
+import { ThemedText } from "@/components/ThemedText"; 
+import { Colors } from "@/constants/Colors"; 
 
-const bookCoverImage = require("@/assets/images/bookImage.png"); // Adjust path as needed
+const bookCoverImage = require("@/assets/images/bookImage.jpg");
 
 const BookCard = (props) => {
   const colors = Colors.light;
 
   return (
-    <Pressable
-      style={styles.card}
-      android_ripple={{ color: "#e0e0e0", borderless: false }}
-    >
-      <View 
-      style={styles.contentContainer}
+    <View style={styles.cardWrapper}>
+      <Pressable
+        android_ripple={{ color: "#e0e0e0", borderless: false }}
       >
-        <Image source={bookCoverImage} style={styles.coverImage} />
-        <ThemedText type="default" style={[styles.title, { color: colors.text }]} numberOfLines={2}>{props.title}</ThemedText>
-        <Text style={styles.author} numberOfLines={1}>{props.author}</Text>
-      </View>
-    </Pressable>
+        <View style={styles.contentContainer}>
+          <Image 
+            source={props.source || bookCoverImage} 
+            style={styles.coverImage} 
+          />
+          <ThemedText type="default" style={[styles.title, { color: colors.text }]} numberOfLines={2}>{props.title}</ThemedText>
+          <Text style={styles.author} numberOfLines={1}>{props.author}</Text>
+        </View>
+      </Pressable>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  cardWrapper: {
+    width: 167,
+    borderRadius: 6,
+    overflow: 'hidden', // This is crucial for clipping the ripple
+  },
   card: {
-    width: 155,
+    width: '100%',
   },
   contentContainer: {
     flex: 1,
     flexDirection: 'column',
-    padding: 10,
-    borderRadius: 6,
+    padding: 16,
     gap: 3,
   },
   coverImage: {

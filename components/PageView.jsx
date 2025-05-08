@@ -41,7 +41,7 @@ const PageView = (props) => {
             </SafeAreaView>
             <SafeAreaView
                 {...props}
-                style={[styles.viewBg, styles.viewBody]}
+                style={[styles.viewBg, props.bodyStyle || styles.viewBody]}
             />
         </SafeAreaProvider>
     );
