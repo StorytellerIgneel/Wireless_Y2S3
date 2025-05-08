@@ -18,7 +18,8 @@ const styles = StyleSheet.create({
         paddingRight: 18
     },
     header: {
-        fontSize: 24,
+        color: "#07314A",
+        fontSize: 32,
         fontWeight: "bold"
     },
     separatorHeader: {
@@ -42,7 +43,7 @@ const PageView = ({ style, ...props}) => {
             </SafeAreaView>
             <SafeAreaView
                 {...props}
-                style={[{ backgroundColor }, styles.viewBody]}
+                style={[{ backgroundColor }, props.bodyStyle || styles.viewBody]}
             />
         </SafeAreaProvider>
     );
