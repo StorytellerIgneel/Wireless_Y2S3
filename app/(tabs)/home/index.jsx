@@ -25,7 +25,6 @@ const Home = () => {
         const bestBooksData = await bestBooksResponse.json();
         const fictionBooksData = await fictionBooksResponse.json();
         
-        // Format the data to match your component's expected structure
         const formattedBestBooks = bestBooksData.results.map(book => ({
           id: book.id.toString(),
           title: book.title,
@@ -51,9 +50,9 @@ const Home = () => {
     };
 
     fetchBooks();
-  }, []); // Empty dependency array means this runs once when component mounts
+  }, []); 
 
-  // Show loading indicator while fetching data
+  // show loading indicator while fetching data
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -117,7 +116,7 @@ const Home = () => {
                 showsHorizontalScrollIndicator={false}
               >
                 {bestBooks.map((book) => (
-                  <View key={book.id} style={styles.bookCardContainer}>
+                  <View key={book.id}>
                     <BookCard 
                       title={book.title} 
                       author={book.author}
@@ -142,7 +141,7 @@ const Home = () => {
                 showsHorizontalScrollIndicator={false}
               >
                 {fictionBooks.map((book) => (
-                  <View key={book.id} style={styles.bookCardContainer}>
+                  <View key={book.id}>
                     <BookCard 
                       title={book.title} 
                       author={book.author} 
@@ -202,9 +201,6 @@ const styles = StyleSheet.create({
     color: 'red',
     fontSize: 16,
     textAlign: 'center',
-  },
-  bookCardContainer: {
-    marginRight: 10,
   },
 });
 
