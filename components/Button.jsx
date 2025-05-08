@@ -26,12 +26,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     borderRadius: 20,
     alignItems: "center",
-    alignSelf: "flex-end",
+},
+primaryButtonWrapper: {
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
     shadowRadius: 3,
     elevation: 4,
+    borderRadius: 20,
+    overflow: "hidden",
+    alignSelf: "flex-end",
   },
 });
 
@@ -74,7 +78,7 @@ const Button = ({
 
 const PrimaryButton = ({ title, icon, style, ...props }) => {
   return (
-    <View style={{ borderRadius: 20, overflow: "hidden" }}>
+    <View style={styles.primaryButtonWrapper}>
       <Pressable
         android_ripple={{
           color: Colors.light.buttonPrimaryRipple,
@@ -90,7 +94,7 @@ const PrimaryButton = ({ title, icon, style, ...props }) => {
         {icon && <Icon name={icon} style={styles.icon} />}
         <ThemedText
           type="defaultSemiBold"
-          style={[styles.buttonText, { color: Colors.light.text }]}
+          style={{ color: Colors.light.text }}
         >
           {title}
         </ThemedText>

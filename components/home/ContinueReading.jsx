@@ -3,16 +3,19 @@ import { StyleSheet, View, Image } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
-import { PrimaryButton } from "@/components/Button"; 
+import { PrimaryButton } from "@/components/Button";
 
-const bookCoverImage = require("@/assets/images/bookImage.png");
+const bookCoverImage = require("@/assets/images/bookImage.jpg");
 
 const ContinueReading = (props) => {
   const colors = Colors.light;
 
   return (
     <ThemedView style={styles.card}>
-      <Image source={bookCoverImage} style={styles.coverImage} />
+      <Image
+        source={props.source || bookCoverImage}
+        style={styles.coverImage}
+      />
       <View style={styles.contentContainer}>
         <ThemedText
           type="defaultSemiBold"
@@ -21,11 +24,7 @@ const ContinueReading = (props) => {
         >
           {props.title}
         </ThemedText>
-        <ThemedText
-          type="subtitleGrey"
-          numberOfLines={1}
-          style= {styles.author}
-        >
+        <ThemedText type="subtitleGrey" numberOfLines={1} style={styles.author}>
           {props.author}
         </ThemedText>
 
@@ -45,7 +44,9 @@ const ContinueReading = (props) => {
 
         <PrimaryButton
           title="Continue"
-          onPress={() => {/* TO-DO: Handle continue reading */}}
+          onPress={() => {
+            /* TO-DO: Handle continue reading */
+          }}
         />
       </View>
     </ThemedView>
@@ -71,7 +72,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   contentContainer: {
-    flex: 1, 
+    flex: 1,
     paddingHorizontal: 20,
     paddingVertical: 25,
   },
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   progressBarContainer: {
-    backgroundColor: "#E0E0E0", 
+    backgroundColor: "#E0E0E0",
     borderRadius: 4,
     height: 8,
   },
@@ -99,7 +100,7 @@ const styles = StyleSheet.create({
   percentageText: {
     fontSize: 12,
     color: "#687076",
-    minWidth: 35, 
+    minWidth: 35,
     textAlign: "right",
   },
 });

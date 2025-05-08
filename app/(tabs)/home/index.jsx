@@ -75,6 +75,7 @@ const Home = () => {
                   title={"The Lord of The Rings"}
                   author={"J.R.R Tolkien"}
                   percentage={30}
+                  source={''}
                 />
               </View>
             </View>
