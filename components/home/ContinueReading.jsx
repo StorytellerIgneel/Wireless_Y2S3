@@ -33,7 +33,10 @@ const ContinueReading = (props) => {
             <View
               style={[
                 styles.progressBarFill,
-                { width: `${props.percentage}%`, backgroundColor: colors.btn_bg_primary},
+                {
+                  width: `${props.percentage}%`,
+                  backgroundColor: colors.btn_bg_primary,
+                },
               ]}
             />
           </View>
@@ -43,9 +46,14 @@ const ContinueReading = (props) => {
         </View>
 
         <Button
-          type='primary'
+          type="primary"
           active={true}
+          rounded={true}
           title="Continue"
+          style={{
+            width: 130,
+            alignSelf: 'flex-end'
+          }}
           onPress={() => {
             /* TO-DO: Handle continue reading */
           }}
@@ -65,10 +73,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
-    marginBottom: 16,
   },
   coverImage: {
-    width: 135,
+    width: 130,
     aspectRatio: 2 / 3,
     borderTopLeftRadius: 4,
     borderBottomLeftRadius: 4,
@@ -76,7 +83,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
     paddingHorizontal: 20,
-    paddingVertical: 25,
+    paddingVertical: 18,
   },
   title: {
     fontSize: 17,
@@ -88,6 +95,7 @@ const styles = StyleSheet.create({
   progressRow: {
     flexDirection: "column",
     flex: 1,
+    marginBottom: 5,
   },
   progressBarContainer: {
     backgroundColor: "#E0E0E0",

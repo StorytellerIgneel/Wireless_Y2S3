@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { StyleSheet, Text, View, ScrollView, ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ContinueReading from "../../../components/home/ContinueReading";
@@ -9,6 +10,7 @@ import BookCard from "../../../components/home/BookCard";
 
 const Home = () => {
   const colors = Colors.light;
+  const errorColor = useThemeColor({}, "error");
   const [bestBooks, setBestBooks] = useState([]);
   const [fictionBooks, setFictionBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -58,8 +60,8 @@ const Home = () => {
       <SafeAreaView style={styles.container}>
         <PageView header="For You">
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color={Colors.light.buttonPrimary} />
-            <Text style={styles.loadingText}>Loading books...</Text>
+            <ActivityIndicator size="large" color={Colors.light.btn_bg_primary} />
+            <Text style={[styles.loadingText]}>Loading books...</Text>
           </View>
         </PageView>
       </SafeAreaView>
@@ -72,7 +74,7 @@ const Home = () => {
       <SafeAreaView style={styles.container}>
         <PageView header="For You">
           <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
+            <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
           </View>
         </PageView>
       </SafeAreaView>
@@ -198,7 +200,6 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   errorText: {
-    color: 'red',
     fontSize: 16,
     textAlign: 'center',
   },
