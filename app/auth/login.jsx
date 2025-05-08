@@ -5,7 +5,6 @@ import { useRouter } from 'expo-router';
 import axios from 'axios';
 
 import UserContext from '@/context/UserContext';
-import NotifContext from '@/context/NotifContext';
 import {
   Text,
   Link,
@@ -51,7 +50,6 @@ const homePath = '(tabs)/index';
 export default function Login() {
   const router = useRouter();
   const { user, loginUser } = useContext(UserContext);
-  const { sendNotif } = useContext(NotifContext); // Get the Notif Context
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -59,8 +57,6 @@ export default function Login() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    sendNotif("My Title", "Notification content"); // Send notification
-
     setUsername('');
     setPassword('');
     setStatus('');
