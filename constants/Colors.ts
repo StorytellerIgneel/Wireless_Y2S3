@@ -10,6 +10,8 @@ const bgSecondaryColorLight = 'rgba(0, 0, 0, 0.05)';
 const textColorDark = 'rgba(255, 255, 255, 1)';
 const bgPrimaryColorDark = 'rgba(3, 35, 48, 1)';
 const bgSecondaryColorDark = textColorLight;
+const buttonPrimary = 'rgba(255, 182, 0, 1)';
+const buttonPrimaryRipple = 'rgba(230, 160, 0, 0.7)';
 // const tintColorLight = '#0a7ea4';
 // const tintColorDark = '#fff';
 
@@ -20,9 +22,11 @@ export const Colors = {
     primaryBackground: bgPrimaryColorLight,
     secondaryBackground: bgSecondaryColorLight,
     icon: textColorLight,
-    border: textColorLight
+    border: textColorLight,
     // tabIconDefault: '#687076',
     // tabIconSelected: tintColorLight,
+    buttonPrimary: buttonPrimary,
+    buttonPrimaryRipple: buttonPrimaryRipple,
   },
   dark: {
     text: textColorDark,
