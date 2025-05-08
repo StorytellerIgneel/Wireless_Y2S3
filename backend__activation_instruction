@@ -35,7 +35,7 @@ If u wish to activate gutendex in backend
 1. launch your psql
 - if u dk how, search ur pc for services in system, find postgresql-x64-17 in the list of services and launch
 
-2. cd into the backend (not backend/gutendex)
+2. cd into the backend/gutendex
 
 3. run venv\Scripts\activate in ur cmd on windows
 - this activate the virtual environment for django to run
@@ -49,3 +49,69 @@ March 19, 2025 - 16:00:25
 Django version 5.1.7, using settings 'gutendex.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CTRL-BREAK.
+
+if u see error message
+django.db.utils.OperationalError: connection to server at "127.0.0.1", port 5432 failed: Connection refused (0x0000274D/10061)
+        Is the server running on that host and accepting TCP/IP connections?
+
+it means ur postgres is not running, find services in windows and find postgres then activate it
+
+Gutendex API access
+to get all books
+url/books
+
+to search for a certain property (e.g. author)
+url/books/?author=xxx
+(no "" is required to enclose the search string)
+
+return guide
+one book is returned in a json form like this
+{
+"id": 1342,
+"title": "Pride and Prejudice",
+"authors": [
+    {
+        "name": "Austen, Jane",
+        "birth_year": 1775,
+        "death_year": 1817
+    }
+],
+"summaries": [
+    "\"Pride and Prejudice\" by Jane Austen is a classic novel written in the early 19th century. The story delves into themes of love, social class, and individual agency, largely revolving around the life of Elizabeth Bennet, one of five sisters from a modest but genteel family navigating the complex social landscape of Regency England.  The opening of the novel introduces the seemingly universal truth that a single man of wealth is a target for matchmaking mothers in the neighborhood. Mrs. Bennet is eager to marry off her daughters and is excited to hear about the arrival of Mr. Bingley, a wealthy young man who has taken up residence at Netherfield Park. Mr. Bennet's teasing yet indifferent nature contrasts sharply with Mrs. Bennet's anxious and businesslike demeanor as she plans to visit Mr. Bingley to create an opportunity for her daughters. Their witty exchanges set the tone for the story's exploration of family dynamics and social expectations, while also hinting at deeper character developments and the challenges Elizabeth will face regarding love and prejudice in her interactions with Mr. Darcy and the Bingley family. (This is an automatically generated summary.)"
+],
+"translators": [],
+"subjects": [
+    "Courtship -- Fiction",
+    "Domestic fiction",
+    "England -- Fiction",
+    "Love stories",
+    "Sisters -- Fiction",
+    "Social classes -- Fiction",
+    "Young women -- Fiction"
+],
+"bookshelves": [
+    "Best Books Ever Listings",
+    "Browsing: Culture/Civilization/Society",
+    "Browsing: Fiction",
+    "Browsing: Literature",
+    "Harvard Classics"
+],
+"languages": [
+    "en"
+],
+"copyright": false,
+"media_type": "Text",
+"formats": {
+    "text/html": "https://www.gutenberg.org/ebooks/1342.html.images",
+    "application/epub+zip": "https://www.gutenberg.org/ebooks/1342.epub3.images",
+    "application/x-mobipocket-ebook": "https://www.gutenberg.org/ebooks/1342.kf8.images",
+    "text/plain; charset=us-ascii": "https://www.gutenberg.org/ebooks/1342.txt.utf-8",
+    "application/rdf+xml": "https://www.gutenberg.org/ebooks/1342.rdf",
+    "image/jpeg": "https://www.gutenberg.org/cache/epub/1342/pg1342.cover.medium.jpg",
+    "application/octet-stream": "https://www.gutenberg.org/cache/epub/1342/pg1342-h.zip"
+},
+"download_count": 59020
+}
+
+as such, attributes that can be extracted are:
+id, title, authors, summaries, translators, subjects, bookshelves, languages, copyright, media_type, formats, download_count

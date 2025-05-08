@@ -5,10 +5,11 @@ import FeedbackScreen from "../feedback";
 import { Link } from "expo-router";
 import Login from "../login";
 import SocketTest from "../SocketTest";
+import Rooms from "../testgrounds/Rooms"
 
 const App = () => {
   return (
-    <SocketTest />
+    <Rooms />
   )
 };
 
