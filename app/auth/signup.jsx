@@ -78,12 +78,7 @@ export default function Signup() {
   const validEmail = (value) => {
     value = value.trim();
 
-<<<<<<< Updated upstream
-    if (value.match(/^[a-zA-Z0-9]{3,}@[a-zA-Z]+\.[a-zA-Z]+$/))
-      return true;
-=======
     if (value.match(/^[a-zA-Z0-9\.]{3,}@[a-zA-Z0-9]+\.[a-zA-Z]+$/)) return true;
->>>>>>> Stashed changes
 
     if (value == "") {
       setMessages(msgs => ["Please enter e-mail", ...msgs]);

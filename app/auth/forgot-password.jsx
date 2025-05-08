@@ -35,16 +35,10 @@ const API_URL = "http://192.168.1.115:5000"; //using expogo
 // const API_URL = process.env.EXPO_PUBLIC_API_URL; // using expo go env
 
 export default function ForgotPassword() {
-<<<<<<< Updated upstream
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState("");
-  const [message, setMessage] = useState("");
-=======
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
   const [timer, setTimer] = useState(0);
->>>>>>> Stashed changes
 
   useEffect(() => {
     setEmail("");
@@ -52,11 +46,6 @@ export default function ForgotPassword() {
     setMessage("");
   }, []);
 
-<<<<<<< Updated upstream
-  //
-  const handleEmail = () => {
-
-=======
   useEffect(() => {
     if (timer > 0)
       setTimeout(() => setTimer(n => n - 1), 1000);
@@ -118,7 +107,6 @@ export default function ForgotPassword() {
     }
 
     handleSend();
->>>>>>> Stashed changes
   }
 
   return (
@@ -135,22 +123,6 @@ export default function ForgotPassword() {
           icon="mail-outline"
           maxLength={30}
           value={email}
-<<<<<<< Updated upstream
-          invalid={status || (message && !email)}
-          onChangeText={setEmail}
-        />
-
-        <Text
-          style={styles.error}>
-          {message}
-        </Text>
-        <Button
-          title="Send code"
-          type="primary"
-          active={![email].includes("")}
-          onPress={handleEmail}
-        />
-=======
           editable={status != 200 || timer == 0}
           invalid={(!!status && status != 200) || message.toLowerCase().includes("mail")}
           onChangeText={setEmail}
@@ -177,7 +149,6 @@ export default function ForgotPassword() {
             onPress={handleSend}
           />
         )}
->>>>>>> Stashed changes
       </FormView>
     </PageView>
   );
