@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     },
     header: {
         color: "#07314A",
-        fontSize: 24,
+        fontSize: 32,
         fontWeight: "bold"
     },
     separatorHeader: {
