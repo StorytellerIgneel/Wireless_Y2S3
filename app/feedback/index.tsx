@@ -4,7 +4,7 @@ import { send, EmailJSResponseStatus } from '@emailjs/react-native';
 import axios from 'axios';
 
 //const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
-const API_URL = "http://192.168.43.114:5000"; //using expogo
+const API_URL = "http://192.168.43.114:8081"; //using expogo
 
 const FeedbackScreen = () => {
   const [ID, setID] = useState<string>();
