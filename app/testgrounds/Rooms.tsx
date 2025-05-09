@@ -3,9 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { io } from 'socket.io-client';
 
-const socket = io('http://192.168.43.114:5001'); // ⚠️ Replace with your backend IP
+const EMULATOR_API = "http://10.0.2.2:5000"
+const PHONE_API = "http://192.168.43.114:5000"
+const socket = io(EMULATOR_API); // ⚠️ Replace with your backend IP
 
-export default function Rooms() {
+export default function Rooms(data) {
+
   const [room, setRoom] = useState(null);
   const [username, setUsername] = useState('');
   const [joined, setJoined] = useState(false);
@@ -13,7 +16,6 @@ export default function Rooms() {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    
     socket.on('chat_history', (data) => {
         setMessages(data.history); // Directly set history
     });
@@ -22,8 +24,6 @@ export default function Rooms() {
         setMessages(prev => [...prev, data]); // For live messages
     });
     
-      
-
     return () => {
       socket.off('message');
     };

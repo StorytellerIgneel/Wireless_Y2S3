@@ -14,7 +14,8 @@ import { useLocalSearchParams, useNavigation } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import DownloadButton from "../../../testgrounds"
+import DownloadButton from "./DownloadButton"
+import { Button } from 'react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -175,6 +176,7 @@ export default function BookDetailsScreen() {
         </Pressable>
 
         <DownloadButton id={id}/>
+        <Button title="gay"/>
       </Animated.View>
     </View>
   );
