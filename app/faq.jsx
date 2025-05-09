@@ -50,12 +50,6 @@ export default function FAQ() {
           )}
         </View>
       ))}
-
-      {!user && (
-        <View style={styles.messageContainer}>
-          <Text style={styles.message}>Please log in to access the FAQ section.</Text>
-        </View>
-      )}
     </View>
   );
 }

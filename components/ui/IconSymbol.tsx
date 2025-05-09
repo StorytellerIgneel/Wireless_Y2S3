@@ -25,6 +25,7 @@ const MAPPING = {
   'chevron.right': { name: 'chevron-right', library: 'MaterialIcons' },
   'search.fill': { name: 'search', library: 'MaterialIcons' },
   'shelf.fill': { name: 'bookshelf', library: 'MaterialCommunityIcons' },
+  'chat.fill' : { name: 'chat', library: 'MaterialCommunityIcons'},
 } as Partial<
   Record<
     import('expo-symbols').SymbolViewProps['name'],

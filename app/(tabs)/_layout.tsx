@@ -22,7 +22,10 @@ const TabLayout = () => {
             return <IconSymbol size={size} name="search.fill" color={color} />;
           } else if (route.name === 'bookshelf') {
             return <IconSymbol size={size} name="shelf.fill" color={color} />;
-          } else {
+          } else if (route.name === 'rooms'){
+            return <IconSymbol size={size} name="chat.fill" color={color} />;
+          }
+          else {
             return null; 
           }
         },
@@ -41,7 +44,7 @@ const TabLayout = () => {
       })}
     >
       <Tabs.Screen
-        name="home/index"
+        name="index"
         options={{
           title: 'Home',
           // Already handled by tabBarIcon above

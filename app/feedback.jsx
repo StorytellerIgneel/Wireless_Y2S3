@@ -67,97 +67,97 @@
 
 // // export default FeedbackScreen;
 
-// import React, { useContext, useState } from 'react';
-// import { ScrollView, Alert } from 'react-native';
-// import { PageView, FormView, FormField, Button, Text, Icon } from '@/components';
-// import { send } from '@emailjs/react-native';
-// import UserContext from '@/context/UserContext';
+import React, { useContext, useState } from 'react';
+import { ScrollView, Alert } from 'react-native';
+import { PageView, FormView, FormField, Button, Text, Icon } from '@/components';
+import { send } from '@emailjs/react-native';
+import UserContext from '@/context/UserContext';
 
-// export default function FeedbackScreen({ navigation }) {
-//   const { user } = useContext(UserContext);
-//   const [feedbackType, setFeedbackType] = useState('Problems');
-//   const [message, setMessage] = useState('');
+export default function FeedbackScreen({ navigation }) {
+  const { user } = useContext(UserContext);
+  const [feedbackType, setFeedbackType] = useState('Problems');
+  const [message, setMessage] = useState('');
 
-//   const onSubmit = async () => {
-//     if (!user?.email || !user?.name || !message) {
-//       Alert.alert('Validation Error', 'All fields are required!');
-//       return;
-//     }
+  const onSubmit = async () => {
+    if (!user?.email || !user?.name || !message) {
+      Alert.alert('Validation Error', 'All fields are required!');
+      return;
+    }
 
-//     try {
-//       await send(
-//         'service_v442tdd',
-//         'template_yqxtmac',
-//         {
-//           name: user.name,
-//           email: user.email,
-//           message: `${feedbackType}: ${message}`,
-//         },
-//         { publicKey: '3n8xXSvm4KPDChxv-' }
-//       );
+    try {
+      await send(
+        'service_v442tdd',
+        'template_yqxtmac',
+        {
+          name: user.name,
+          email: user.email,
+          message: `${feedbackType}: ${message}`,
+        },
+        { publicKey: '3n8xXSvm4KPDChxv-' }
+      );
 
-//       Alert.alert('Success', 'Feedback sent successfully!');
-//       setMessage('');
-//     } catch (err) {
-//       console.log('EmailJS error:', err);
-//       Alert.alert('Error', 'Failed to send feedback.');
-//     }
-//   };
+      Alert.alert('Success', 'Feedback sent successfully!');
+      setMessage('');
+    } catch (err) {
+      console.log('EmailJS error:', err);
+      Alert.alert('Error', 'Failed to send feedback.');
+    }
+  };
 
-//   return (
-//     <PageView header="Feedback">
-//       <FormView>
-//         <FormField
-//           label="Username"
-//           value={user?.name || ''}
-//           editable={false}
-//           icon="person-outline"
-//         />
-//         <FormField
-//           label="E-mail address"
-//           value={user?.email || ''}
-//           editable={false}
-//           icon="mail-outline"
-//         />
-//         <Text style = {{fontSize: 14, fontWeight: 500}}>
-//           Feedback Type
-//         </Text>
-//         {['Problems', 'Comments', 'Suggestions'].map(type => (
-//           <Button
-//             key={type}
-//             title={type}
-//             // type={feedbackType === type ? 'primary' : 'outline'}
-//             onPress={() => setFeedbackType(type)}
-//             style={{ flex: 1 }}
-//             backgroundColor="rgba(109, 120, 126, 1)"
-//             activeBackgroundColor="rgba(66, 134, 245, 1)"
-//           />
-//         ))}
-//         <FormField
-//           label="Description"
-//           value={message}
-//           onChangeText={setMessage}
-//           placeholder="Describe your issue or feedback..."
-//           multiline
-//           numberOfLines={5}
-//           icon="pencil-outline"
-//         />
-//       </FormView>
-//     </PageView>
-//   );
-// }
+  return (
+    <PageView header="Feedback">
+      <FormView>
+        <FormField
+          label="Username"
+          value={user?.name || ''}
+          editable={false}
+          icon="person-outline"
+        />
+        <FormField
+          label="E-mail address"
+          value={user?.email || ''}
+          editable={false}
+          icon="mail-outline"
+        />
+        <Text style = {{fontSize: 14, fontWeight: 500}}>
+          Feedback Type
+        </Text>
+        {['Problems', 'Comments', 'Suggestions'].map(type => (
+          <Button
+            key={type}
+            title={type}
+            // type={feedbackType === type ? 'primary' : 'outline'}
+            onPress={() => setFeedbackType(type)}
+            style={{ flex: 1 }}
+            backgroundColor="rgba(109, 120, 126, 1)"
+            activeBackgroundColor="rgba(66, 134, 245, 1)"
+          />
+        ))}
+        <FormField
+          label="Description"
+          value={message}
+          onChangeText={setMessage}
+          placeholder="Describe your issue or feedback..."
+          multiline
+          numberOfLines={5}
+          icon="pencil-outline"
+        />
+      </FormView>
+    </PageView>
+  );
+}
 
 
-// // <ScrollView contentContainerStyle={{ padding: 20 }}>
-// // </ScrollView>
+// <ScrollView contentContainerStyle={{ padding: 20 }}>
+// </ScrollView>
 
-//         {/* <Button type="primary" onPress={onSubmit} style={{ marginTop: 20 }}>
-//           Submit Feedback
-//         </Button> */}
+        {/* <Button type="primary" onPress={onSubmit} style={{ marginTop: 20 }}>
+          Submit Feedback
+        </Button> */}
 
-//         {/* <Button
-//           type="ghost"
-//           icon={{ name: 'arrow-back', library: 'Ionicons', size: 24, color: '#002b5b' }}
-//           onPress={() => navigation.goBack()}
-//           style={{ marginBottom: 10, alignSelf: 'flex-start' }}
-//         /> */}
+        {/* <Button
+          type="ghost"
+          icon={{ name: 'arrow-back', library: 'Ionicons', size: 24, color: '#002b5b' }}
+          onPress={() => navigation.goBack()}
+          style={{ marginBottom: 10, alignSelf: 'flex-start' }}
+        /> */}

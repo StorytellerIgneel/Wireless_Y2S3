@@ -3,15 +3,20 @@ import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { Drawer } from 'expo-router/drawer';
+import { createDrawerNavigator } from '@react-navigation/drawer'; // Correct import
 import CustomDrawerContent from '@/components/CustomDrawerContent';
 import { ThemedText } from '@/components/ThemedText'; 
 import Icon from '@/components/Icon';
-import { useNavigation } from '@react-navigation/native';
 import Login from './auth/login';
 import Welcome from './welcome';
 import { UserProvider } from '@/context/UserContext';
+import { useNavigation } from 'expo-router';
+import { Drawer } from 'expo-router/drawer';
 
+// List of screens to exclude from the Drawer
+const excludedScreens = ['(tabs)', 'index', 'auth', 'welcome', 'reading/reader'];
+
+// Prevent splash screen from hiding automatically
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -21,6 +26,15 @@ export default function RootLayout() {
   });
   const [isSplashVisible, setIsSplashVisible] = useState(true);
   const [showLogin, setShowLogin] = useState(false);
+  const navigation = useNavigation();
+
+  // if (showLogin) {
+  //   return (
+  //     <UserProvider>
+  //       <Login />
+  //     </UserProvider>
+  //   );
+  // }
 
   useEffect(() => {
     if (fontsLoaded) {
@@ -36,15 +50,6 @@ export default function RootLayout() {
   if (!fontsLoaded || isSplashVisible) {
     return <Welcome />;
   }
-
-  if (showLogin) {
-    return (
-      <UserProvider>
-        <Login />
-      </UserProvider>
-    );
-  }
-
   return (
     <UserProvider>
       <ThemeProvider value={DefaultTheme}> {/* replace 'colorScheme === "dark" ? DarkTheme : DefaultTheme' with DefaultTheme if colorScheme is not defined */}
@@ -52,23 +57,14 @@ export default function RootLayout() {
           drawerContent={(props) => <CustomDrawerContent {...props} />}
           screenOptions={{
             headerShown: true,
-            headerTitle: null,
-            headerLeft: ({ navigation }) => (
-              <View style={{ marginLeft: 20 }}>
-                <Icon
-                  name="menu"
-                  size={30}
-                  color="#07314A"
-                  style={{ paddingLeft: 10 }}
-                  onPress={() => navigation.toggleDrawer()}
-                />
-              </View>
-            ),
+            headerTitle: '', // Hide header title by setting it to an empty string
+            // headerLeft: () => <DrawerToggle />, // Use the new DrawerToggle component
             drawerIcon: () => (
               <Icon name="menu" size={30} color="#07314A" style={{ marginLeft: 20, marginRight: 20 }} />
             ),
           }}
         >
+           {!excludedScreens.includes('chat') && (
           <Drawer.Screen
             name="chat"
             options={{
@@ -77,8 +73,8 @@ export default function RootLayout() {
                 <Icon name="chatbubble-ellipses-outline" size={22} color="#07314A" />
               ),
             }}
-          />
-
+          /> )}
+           {!excludedScreens.includes('faq') && (
           <Drawer.Screen
             name="faq"
             options={{
@@ -87,8 +83,9 @@ export default function RootLayout() {
                 <Icon name="help-circle-outline" size={22} color="#07314A" />
               ),
             }}
-          />
+          /> )}
 
+          {!excludedScreens.includes('feedback') && (
           <Drawer.Screen
             name="feedback"
             options={{
@@ -97,8 +94,9 @@ export default function RootLayout() {
                 <Icon name="chatbubbles-outline" size={22} color="#07314A" />
               ),
             }}
-          />
+          /> )}
 
+          {!excludedScreens.includes('profile') && (
           <Drawer.Screen
             name="profile"
             options={{
@@ -107,8 +105,9 @@ export default function RootLayout() {
                 <Icon name="person-outline" size={22} color="#07314A" />
               ),
             }}
-          />
+          />)}
 
+          {!excludedScreens.includes('terms') && (
           <Drawer.Screen
             name="terms"
             options={{
@@ -116,6 +115,14 @@ export default function RootLayout() {
               drawerIcon: () => (
                 <Icon name="document-text-outline" size={22} color="#07314A" />
               ),
+            }}
+          />)}
+          {/* Add the tabs layout but exclude it from being in the Drawer */}
+          <Drawer.Screen
+            name="tabs"
+            // component={TabsLayout} // This is a separate layout for your Tabs
+            options={{
+              drawerItemStyle: { display: 'none' },  // Hide this in the Drawer
             }}
           />
         </Drawer>
