@@ -6,6 +6,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)  # Allow requests from React Native
 
+download_bp = Blueprint("download", __name__)
 @app.route("/download", methods=["POST"])
 def download_and_extract_gutenberg_book(book_id, sandbox_path="sandbox/books"):
     base_url = f"https://www.gutenberg.org/files/{book_id}/{book_id}-h.zip"
@@ -44,6 +45,3 @@ def download_and_extract_gutenberg_book(book_id, sandbox_path="sandbox/books"):
     print(f"HTML path: {full_html_path}")
 
     return full_html_path
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=6000, debug=True)

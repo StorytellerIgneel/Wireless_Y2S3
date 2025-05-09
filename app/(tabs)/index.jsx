@@ -8,7 +8,7 @@ const GoToTestPageButton = () => {
   return (
     <TouchableOpacity
       style={styles.button}
-      onPress={() => router.push('/testgrounds')}
+      onPress={() => router.push('/chat')}
     >
       <Text style={styles.buttonText}>Go to Profile Page</Text>
     </TouchableOpacity>
