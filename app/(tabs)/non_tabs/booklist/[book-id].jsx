@@ -169,14 +169,10 @@ export default function BookDetailsScreen() {
             color="gold"
           />
         </Pressable>
-<<<<<<< HEAD
         <Pressable onPress={() => router.push(`reading/reader?id=${id}`)} style={styles.readButton}>
           <Text style={styles.readButtonText}>Start Reading</Text>
         </Pressable>
-=======
-
         <DownloadButton id={id}/>
->>>>>>> d8585695eb76b5f69f4f88e66e6f7452bf1aa656
       </Animated.View>
     </View>
   );
