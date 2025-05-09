@@ -1,7 +1,17 @@
 import { useThemeColor } from '@/hooks/useThemeColor';
 import {
-    Text
+    Text,
+    StyleSheet
 } from 'react-native';
+
+const styles = StyleSheet.create({
+  block: {
+    padding: 12
+  },
+  bold: {
+    fontWeight: 'bold'
+  }
+});
 
 const CustomText = ({ type, style, ...props }) => {
   const color = useThemeColor({}, 'text');
@@ -13,6 +23,8 @@ const CustomText = ({ type, style, ...props }) => {
         {
           color: type == 'error' ? error : color
         },
+        type == 'block' ? styles.block : undefined,
+        type == 'bold' ? styles.bold : undefined,
         style,
       ]}
       {...props}

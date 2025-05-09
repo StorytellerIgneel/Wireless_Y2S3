@@ -6,7 +6,8 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import Welcome from './welcome'; 
-import { UserProvider } from '@/context/UserContext'; 
+import { UserProvider } from '@/context/UserContext';
+import { NotifProvider } from '@/context/NotifContext'; 
 
 SplashScreen.preventAutoHideAsync();
 
@@ -34,14 +35,16 @@ export default function RootLayout() {
   }
 
   return (
-    <UserProvider> 
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="auth" />
-          <Stack.Screen name="(tabs)" />
-        </Stack>
-        <StatusBar style="auto" />
-      </ThemeProvider>
+    <UserProvider>
+      <NotifProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="auth" />
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </NotifProvider>
     </UserProvider>
   );
 }
