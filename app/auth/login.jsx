@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Alert, StyleSheet, Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import axios from 'axios';
 
 import UserContext from '@/context/UserContext';
@@ -9,6 +9,7 @@ import {
   Text,
   Link,
   Button,
+  Checkbox,
   Divider,
   PageView,
   FormView,
@@ -45,22 +46,32 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '(tabs)/index';
+const homePath = '/demo-user-context/home';
 
 export default function Login() {
   const router = useRouter();
-  const { user, loginUser } = useContext(UserContext);
+  const { user, loginUser, saveUser } = useContext(UserContext);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
+  useEffect(async () => {
     setUsername('');
     setPassword('');
+    setRememberMe(false);
     setStatus('');
     setMessage('');
+
+    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+
+    GoogleSignin.configure({
+      iosClientId: "143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau.apps.googleusercontent.com",
+      webClientId: "143395840986-ef5dvc0p50d3ofc00tnbjcnl0b7qe06h.apps.googleusercontent.com",
+      profileImageSize: 150,
+    })
   }, []);
 
   const handleLogin = async () => {
@@ -76,8 +87,20 @@ export default function Login() {
         password,
       });
 
-      loginUser({ username });
-      router.navigate(homePath);
+      loginUser({
+        username: username,
+        email: response.data.email,
+        phone: response.data.phone
+      });
+
+      if (rememberMe) {
+        saveUser({
+          username: username,
+          email: response.data.email,
+          phone: response.data.phone,
+          password: password
+        });
+      }
     } catch (error) {
       const code = error?.response?.status || 500;
       setStatus(code);
@@ -92,6 +115,33 @@ export default function Login() {
       }
     }
   };
+
+  const handleGoogle = async () => {
+    try {
+      const { GoogleSignin, isSuccessResponse, isErrorWithCode, statusCodes } = await import( "@react-native-google-signin/google-signin");
+
+      await GoogleSignin.hasPlayServices();
+
+      const res = await GoogleSignin.signIn();
+
+      if (isSuccessResponse(res)) {
+        const { idToken, user } = res.data;
+        const { name, email, photo } = user;
+
+        loginUser({
+          username: name,
+          email: email
+        });
+      } else {
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(res);
+    }
+  }
+
+  if (user)
+    return <Redirect href={homePath} />
 
   return (
     <PageView header="Login">
@@ -114,6 +164,12 @@ export default function Login() {
           value={password}
           invalid={!!status || (message && !password)}
           onChangeText={setPassword}
+        />
+
+        <Checkbox
+          label="Remember Me"
+          value={rememberMe}
+          onValueChange={setRememberMe}
         />
 
         <Link href="/auth/forgot-password" style={styles.hyperlink}>
@@ -142,7 +198,7 @@ export default function Login() {
           icon="logo-google"
           type="link"
           active
-          onPress={handleLogin}
+          onPress={handleGoogle}
         />
 
         <View style={styles.footer}>
