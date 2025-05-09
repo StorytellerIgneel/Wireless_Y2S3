@@ -2,6 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
+<<<<<<< HEAD
 import { View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer'; // Correct import
 import CustomDrawerContent from '@/components/CustomDrawerContent';
@@ -12,6 +13,12 @@ import Welcome from './welcome';
 import { UserProvider } from '@/context/UserContext';
 import { useNavigation } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
+=======
+import { useColorScheme } from '@/hooks/useColorScheme';
+import Welcome from './welcome'; 
+import { UserProvider } from '@/context/UserContext';
+import { NotifProvider } from '@/context/NotifContext'; 
+>>>>>>> d8585695eb76b5f69f4f88e66e6f7452bf1aa656
 
 // List of screens to exclude from the Drawer
 const excludedScreens = ['(tabs)', 'index', 'auth', 'welcome', 'reading/reader'];
@@ -52,6 +59,7 @@ export default function RootLayout() {
   }
   return (
     <UserProvider>
+<<<<<<< HEAD
       <ThemeProvider value={DefaultTheme}> {/* replace 'colorScheme === "dark" ? DarkTheme : DefaultTheme' with DefaultTheme if colorScheme is not defined */}
         <Drawer
           drawerContent={(props) => <CustomDrawerContent {...props} />}
@@ -127,6 +135,17 @@ export default function RootLayout() {
           />
         </Drawer>
       </ThemeProvider>
+=======
+      <NotifProvider>
+        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="auth" />
+            <Stack.Screen name="(tabs)" />
+          </Stack>
+          <StatusBar style="auto" />
+        </ThemeProvider>
+      </NotifProvider>
+>>>>>>> d8585695eb76b5f69f4f88e66e6f7452bf1aa656
     </UserProvider>
   );
 }

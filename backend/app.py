@@ -1,16 +1,26 @@
 from flask import Flask
 from flask_cors import CORS
-from auth_sqlite import auth_bp
-from chatbot import chatbot_bp
-from feedback import feedback_bp
+from flask_socketio import SocketIO
+from restful_apis.auth import auth_bp
+from restful_apis.download import download_bp
+from restful_apis.feedback import feedback_bp
+from websocket_apis.chatbot import init_chatbot_socketio
+from websocket_apis.community import init_community_socketio
 
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-#register blueprint
+#initialize sockets
+init_chatbot_socketio(socketio)
+init_community_socketio(socketio)
+
+#register blueprint for RESTfuls
 app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(chatbot_bp, url_prefix="/chatbot")
+app.register_blueprint(download_bp, url_prefix="/download")
 app.register_blueprint(feedback_bp, url_prefix="/feedback")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    import eventlet
+    import eventlet.wsgi
+    socketio.run(app, host="0.0.0.0", port=5000, debug=True)
