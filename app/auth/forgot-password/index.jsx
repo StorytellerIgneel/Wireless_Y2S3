@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { StyleSheet, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 
 import {
@@ -45,21 +46,17 @@ if (Platform.OS === 'ios') {
 console.log('API_URL:', API_URL);
 
 export default function ForgotPassword() {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
-  const [timer, setTimer] = useState(0);
 
   useEffect(() => {
     setEmail('');
     setStatus('');
     setMessage('');
   }, []);
-
-  useEffect(() => {
-    if (timer > 0)
-      setTimeout(() => setTimer(n => n - 1), 1000);
-  }, [timer]);
 
   const validEmail = (value) => {
     value = value.trim();
@@ -75,37 +72,6 @@ export default function ForgotPassword() {
     return false;
   };
 
-  // Resend function
-  const handleSend = async () => {
-    if (timer > 0)
-      return;
-
-    setTimer(30);
-
-    try {
-      const response = await axios.post(`${API_URL}/auth/recover_password`, {
-        email
-      });
-
-      const code = response.status;
-      setStatus(code);
-
-      console.log(response);
-    } catch (error) {
-      const code = error?.response?.status;
-      setStatus(code);
-
-      switch (code) {
-        case 400:
-        case 404:
-          setMessages(["Please enter a registered e-mail"]);
-          break;
-        default:
-          setMessages(["Something went wrong, try again later"]);
-      }
-    }
-  }
-
   // Recover password
   const handleEmail = async () => {
     setMessage('');
@@ -116,16 +82,37 @@ export default function ForgotPassword() {
       return;
     }
 
-    handleSend();
+    try {
+      const response = await axios.post(`${API_URL}/auth/recover_password`, {
+        email
+      });
+
+      const code = response.status;
+      setStatus(code);
+
+      router.navigate({
+        pathname: "/auth/forgot-password/code-verification",
+        params: { email }
+      });
+
+    } catch (error) {
+      const code = error?.response?.status;
+      setStatus(code);
+
+      switch (code) {
+        case 400:
+        case 404:
+          setMessage("Please enter a registered e-mail");
+          break;
+        default:
+          setMessage("Something went wrong, try again later");
+      }
+    }
   }
 
   return (
     <PageView header="Reset Password">
-      {status != 200 ? (
-        <Text type="block">We just need your registered email address to reset your password</Text>
-      ) : (
-        <Text type="block">We have sent a password recovery link to <Text type="bold">{email}</Text></Text>
-      )}
+      <Text type="block">We just need your registered email address to reset your password</Text>
       
       <FormView>
         <FormField
@@ -133,7 +120,6 @@ export default function ForgotPassword() {
           icon="mail-outline"
           maxLength={30}
           value={email}
-          editable={status != 200 || timer == 0}
           invalid={(!!status && status != 200) || message.toLowerCase().includes("mail")}
           onChangeText={setEmail}
         />
@@ -144,21 +130,12 @@ export default function ForgotPassword() {
           </Text>
         )}
 
-        {status != 200 ? (
-          <Button
-            title="Send code"
-            type="primary"
-            active={email.trim() !== ''}
-            onPress={handleEmail}
-          />
-        ) : (
-          <Button
-            title={timer == 0 ? "Resend" : `Sent (${timer})`}
-            type="primary"
-            active={timer == 0}
-            onPress={handleSend}
-          />
-        )}
+        <Button
+          title="Send code"
+          type="primary"
+          active={email.trim() !== ''}
+          onPress={handleEmail}
+        />
       </FormView>
     </PageView>
   );

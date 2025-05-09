@@ -1,4 +1,5 @@
 import Button from './Button';
+import Checkbox from './Checkbox';
 import Divider from './Divider';
 import FormField from './FormField';
 import FormFooterView from './FormFooterView';
@@ -10,6 +11,7 @@ import Text from './Text';
 
 export {
     Button,
+    Checkbox,
     Divider,
     FormField,
     FormFooterView,
