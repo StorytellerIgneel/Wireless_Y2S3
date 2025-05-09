@@ -46,7 +46,7 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '/demo-user-context/home';
+const homePath = '/(tabs)/home';
 
 export default function Login() {
   const router = useRouter();
@@ -58,20 +58,28 @@ export default function Login() {
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
 
-  useEffect(async () => {
+  setupGoogleSignIn = async () => {
+    try {
+      const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+
+      GoogleSignin.configure({
+        iosClientId: "143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau.apps.googleusercontent.com",
+        webClientId: "143395840986-ef5dvc0p50d3ofc00tnbjcnl0b7qe06h.apps.googleusercontent.com",
+        profileImageSize: 150,
+      });
+    } catch (err) {
+
+    }
+  }
+
+  useEffect(() => {
     setUsername('');
     setPassword('');
     setRememberMe(false);
     setStatus('');
     setMessage('');
 
-    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
-
-    GoogleSignin.configure({
-      iosClientId: "143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau.apps.googleusercontent.com",
-      webClientId: "143395840986-ef5dvc0p50d3ofc00tnbjcnl0b7qe06h.apps.googleusercontent.com",
-      profileImageSize: 150,
-    })
+    // setupGoogleSignIn();
   }, []);
 
   const handleLogin = async () => {
