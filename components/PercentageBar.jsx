@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     height: 8,
   },
   progressBarContainerInline: {
+    borderRadius: 7,
     height: 20,
   },
   progressBarFill: {

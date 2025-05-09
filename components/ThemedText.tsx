@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     color: '#0a7ea4',
   },
   subtitleGrey: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#687076",
     lineHeight: 24,
   }

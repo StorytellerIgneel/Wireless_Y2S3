@@ -28,7 +28,7 @@ export default function BookShelfCard(props) {
             {props.shelfTitle}
           </ThemedText>
           <ThemedText style={[styles.bookCount, { color: shelfTitleColor }]}>
-            {props.books.length} Books
+            {props.books.length} Book{props.books.length>1? ('s'):('')}
           </ThemedText>
         </View>
       </View>
