@@ -17,13 +17,9 @@
   "dependencies": {
     "@emailjs/react-native": "^4.2.2",
     "@expo/vector-icons": "^14.1.0",
-<<<<<<< HEAD
     "@react-native-community/slider": "^4.5.6",
     "@react-native-google-signin/google-signin": "^13.2.0",
-=======
     "@react-native-async-storage/async-storage": "^2.1.2",
-    "@react-native-google-signin/google-signin": "^14.0.0",
->>>>>>> d8585695eb76b5f69f4f88e66e6f7452bf1aa656
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/drawer": "^7.3.11",
     "@react-navigation/elements": "^2.4.1",
@@ -32,11 +28,8 @@
     "chat-feat": "file:",
     "expo": "~52.0.46",
     "expo-blur": "~14.0.3",
-<<<<<<< HEAD
     "expo-brightness": "~13.0.3",
-=======
     "expo-checkbox": "~4.0.1",
->>>>>>> d8585695eb76b5f69f4f88e66e6f7452bf1aa656
     "expo-constants": "^17.0.8",
     "expo-device": "~7.0.2",
     "expo-font": "~13.0.3",
