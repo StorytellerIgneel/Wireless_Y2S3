@@ -58,12 +58,20 @@ export default function Login() {
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
+  useEffect(async () => {
     setUsername('');
     setPassword('');
     setRememberMe(false);
     setStatus('');
     setMessage('');
+
+    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+
+    GoogleSignin.configure({
+      iosClientId: "143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau.apps.googleusercontent.com",
+      webClientId: "143395840986-ef5dvc0p50d3ofc00tnbjcnl0b7qe06h.apps.googleusercontent.com",
+      profileImageSize: 150,
+    })
   }, []);
 
   const handleLogin = async () => {
@@ -107,6 +115,30 @@ export default function Login() {
       }
     }
   };
+
+  const handleGoogle = async () => {
+    try {
+      const { GoogleSignin, isSuccessResponse, isErrorWithCode, statusCodes } = await import( "@react-native-google-signin/google-signin");
+
+      await GoogleSignin.hasPlayServices();
+
+      const res = await GoogleSignin.signIn();
+
+      if (isSuccessResponse(res)) {
+        const { idToken, user } = res.data;
+        const { name, email, photo } = user;
+
+        loginUser({
+          username: name,
+          email: email
+        });
+      } else {
+        console.log(res);
+      }
+    } catch (err) {
+      console.log(res);
+    }
+  }
 
   if (user)
     return <Redirect href={homePath} />
@@ -166,7 +198,7 @@ export default function Login() {
           icon="logo-google"
           type="link"
           active
-          onPress={handleLogin}
+          onPress={handleGoogle}
         />
 
         <View style={styles.footer}>
