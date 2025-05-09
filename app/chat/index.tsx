@@ -1,73 +1,76 @@
+// ChatScreen.tsx
+
 import React, { useState, useCallback, useEffect } from 'react';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import {View, StyleSheet, Text } from 'react-native';
-import axios from 'axios';
+import { View, StyleSheet, Text } from 'react-native';
+import io from 'socket.io-client';
 
-const API_URL = 'http://10.0.2.2:5000';
-// const API_URL = 'http://192.168.43.114:8081';
+const SOCKET_URL = 'http://192.168.43.114:5000'; // Replace with your LAN IP
+const socket = io(SOCKET_URL);
 
 const ChatScreen = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
 
-  //connecting to backend chat api
-  const sendMessage = async (userMessage: IMessage) => {
-    if (!userMessage.text.trim()) return;
-    try {
-      const res = await axios.post(`${API_URL}/chat`, {userInput: userMessage.text });
+  // Connect and listen for responses
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('✅ Connected to server');
+    });
 
-      console.log("res: " + res.data.response)
-      const newMessage: IMessage = {
-        _id: String(new Date().getTime()),  // Unique ID based on timestamp
-        text: res.data.response,            // Message from API response
-        createdAt: new Date(),             // Timestamp of message creation
-        user: {                            // User details
-          _id: 1,                          // The user ID (current user)
-          name: 'Klein',                   // The user name (current user)
+    //client side socketio function to show response of gpt
+    socket.on('response', (data) => {
+      // console.log('📩 Server responded:', data);
+
+      const botMessage: IMessage = {
+        _id: String(new Date().getTime()),
+        text: data.response,
+        createdAt: new Date(),
+        user: {
+          _id: 1,
+          name: 'Gemini',
         },
       };
-      setMessages(previousMessages => GiftedChat.append(previousMessages, [newMessage]));
-    } catch (error) {
-      console.error("Error:", error);
-    }
+
+      setMessages((prevMessages) => GiftedChat.append(prevMessages, [botMessage]));
+    });
+
+    // Clean up on unmount
+    return () => {
+      socket.off('response');
+      socket.disconnect();
+    };
+  }, []);
+
+  const sendMessage = (userMessage: IMessage) => {
+    if (!userMessage.text.trim()) return;
+    socket.emit('query', { userInput: userMessage.text });
   };
-  // ✅ Load initial messages
-  // useEffect(() => {
-  // }, []);
 
-  // ✅ Fix the `onSend` type issue
   const onSend = useCallback((newMessages: IMessage[] = []) => {
-    //new message refers to the latest message sent by user
-    if (newMessages.length == 0) return;
+    if (newMessages.length === 0) return;
 
-    console.log(messages)
-    setMessages(messages => GiftedChat.append(messages, newMessages));
-    console.log(messages)
-    console.log(newMessages[0])
-    
-    // send message to backend
+    setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
     sendMessage(newMessages[0]);
   }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.banner}>
-        <Text style={styles.bannerText}>ChatGPT</Text> {/* Ensure `style={styles.bannerText}` is used */}
+        <Text style={styles.bannerText}>Chat with Gemini</Text>
       </View>
-
       <GiftedChat
         messages={messages}
-        onSend={(messages) => onSend(messages)} // Ensure correct function signature
-        user={{ _id: 2, name: 'Klein' }} // Current user, stands for "who is reading the chat"
+        onSend={(messages) => onSend(messages)}
+        user={{ _id: 2, name: 'You' }}
       />
     </View>
   );
 };
 
-
 const styles = StyleSheet.create({
   container: { flex: 1 },
   banner: {
-    backgroundColor: '#2E86C1', // Blue header like most chat apps
+    backgroundColor: '#2E86C1',
     padding: 15,
     alignItems: 'center',
   },

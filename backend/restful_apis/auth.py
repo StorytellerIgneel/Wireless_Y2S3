@@ -1,6 +1,6 @@
 import sqlite3
 import os
-import db;
+from db_operations import db;
 from flask import Flask, request, jsonify, Blueprint
 from flask_cors import CORS
 from werkzeug.security import generate_password_hash, check_password_hash  # Secure passwords
