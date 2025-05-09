@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Alert, StyleSheet, Platform } from 'react-native';
 import Constants from 'expo-constants';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import axios from 'axios';
 
 import UserContext from '@/context/UserContext';
@@ -9,6 +9,7 @@ import {
   Text,
   Link,
   Button,
+  Checkbox,
   Divider,
   PageView,
   FormView,
@@ -45,20 +46,22 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '(tabs)/index';
+const homePath = '/demo-user-context/home';
 
 export default function Login() {
   const router = useRouter();
-  const { user, loginUser } = useContext(UserContext);
+  const { user, loginUser, saveUser } = useContext(UserContext);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
 
   useEffect(() => {
     setUsername('');
     setPassword('');
+    setRememberMe(false);
     setStatus('');
     setMessage('');
   }, []);
@@ -76,8 +79,20 @@ export default function Login() {
         password,
       });
 
-      loginUser({ username });
-      router.navigate(homePath);
+      loginUser({
+        username: username,
+        email: response.data.email,
+        phone: response.data.phone
+      });
+
+      if (rememberMe) {
+        saveUser({
+          username: username,
+          email: response.data.email,
+          phone: response.data.phone,
+          password: password
+        });
+      }
     } catch (error) {
       const code = error?.response?.status || 500;
       setStatus(code);
@@ -92,6 +107,9 @@ export default function Login() {
       }
     }
   };
+
+  if (user)
+    return <Redirect href={homePath} />
 
   return (
     <PageView header="Login">
@@ -114,6 +132,12 @@ export default function Login() {
           value={password}
           invalid={!!status || (message && !password)}
           onChangeText={setPassword}
+        />
+
+        <Checkbox
+          label="Remember Me"
+          value={rememberMe}
+          onValueChange={setRememberMe}
         />
 
         <Link href="/auth/forgot-password" style={styles.hyperlink}>
