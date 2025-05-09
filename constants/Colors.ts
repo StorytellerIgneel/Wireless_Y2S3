@@ -59,6 +59,7 @@ export const Colors = {
     btn_bg_link_inactive: btn_bg_link_inactive,
     // tabIconDefault: '#687076',
     // tabIconSelected: tintColorLight,
+    invert_text: dark_text_primary,
   },
   dark: {
     text: dark_text_primary,

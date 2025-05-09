@@ -4,6 +4,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Button from "@/components/Button";
+import PercentageBar from "../PercentageBar";
 
 const bookCoverImage = require("@/assets/images/bookImage.jpg");
 
@@ -28,27 +29,12 @@ const ContinueReading = (props) => {
           {props.author}
         </ThemedText>
 
-        <View style={styles.progressRow}>
-          <View style={styles.progressBarContainer}>
-            <View
-              style={[
-                styles.progressBarFill,
-                {
-                  width: `${props.percentage}%`,
-                  backgroundColor: colors.btn_bg_primary,
-                },
-              ]}
-            />
-          </View>
-          <ThemedText style={styles.percentageText}>
-            {props.percentage}%
-          </ThemedText>
-        </View>
+        <PercentageBar percentage={30} />
 
         <Button
           type="primary"
-          active={true}
-          rounded={true}
+          active
+          rounded
           title="Continue"
           style={{
             width: 130,
@@ -91,26 +77,6 @@ const styles = StyleSheet.create({
   },
   author: {
     marginBottom: 10,
-  },
-  progressRow: {
-    flexDirection: "column",
-    flex: 1,
-    marginBottom: 5,
-  },
-  progressBarContainer: {
-    backgroundColor: "#E0E0E0",
-    borderRadius: 4,
-    height: 8,
-  },
-  progressBarFill: {
-    borderRadius: 4,
-    height: 8,
-  },
-  percentageText: {
-    fontSize: 12,
-    color: "#687076",
-    minWidth: 35,
-    textAlign: "right",
   },
 });
 
