@@ -11,7 +11,30 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import { Stack } from 'expo-router';
 
+/* 
+export const unstable_settings = {
+  initialRouteName: 'search-result',
+};
+
+export default function SearchResultScreen() {
+  const router = useRouter();
+
+  return (
+    <Stack.Screen
+      options={{
+        title: 'Search Result',
+        headerLeft: () => (
+          <Pressable onPress={() => router.back()} style={{ paddingHorizontal: 10 }}>
+            <Ionicons name="arrow-back" size={24} />
+          </Pressable>
+        ),
+      }}
+    />
+  );
+}
+*/
 function BookItem({ item }) {
   const [imageError, setImageError] = useState(false);
   const imageUrl = item.formats?.['image/jpeg'];

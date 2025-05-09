@@ -51,10 +51,12 @@ export default function Search() {
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
-      router.push({
+      router.navigate({
         pathname: 'non_tabs/booklist/search_result',
         params: { query: searchQuery.trim() },
       });
+
+      // router.navigate('/(tabs)/(non-tabs)/booklist/search-result');
     }
   };
 

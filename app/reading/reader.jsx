@@ -7,12 +7,14 @@ import {
   Dimensions,
   TouchableOpacity,
   Animated,
+  Modal,
 } from 'react-native';
 import { useLocalSearchParams, useNavigation } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
+import ReadSettings from './readSettings';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default function ReaderScreen() {
   const { id } = useLocalSearchParams();
@@ -22,6 +24,13 @@ export default function ReaderScreen() {
   const [currentPage, setCurrentPage] = useState(0);
   const [showHeader, setShowHeader] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const [fontSize, setFontSize] = useState(14);
+  const [fontFamily, setFontFamily] = useState('Arial');
+  const [bgColor, setBgColor] = useState('#fff');
+  const [fontColor, setFontColor] = useState('#333');
+  const [modalVisible, setModalVisible] = useState(false);
+  const [lineHeight, setLineHeight] = useState(1.2);
 
   const showControls = () => {
     setShowHeader(true);
@@ -69,12 +78,6 @@ export default function ReaderScreen() {
     setPages(paged);
   };
 
-  const goToPage = (pageNum) => {
-    if (pageNum < 0) pageNum = 0;
-    if (pageNum >= pages.length) pageNum = pages.length - 1;
-    setCurrentPage(pageNum);
-  };
-
   const handleNextPage = () => {
     if (currentPage < pages.length - 1) {
       setCurrentPage(currentPage + 1);
@@ -88,11 +91,10 @@ export default function ReaderScreen() {
   };
 
   const pageText = pages[currentPage] || '';
-  const progress = ((currentPage + 1) / pages.length) * 100;
+  const progress = pages.length > 0 ? ((currentPage + 1) / pages.length) * 100 : 0;
 
   return (
-    <View style={styles.container}>
-      {/* Header with back & title (shown on 3-dot tap) */}
+    <View style={[styles.container, { backgroundColor: bgColor }]}>
       {showHeader && (
         <Animated.View style={[styles.header, { opacity: fadeAnim }]}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
@@ -103,33 +105,49 @@ export default function ReaderScreen() {
         </Animated.View>
       )}
 
-      {/* 3-dots menu icon */}
-      <TouchableOpacity style={styles.dotsIcon} onPress={showControls}>
+      <TouchableOpacity style={styles.dotsIcon} onPress={() => setModalVisible(true)}>
         <Ionicons name="ellipsis-vertical" size={24} color="gray" />
       </TouchableOpacity>
 
-      {/* Reader content */}
+      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+        <ReadSettings
+          onClose={() => setModalVisible(false)}
+          fontSize={fontSize}
+          setFontSize={setFontSize}
+          fontFamily={fontFamily}
+          setFontFamily={setFontFamily}
+          bgColor={bgColor}
+          setBgColor={setBgColor}
+          fontColor={fontColor}
+          setFontColor={setFontColor}
+          lineHeight={lineHeight}
+          setLineHeight={setLineHeight}
+        />
+      </Modal>
+
       <View style={styles.page}>
-        <TouchableOpacity
-          style={styles.navIconLeft}
-          onPress={handlePreviousPage}
-        >
+        <TouchableOpacity style={styles.navIconLeft} onPress={handlePreviousPage}>
           <Ionicons name="chevron-back" size={24} color="black" />
         </TouchableOpacity>
 
-        <ScrollView contentContainerStyle={styles.textContainer}>
-          <Text style={styles.pageText}>{pageText}</Text>
+        <ScrollView contentContainerStyle={styles.textContainer} onTouchStart={showControls}>
+          <Text
+            style={{
+              fontFamily,
+              fontSize,
+              lineHeight: fontSize * lineHeight,
+              color: fontColor,
+            }}
+          >
+            {pageText}
+          </Text>
         </ScrollView>
 
-        <TouchableOpacity
-          style={styles.navIconRight}
-          onPress={handleNextPage}
-        >
+        <TouchableOpacity style={styles.navIconRight} onPress={handleNextPage}>
           <Ionicons name="chevron-forward" size={24} color="black" />
         </TouchableOpacity>
       </View>
 
-      {/* Progress */}
       <View style={styles.progressBox}>
         <View style={styles.progressContainer}>
           <View style={[styles.progressBar, { width: `${progress}%` }]} />
@@ -143,7 +161,6 @@ export default function ReaderScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   header: {
     position: 'absolute',
@@ -155,7 +172,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     alignItems: 'center',
-    backgroundColor: 'transparent',
   },
   headerTitle: {
     fontSize: 18,
@@ -167,11 +183,10 @@ const styles = StyleSheet.create({
     right: 16,
     zIndex: 20,
     padding: 4,
-    backgroundColor: 'transparent',
   },
   page: {
     flex: 1,
-    padding: 5, // <== Added padding around content
+    padding: 5,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -187,12 +202,6 @@ const styles = StyleSheet.create({
     width: width - 100,
     paddingHorizontal: 10,
   },
-  pageText: {
-    fontFamily: 'Arial',
-    fontSize: 14,
-    lineHeight: 17, // 14 * 1.2
-    color: '#333',
-  },
   progressBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -201,7 +210,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   progressContainer: {
-    height: 6, // <== Reduced height
+    height: 6,
     width: '85%',
     borderRadius: 3,
     backgroundColor: '#eee',

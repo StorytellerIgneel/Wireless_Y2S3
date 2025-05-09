@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 
 const AuthLayout = () => {
+    console.log('Root Layout rendered');
     return (
         <Stack
             screenOptions={{headerShown: false}}>

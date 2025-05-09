@@ -1,24 +1,26 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import {View, StyleSheet, Text } from 'react-native';
 import axios from 'axios';
+import UserContext from '@/context/UserContext';
 
 const API_URL = 'http://10.0.2.2:5000';
 // const API_URL = 'http://192.168.43.114:8081';
 
 const ChatScreen = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const { user } = useContext(UserContext);
+  const [messages, setMessages] = useState([]);
 
   //connecting to backend chat api
-  const sendMessage = async (userMessage: IMessage) => {
+  const sendMessage = async (userMessage) => {
     if (!userMessage.text.trim()) return;
     try {
       const res = await axios.post(`${API_URL}/chat`, {userInput: userMessage.text });
 
       console.log("res: " + res.data.response)
-      const newMessage: IMessage = {
+      const newMessage= {
         _id: String(new Date().getTime()),  // Unique ID based on timestamp
-        text: res.data.response,            // Message from API response
+        text: String(res.data.response),   // Message from API response
         createdAt: new Date(),             // Timestamp of message creation
         user: {                            // User details
           _id: 1,                          // The user ID (current user)
@@ -35,9 +37,9 @@ const ChatScreen = () => {
   // }, []);
 
   // ✅ Fix the `onSend` type issue
-  const onSend = useCallback((newMessages: IMessage[] = []) => {
+  const onSend = useCallback((newMessages= []) => {
     //new message refers to the latest message sent by user
-    if (newMessages.length == 0) return;
+    if (newMessages.length === 0) return;
 
     console.log(messages)
     setMessages(messages => GiftedChat.append(messages, newMessages));
@@ -57,12 +59,14 @@ const ChatScreen = () => {
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)} // Ensure correct function signature
-        user={{ _id: 2, name: 'Klein' }} // Current user, stands for "who is reading the chat"
+        user={{ 
+          _id: user?.id || 2, 
+          name: user?.name || 'User',
+        }} // Current user, stands for "who is reading the chat"
       />
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

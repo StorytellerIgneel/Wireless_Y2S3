@@ -118,7 +118,7 @@ export default function BookDetailsScreen() {
           )}
           {(languageList || translatorNames) && (
             <Text style={styles.meta}>
-              {languageList}
+              {languageList ? ` Languages: ${languageList}` : ''}
               {translatorNames ? ` / Translated by ${translatorNames}` : ''}
             </Text>
           )}
@@ -161,16 +161,15 @@ export default function BookDetailsScreen() {
           },
         ]}
       >
-        <Pressable onPress={() => router.push(`reader?id=${id}`)} style={styles.readButton}>
-          <Text style={styles.readButtonText}>Start Reading</Text>
-        </Pressable>
-
         <Pressable onPress={() => setBookmarked((prev) => !prev)} style={styles.iconButton}>
           <Ionicons
             name={bookmarked ? 'bookmark' : 'bookmark-outline'}
             size={24}
             color="gold"
           />
+        </Pressable>
+        <Pressable onPress={() => router.push(`reading/reader?id=${id}`)} style={styles.readButton}>
+          <Text style={styles.readButtonText}>Start Reading</Text>
         </Pressable>
       </Animated.View>
     </View>
@@ -239,7 +238,7 @@ const styles = StyleSheet.create({
   stickyContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     padding: 12,
     paddingHorizontal: 20,
     backgroundColor: '#fff',

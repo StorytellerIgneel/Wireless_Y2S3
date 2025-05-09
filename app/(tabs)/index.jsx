@@ -1,32 +1,13 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { useRouter } from 'expo-router';
+import { Text, View } from 'react-native';
+import { PageView } from '@/components';
 
-const GoToTestPageButton = () => {
-  const router = useRouter();
-
+export default function App() {
   return (
-    <TouchableOpacity
-      style={styles.button}
-      onPress={() => router.push('/profile')}
-    >
-      <Text style={styles.buttonText}>Go to Profile Page</Text>
-    </TouchableOpacity>
+    <PageView>
+      <View>
+        <Text>Home</Text>
+      </View>
+    </PageView>
   );
-};
-
-const styles = StyleSheet.create({
-  button: {
-    marginTop: 20,
-    backgroundColor: '#007AFF',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-  },
-});
-
-export default GoToTestPageButton;
+}

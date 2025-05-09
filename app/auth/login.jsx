@@ -3,7 +3,6 @@ import { View, Alert, StyleSheet, Platform } from 'react-native';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
-
 import UserContext from '@/context/UserContext';
 import {
   Text,
@@ -45,12 +44,11 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '(tabs)/index';
+const homePath = '(tabs)/index'; 
 
 export default function Login() {
   const router = useRouter();
   const { user, loginUser } = useContext(UserContext);
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [status, setStatus] = useState('');
@@ -61,6 +59,7 @@ export default function Login() {
     setPassword('');
     setStatus('');
     setMessage('');
+    console.log(user ? "Logged in" : "Not logged in");
   }, []);
 
   const handleLogin = async () => {
@@ -77,7 +76,7 @@ export default function Login() {
       });
 
       loginUser({ username });
-      router.navigate(homePath);
+      router.replace(homePath); // Replace history to prevent going back
     } catch (error) {
       const code = error?.response?.status || 500;
       setStatus(code);
