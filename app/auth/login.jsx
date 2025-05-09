@@ -46,7 +46,7 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '/profile';
+const homePath = '/(tabs)/home';
 
 export default function Login() {
   const router = useRouter();
@@ -59,13 +59,17 @@ export default function Login() {
   const [message, setMessage] = useState('');
 
   setupGoogleSignIn = async () => {
-    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+    try {
+      const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
 
-    GoogleSignin.configure({
-      iosClientId: "143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau.apps.googleusercontent.com",
-      webClientId: "143395840986-ef5dvc0p50d3ofc00tnbjcnl0b7qe06h.apps.googleusercontent.com",
-      profileImageSize: 150,
-    });
+      GoogleSignin.configure({
+        iosClientId: "143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau.apps.googleusercontent.com",
+        webClientId: "143395840986-ef5dvc0p50d3ofc00tnbjcnl0b7qe06h.apps.googleusercontent.com",
+        profileImageSize: 150,
+      });
+    } catch (err) {
+
+    }
   }
 
   useEffect(() => {
@@ -75,7 +79,7 @@ export default function Login() {
     setStatus('');
     setMessage('');
 
-    setupGoogleSignIn();
+    // setupGoogleSignIn();
   }, []);
 
   const handleLogin = async () => {

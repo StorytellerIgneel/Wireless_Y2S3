@@ -58,6 +58,11 @@ const Button = ({
   const btn_bg_link = useThemeColor({}, "btn_bg_link");
   const btn_bg_link_inactive = useThemeColor({}, "btn_bg_link_inactive");
 
+  const btn_danger = useThemeColor({}, "btn_danger");
+  const btn_danger_inactive = useThemeColor({}, "btn_danger_inactive");
+  const btn_bg_danger = useThemeColor({}, "btn_bg_danger");
+  const btn_bg_danger_inactive = useThemeColor({}, "btn_bg_danger_inactive");
+
   return (
     <Pressable
       android_ripple={{ color: "rgba(255, 255, 255, 0.25)", borderless: false }}
@@ -65,7 +70,6 @@ const Button = ({
       style={[
         active
           ? {
-              opacity: 1,
               backgroundColor:
                 activeBackgroundColor ?? type == "primary"
                   ? btn_bg_primary
@@ -73,10 +77,11 @@ const Button = ({
                   ? btn_bg_secondary
                   : type == "link"
                   ? btn_bg_link
+                  : type == "danger"
+                  ? btn_bg_danger
                   : btn_bg_primary,
             }
           : {
-              opacity: 0.5,
               backgroundColor:
                 backgroundColor ?? type == "primary"
                   ? btn_bg_primary_inactive
@@ -84,6 +89,8 @@ const Button = ({
                   ? btn_bg_secondary_inactive
                   : type == "link"
                   ? btn_bg_link_inactive
+                  : type == "danger"
+                  ? btn_bg_danger_inactive
                   : btn_bg_primary_inactive,
             },
         rounded
@@ -110,6 +117,8 @@ const Button = ({
                     ? btn_secondary
                     : type == "link"
                     ? btn_link
+                    : type == "danger"
+                    ? btn_danger
                     : btn_primary,
               }
             : {
@@ -120,6 +129,8 @@ const Button = ({
                     ? btn_secondary_inactive
                     : type == "link"
                     ? btn_link_inactive
+                    : type == "danger"
+                    ? btn_danger_inactive
                     : btn_primary_inactive,
               },
           styles.text,
