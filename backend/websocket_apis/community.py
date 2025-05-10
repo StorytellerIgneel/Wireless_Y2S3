@@ -28,9 +28,9 @@ def init_community_socketio(io: SocketIO):
     # Handle joining a room
     @socketio.on('join_room')
     def handle_join(data):
-        print(f"Client {request.sid} joined room: {data['room']}")
+        print(f"Client {request.sid} joined room: {data['room_id']}")
         #extracting data from arg
-        room = data['room']
+        room = data['room_id']
         username = data['username']
         
         join_room(room) #join the room eg room-1234
