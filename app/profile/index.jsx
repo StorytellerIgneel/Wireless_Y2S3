@@ -50,18 +50,6 @@ const ProfileScreen = () => {
         </View>
 
         {/* Navigation Options */}
-        <ProfileSection>
-          <ProfileOption
-            icon={"phone-portrait-outline"}
-            label={"Display Settings"}
-            onPress={() => router.push('/faq')}
-          />
-          <ProfileOption
-            icon={"notifications-outline"}
-            label={"Notification Settings"}
-            onPress={() => router.push('/faq')}
-          />
-        </ProfileSection>
 
         <ProfileSection>
           <ProfileOption
