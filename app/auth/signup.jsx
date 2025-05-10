@@ -147,6 +147,7 @@ export default function Signup() {
       });
 
       loginUser({
+        id: response.data.id,
         username: username,
         email: email,
         phone: phone
