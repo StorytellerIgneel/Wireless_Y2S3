@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import UserContext from '@/context/UserContext';
+import NotifContext from '@/context/NotifContext';
 import { useRouter } from 'expo-router';
 import {
   StyleSheet
@@ -39,6 +40,11 @@ export default function Home() {
 
   // Use this approach to get username from user
   const {user, logoutUser} = useContext(UserContext);
+  const { sendNotif } = useContext(NotifContext); // Get the Notif Context
+
+  useEffect(() => {
+    sendNotif("Welcome", "New to this app?"); // Send notification
+  }, []);
 
   return (
     <PageView header="Home">

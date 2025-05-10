@@ -14,6 +14,7 @@ import { useLocalSearchParams, useNavigation } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import DownloadButton from "../../../testgrounds"
 
 const { width } = Dimensions.get('window');
 
@@ -172,6 +173,8 @@ export default function BookDetailsScreen() {
             color="gold"
           />
         </Pressable>
+
+        <DownloadButton id={id}/>
       </Animated.View>
     </View>
   );

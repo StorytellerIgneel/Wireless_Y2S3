@@ -39,12 +39,12 @@ yarn-error.*
 backend/venv/
 
 # Python cache files
-backend/__pycache__/
+backend/__pycache__/*
 __pycache__/
 *.py[cod]
 *$py.class
 
 #db files
-backend/database.sqlite3
+**/database.sqlite3
 
 app-example

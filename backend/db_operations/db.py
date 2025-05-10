@@ -4,9 +4,12 @@ from contextlib import closing
 import os
 
 # Database connection function
-DATABASE = os.path.join(os.getcwd(), "database.sqlite3") #the db shud locate at the same dir as this file
+DATABASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database.sqlite3")
+ #the db shud locate at the same dir as this file
+
 
 def get_db_connection():
+    print("DATABASE: " ,DATABASE)
     return sqlite3.connect(DATABASE, check_same_thread=False)
 
 def execute_query(query, params=()):

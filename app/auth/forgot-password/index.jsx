@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { StyleSheet, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 import Constants from 'expo-constants';
 
 import {
   Text,
+  Link,
   Button,
   PageView,
   FormView,
@@ -44,6 +46,8 @@ if (Platform.OS === 'ios') {
 console.log('API_URL:', API_URL);
 
 export default function ForgotPassword() {
+  const router = useRouter();
+
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState('');
   const [message, setMessage] = useState('');
@@ -54,15 +58,69 @@ export default function ForgotPassword() {
     setMessage('');
   }, []);
 
+  const validEmail = (value) => {
+    value = value.trim();
+
+    if (value.match(/^[a-zA-Z0-9\.]{3,}@[a-zA-Z0-9]+\.[a-zA-Z]+$/)) return true;
+
+    if (value === "") {
+      setMessage("Please enter e-mail");
+    } else {
+      setMessage("Please enter valid e-mail");
+    }
+
+    return false;
+  };
+
+  // Recover password
+  const handleEmail = async () => {
+    setMessage('');
+
+    const isEmailValid = validEmail(email);
+
+    if (!isEmailValid) {
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${API_URL}/auth/recover_password`, {
+        email
+      });
+
+      const code = response.status;
+      setStatus(code);
+
+      router.navigate({
+        pathname: "/auth/forgot-password/code-verification",
+        params: { email }
+      });
+
+    } catch (error) {
+      const code = error?.response?.status;
+      setStatus(code);
+
+      switch (code) {
+        case 400:
+        case 404:
+          setMessage("Please enter a registered e-mail");
+          break;
+        default:
+          setMessage("Something went wrong, try again later");
+      }
+    }
+  }
+
   return (
     <PageView header="Reset Password">
+      <Text type="block">We just need your registered email address to reset your password</Text>
+      
       <FormView>
         <FormField
           label="E-mail address"
           icon="mail-outline"
           maxLength={30}
           value={email}
-          invalid={!!status || (message && !email)}
+          invalid={(!!status && status != 200) || message.toLowerCase().includes("mail")}
           onChangeText={setEmail}
         />
 
@@ -76,10 +134,7 @@ export default function ForgotPassword() {
           title="Send code"
           type="primary"
           active={email.trim() !== ''}
-          onPress={() => {
-            // Handle sending code here
-            console.log("Send code clicked with email:", email);
-          }}
+          onPress={handleEmail}
         />
       </FormView>
     </PageView>

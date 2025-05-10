@@ -20,7 +20,8 @@
         "adaptiveIcon": {
           "foregroundImage": "./assets/images/adaptive-icon.png",
           "backgroundColor": "#ffffff"
-        }
+        },
+        "package": "com.teohweihong.chatfeat"
       },
       "web": {
         "bundler": "metro",
@@ -28,6 +29,16 @@
         "favicon": "./assets/images/favicon.png"
       },
       "plugins": [
+        "expo-router",
+        [
+          "expo-splash-screen",
+          {
+            "image": "./assets/images/splash-icon.png",
+            "imageWidth": 200,
+            "resizeMode": "contain",
+            "backgroundColor": "#ffffff"
+          }
+        ],
         "expo-router",
         [
           "expo-splash-screen",
@@ -49,13 +60,33 @@
         "eas": {
           "projectId": "c32e3745-fcef-4061-8d68-1bf18f88e0c4"
         }
+      },
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
       }
     },
     "android": {
       "permissions": ["INTERNET"]
     },
     "plugins": [
-      "expo-router"
-    ]
+      "expo-router",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau"
+        }
+      ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "09ca4b0a-55f1-4aef-a505-9f24e99db3d5"
+      }
+    },
+    "android": {
+      "package": "com.teohweihong.chatfeat"
+    }
   }
 }
