@@ -9,12 +9,14 @@ import {
   Dimensions,
   Pressable,
   Animated,
+  Button,
 } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation, useSear } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import DownloadButton from "../../../testgrounds"
+import DownloadButton from "../../../downloadBook"
+import Rooms from "../../../rooms"
 import {
   Button
 } from '@/components';
@@ -187,7 +189,10 @@ export default function BookDetailsScreen() {
           />
         </Pressable>
 
-        <DownloadButton id={id}/>
+        <DownloadButton book_id={id}/>
+        {/* <Pressable onPress={() => router.push(`rooms?id=${id}`)} style={styles.iconButton}>
+          <Text style={styles.readButtonText}>Join community discussion</Text>
+        </Pressable> */}
       </Animated.View>
     </View>
   );
