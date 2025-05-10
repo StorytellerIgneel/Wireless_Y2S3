@@ -29,7 +29,7 @@ def login():
     if not all([username, password]):
         return jsonify({"response": "Error: Missing fields"}), 400
 
-    sql = "SELECT password, id, email, phone_number FROM users WHERE username = ?"
+    sql = "SELECT password, user_id, email, phone_number FROM users WHERE username = ?"
     
     with get_db_connection() as conn:
         cursor = conn.cursor()

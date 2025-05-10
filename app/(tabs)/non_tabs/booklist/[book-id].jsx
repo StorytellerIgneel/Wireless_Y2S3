@@ -17,6 +17,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import DownloadButton from "../../../downloadBook"
 import Rooms from "../../../rooms"
+import {
+  Button
+} from '@/components';
 
 const { width } = Dimensions.get('window');
 
@@ -153,6 +156,16 @@ export default function BookDetailsScreen() {
           <Text style={styles.summaryTitle}>What’s it about?</Text>
           <Text style={styles.summaryText}>{summaries?.join('\n\n') || ''}</Text>
         </View>
+
+        <Button
+          title="Join Discussion"
+          onPress={() => router.navigate({
+            pathname: "/community",
+            params: {
+              room: `room-${id}`
+            }
+          })}
+        />
       </Animated.ScrollView>
 
       {/* Sticky Action Bar */}
