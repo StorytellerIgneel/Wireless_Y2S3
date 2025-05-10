@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import {
   View,
   Text,
@@ -9,17 +9,20 @@ import {
   Pressable,
   Animated,
 } from 'react-native';
-import { useLocalSearchParams, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useNavigation, useSear } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
+import UserContext from '@/context/UserContext';
 import { useRouter } from 'expo-router';
-import DownloadButton from "../../../testgrounds"
-import { PageView } from "@/components";
+import DownloadButton from "../../../downloadBook"
+import Rooms from "../../../rooms"
+import { Button, PageView } from "@/components";
 
 const { width } = Dimensions.get('window');
 
 export default function BookDetailsScreen() {
   const router = useRouter();
+  const { user } = useContext(UserContext);
   const { 'book-id': id } = useLocalSearchParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -151,6 +154,22 @@ export default function BookDetailsScreen() {
           <Text style={styles.summaryTitle}>What’s it about?</Text>
           <Text style={styles.summaryText}>{summaries?.join('\n\n') || ''}</Text>
         </View>
+
+        <Button
+          title="Join Discussion"
+          active
+          onPress={() => router.navigate(
+            user ?
+              {
+                pathname: "/community",
+                params: {
+                  room: `room-${id}`
+                }
+              } : {
+                pathname: "/auth/login",
+              }
+          )}
+        />
       </Animated.ScrollView>
 
       {/* Sticky Action Bar */}
@@ -174,7 +193,10 @@ export default function BookDetailsScreen() {
           />
         </Pressable>
 
-        <DownloadButton id={id}/>
+        <DownloadButton book_id={id}/>
+        {/* <Pressable onPress={() => router.push(`rooms?id=${id}`)} style={styles.iconButton}>
+          <Text style={styles.readButtonText}>Join community discussion</Text>
+        </Pressable> */}
       </Animated.View>
     </PageView>
   );

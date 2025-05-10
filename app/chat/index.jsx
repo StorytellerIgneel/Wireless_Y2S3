@@ -4,12 +4,16 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
 import { View, StyleSheet, Text } from 'react-native';
 import io from 'socket.io-client';
+import {
+  PageView,
+} from "@/components";
 
+// const SOCKET_URL = 'http://192.168.1.22:5000'; // Replace with your LAN IP
 const SOCKET_URL = 'http://192.168.43.114:5000'; // Replace with your LAN IP
 const socket = io(SOCKET_URL);
 
 const ChatScreen = () => {
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [messages, setMessages] = useState([]);
 
   // Connect and listen for responses
   useEffect(() => {
@@ -21,7 +25,7 @@ const ChatScreen = () => {
     socket.on('response', (data) => {
       // console.log('📩 Server responded:', data);
 
-      const botMessage: IMessage = {
+      const botMessage = {
         _id: String(new Date().getTime()),
         text: data.response,
         createdAt: new Date(),
@@ -41,12 +45,12 @@ const ChatScreen = () => {
     };
   }, []);
 
-  const sendMessage = (userMessage: IMessage) => {
+  const sendMessage = (userMessage) => {
     if (!userMessage.text.trim()) return;
     socket.emit('query', { userInput: userMessage.text });
   };
 
-  const onSend = useCallback((newMessages: IMessage[] = []) => {
+  const onSend = useCallback((newMessages = []) => {
     if (newMessages.length === 0) return;
 
     setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
@@ -54,21 +58,22 @@ const ChatScreen = () => {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.banner}>
-        <Text style={styles.bannerText}>Chat with Gemini</Text>
-      </View>
-      <GiftedChat
-        messages={messages}
-        onSend={(messages) => onSend(messages)}
-        user={{ _id: 2, name: 'You' }}
-      />
-    </View>
+    <>
+      <PageView header="Chat with Gemini" type="back" />
+      <View style={styles.container}>
+          <GiftedChat
+            style={styles.container}
+            messages={messages}
+            onSend={(messages) => onSend(messages)}
+            user={{ _id: 2, name: 'You' }}
+          />
+        </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 5 },
   banner: {
     backgroundColor: '#2E86C1',
     padding: 15,

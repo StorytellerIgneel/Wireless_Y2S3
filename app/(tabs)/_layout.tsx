@@ -16,7 +16,7 @@ const TabLayout = () => {
       screenOptions={({ route }) => ({
         // Tab icon logic: fallback to IconSymbol for home, Ionicons otherwise
         tabBarIcon: ({ color, size }) => {
-          if (route.name === 'index') {
+          if (route.name === 'home') {
             return <IconSymbol size={28} name="house.fill" color={color} />;
           } else if (route.name === 'search') {
             return <IconSymbol size={size} name="search.fill" color={color} />;
@@ -41,7 +41,7 @@ const TabLayout = () => {
       })}
     >
       <Tabs.Screen
-        name="home/index"
+        name="home"
         options={{
           title: 'Home',
           // Already handled by tabBarIcon above
