@@ -93,8 +93,8 @@ export default function Rooms() {
               onChangeText={setMessage}
               style={styles.input}
             />
-            <Button title="Send" onPress={sendMessage} />
-            <Button title="Leave Room" onPress={reset} color="gray" />
+            <Button title="Send" active={message} onPress={sendMessage} />
+            <Button title="Leave Room" type="danger" active onPress={reset} />
           </>
         )}
       </View>

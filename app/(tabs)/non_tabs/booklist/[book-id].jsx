@@ -160,6 +160,7 @@ export default function BookDetailsScreen() {
 
         <Button
           title="Join Discussion"
+          active
           onPress={() => router.navigate(
             user ?
               {
