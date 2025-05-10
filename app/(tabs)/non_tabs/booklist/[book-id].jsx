@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
 import { useLocalSearchParams, useNavigation, useSear } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
+import UserContext from '@/context/UserContext';
 import { useRouter } from 'expo-router';
 import DownloadButton from "../../../downloadBook"
 import Rooms from "../../../rooms"
@@ -24,6 +25,7 @@ const { width } = Dimensions.get('window');
 
 export default function BookDetailsScreen() {
   const router = useRouter();
+  const { user } = useContext(UserContext);
   const { 'book-id': id } = useLocalSearchParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -158,12 +160,17 @@ export default function BookDetailsScreen() {
 
         <Button
           title="Join Discussion"
-          onPress={() => router.navigate({
-            pathname: "/community",
-            params: {
-              room: `room-${id}`
-            }
-          })}
+          onPress={() => router.navigate(
+            user ?
+              {
+                pathname: "/community",
+                params: {
+                  room: `room-${id}`
+                }
+              } : {
+                pathname: "/auth/login",
+              }
+          )}
         />
       </Animated.ScrollView>
 
