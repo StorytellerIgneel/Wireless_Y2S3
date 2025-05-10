@@ -56,7 +56,7 @@ def init_community_socketio(io: SocketIO):
         query = """
         SELECT users.username, messages.msg
         FROM messages
-        JOIN users ON messages.user_id = users.id
+        JOIN users ON messages.user_id = users.user_id
         WHERE messages.room_id = ?
         ORDER BY timestamp ASC
         LIMIT 50
