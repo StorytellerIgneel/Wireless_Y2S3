@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useContext } from 'react';
 import {
   View,
   Text,
+  ScrollView,
   Image,
   StyleSheet,
   ActivityIndicator,
@@ -15,8 +16,8 @@ import { Ionicons } from '@expo/vector-icons';
 import UserContext from '@/context/UserContext';
 import { useRouter } from 'expo-router';
 import DownloadButton from "../../../downloadBook"
+import Rooms from "../../../rooms"
 import {
-  PageView,
   Button
 } from '@/components';
 
@@ -92,7 +93,7 @@ export default function BookDetailsScreen() {
   });
 
   return (
-    <PageView style={styles.container} bodyStyle type={'back'} header={title}>
+    <View style={styles.container}>
       <Animated.ScrollView
         contentContainerStyle={styles.scrollContent}
         scrollEventThrottle={16}
@@ -196,11 +197,8 @@ export default function BookDetailsScreen() {
         </Pressable>
 
         <DownloadButton book_id={id}/>
-        {/* <Pressable onPress={() => router.push(`rooms?id=${id}`)} style={styles.iconButton}>
-          <Text style={styles.readButtonText}>Join community discussion</Text>
-        </Pressable> */}
       </Animated.View>
-    </PageView>
+    </View>
   );
 }
 

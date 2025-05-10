@@ -1,163 +1,170 @@
-// // import { useState } from 'react';
-// // // import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
-// // import { send, EmailJSResponseStatus } from '@emailjs/react-native';
-// // // import styles from 'stylesheet';
+import React, { useContext, useState, useEffect } from 'react';
+import { Alert, View, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import { PageView, FormTextView, FormView, FormField, Button, Text } from '@/components';
+import { ThemedText } from '@/components/ThemedText'; 
+import { send } from '@emailjs/react-native';
+import UserContext from '@/context/UserContext';
 
-// // const FeedbackScreen = () => {
-// //   const [name, setName] = useState();
-// //   const [email, setEmail] = useState();
-// //   const [type, setType] = useState();
-// //   const [message, setMessage] = useState();
+export default function FeedbackScreen() {
+  const [feedbackType, setFeedbackType] = useState('');
+  const [message, setMessage] = useState('');
+  const { user } = useContext(UserContext);
+  const router = useRouter();
 
-// //   const onSubmit = async () => {
-// //     if (!email || !name) {
-// //       console.log('Email and Name are required!');
-// //       return;
-// //     }
-// //     try {
-// //       await send(
-// //         'service_v442tdd',
-// //         'template_yqxtmac',
-// //         {
-// //           name: name,
-// //           email: email,
-// //           message: message,
-// //         },
-// //         {
-// //           publicKey: '3n8xXSvm4KPDChxv-',
-// //         },
-// //       );
+  // Redirect to login if not logged in
+  useEffect(() => {
+    if (!user?.email || !user?.name) {
+      Alert.alert(
+        'Login Required',
+        'Please log in to submit feedback.',
+        [
+          {
+            text: 'OK',
+            // onPress: () => router.replace('/auth/login'),
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  }, [user]);
 
-// //       console.log('SUCCESS!');
-// //     } catch (err) {
-// //       if (err instanceof EmailJSResponseStatus) {
-// //         console.log('EmailJS Request Failed...', err);
-// //       }
+  const onSubmit = async () => {
+    if (!user?.email || !user?.name || !message || !feedbackType) {
+      Alert.alert('Validation Error', 'All fields are required!');
+      return;
+    }
 
-// //       console.log('ERROR', err);
-// //     }
-// //   };
+    try {
+      await send(
+        'service_v442tdd',
+        'template_yqxtmac',
+        {
+          name: user.name,
+          email: user.email,
+          message: `${feedbackType}: ${message}`,
+        },
+        { publicKey: '3n8xXSvm4KPDChxv-' }
+      );
 
-// //   return (
-// //     <View>
-// //       <TextInput style={{backgroundColor: "blue",  color: 'white'}}
-// //         inputMode="email"
-// //         keyboardType="email-address"
-// //         textContentType="emailAddress"
-// //         placeholder="Email"
-// //         value={email}
-// //         onChangeText={setEmail}
-// //       />
-// //       <TextInput style={{backgroundColor: "blue", color: 'white'}}
-// //         inputMode="text"
-// //         placeholder="Name"
-// //         value={name}
-// //         onChangeText={setName}
-// //       />
-// //       <TextInput style={{backgroundColor: "blue", color: 'white'}}
-// //         inputMode="text"
-// //         placeholder="Message"
-// //         value={message}
-// //         onChangeText={setMessage}
-// //       />
-// //       <Button title="Submit" onPress={onSubmit} />
-// //     </View>
-// //   );
-// // };
+      Alert.alert('Success', 'Feedback sent successfully!');
+      setMessage('');
+      setFeedbackType('');
+    } catch (err) {
+      console.log('EmailJS error:', err);
+      Alert.alert('Error', 'Failed to send feedback.');
+    }
+  };
 
-// // export default FeedbackScreen;
+  return (
+    <PageView header="Feedback">
+        <ThemedText>
+            This is the default text.
+        </ThemedText>
+        <ThemedText type="title">
+            This is a title.
+        </ThemedText>
+        <ThemedText type="subtitle">
+            This is a subtitle.
+        </ThemedText>
+        <ThemedText type="subtitleGrey">
+            This is a grey subtitle.
+        </ThemedText>
+      <FormView>
+        <FormField
+          label="Username"
+          placeholder={user?.name}  
+          editable={false}
+          icon="person-outline"
+          unstyled
+        />
+        <FormField
+          label="E-mail address"
+          placeholder={user?.email}
+          editable={false}
+          icon="mail-outline"
+          unstyled
+        />
+        <Text style={styles.label}>Feedback Type</Text>
+        <View style={styles.buttonRow}>
+          {['Problems', 'Comments', 'Suggestions'].map(type => (
+            <Button
+              key={type}
+              title={type}
+              onPress={() => setFeedbackType(type)}
+              style={[
+                styles.feedbackButton,
+                feedbackType === type && styles.selectedButton,
+              ]}
+              textStyle={[
+                // styles.buttonText,
+                feedbackType === type && styles.selectedText,
+              ]}
+            />
+          ))}
+        </View>
 
-// import React, { useContext, useState } from 'react';
-// import { ScrollView, Alert } from 'react-native';
-// import { PageView, FormView, FormField, Button, Text, Icon } from '@/components';
-// import { send } from '@emailjs/react-native';
-// import UserContext from '@/context/UserContext';
+        <FormField
+          label="Description"
+          value={message}
+          onChangeText={setMessage}
+          placeholder="Describe your issue or feedback..."
+          multiline
+          numberOfLines={5}
+          icon="pencil-outline"
+        />
 
-// export default function FeedbackScreen({ navigation }) {
-//   const { user } = useContext(UserContext);
-//   const [feedbackType, setFeedbackType] = useState('Problems');
-//   const [message, setMessage] = useState('');
+        <Button
+          title="Submit"
+          noBorder
+          onPress={onSubmit}
+          style={[
+            styles.submitButton,
+            message && feedbackType && styles.selectedButton,
+          ]}
+          textStyle={[
+            styles.buttonText,
+            message && feedbackType && styles.selectedText,
+          ]}
+        />
+      </FormView>
+    </PageView>
+  );
+}
 
-//   const onSubmit = async () => {
-//     if (!user?.email || !user?.name || !message) {
-//       Alert.alert('Validation Error', 'All fields are required!');
-//       return;
-//     }
-
-//     try {
-//       await send(
-//         'service_v442tdd',
-//         'template_yqxtmac',
-//         {
-//           name: user.name,
-//           email: user.email,
-//           message: `${feedbackType}: ${message}`,
-//         },
-//         { publicKey: '3n8xXSvm4KPDChxv-' }
-//       );
-
-//       Alert.alert('Success', 'Feedback sent successfully!');
-//       setMessage('');
-//     } catch (err) {
-//       console.log('EmailJS error:', err);
-//       Alert.alert('Error', 'Failed to send feedback.');
-//     }
-//   };
-
-//   return (
-//     <PageView header="Feedback">
-//       <FormView>
-//         <FormField
-//           label="Username"
-//           value={user?.name || ''}
-//           editable={false}
-//           icon="person-outline"
-//         />
-//         <FormField
-//           label="E-mail address"
-//           value={user?.email || ''}
-//           editable={false}
-//           icon="mail-outline"
-//         />
-//         <Text style = {{fontSize: 14, fontWeight: 500}}>
-//           Feedback Type
-//         </Text>
-//         {['Problems', 'Comments', 'Suggestions'].map(type => (
-//           <Button
-//             key={type}
-//             title={type}
-//             // type={feedbackType === type ? 'primary' : 'outline'}
-//             onPress={() => setFeedbackType(type)}
-//             style={{ flex: 1 }}
-//             backgroundColor="rgba(109, 120, 126, 1)"
-//             activeBackgroundColor="rgba(66, 134, 245, 1)"
-//           />
-//         ))}
-//         <FormField
-//           label="Description"
-//           value={message}
-//           onChangeText={setMessage}
-//           placeholder="Describe your issue or feedback..."
-//           multiline
-//           numberOfLines={5}
-//           icon="pencil-outline"
-//         />
-//       </FormView>
-//     </PageView>
-//   );
-// }
-
-
-// // <ScrollView contentContainerStyle={{ padding: 20 }}>
-// // </ScrollView>
-
-//         {/* <Button type="primary" onPress={onSubmit} style={{ marginTop: 20 }}>
-//           Submit Feedback
-//         </Button> */}
-
-//         {/* <Button
-//           type="ghost"
-//           icon={{ name: 'arrow-back', library: 'Ionicons', size: 24, color: '#002b5b' }}
-//           onPress={() => navigation.goBack()}
-//           style={{ marginBottom: 10, alignSelf: 'flex-start' }}
-//         /> */}
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 14,
+    fontWeight: '500',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 8,
+    marginBottom: 20,
+  },
+  feedbackButton: {
+    flex: 1,
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    // borderColor: '#ccc',
+    paddingVertical: 8,
+  },
+  selectedButton: {
+    backgroundColor: '#FFD700', // Yellow
+    borderColor: '#FFD700',
+  },
+  selectedText: {
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  submitButton: {
+    marginTop: 20,
+    paddingVertical: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: 'transparent',
+  },
+});
