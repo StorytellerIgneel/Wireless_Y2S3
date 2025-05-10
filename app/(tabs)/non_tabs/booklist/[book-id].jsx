@@ -9,7 +9,6 @@ import {
   Dimensions,
   Pressable,
   Animated,
-  Button,
 } from 'react-native';
 import { useLocalSearchParams, useNavigation, useSear } from 'expo-router';
 import axios from 'axios';
@@ -190,9 +189,6 @@ export default function BookDetailsScreen() {
         </Pressable>
 
         <DownloadButton book_id={id}/>
-        {/* <Pressable onPress={() => router.push(`rooms?id=${id}`)} style={styles.iconButton}>
-          <Text style={styles.readButtonText}>Join community discussion</Text>
-        </Pressable> */}
       </Animated.View>
     </View>
   );
