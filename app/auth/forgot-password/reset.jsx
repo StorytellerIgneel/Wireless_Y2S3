@@ -118,7 +118,7 @@ export default function CodeRecovery() {
   }
 
   return (
-    <PageView header="Reset Password">
+    <PageView header="Reset Password" type="back">
       <Text type="block">Please enter a new password</Text>
       
       <FormView>

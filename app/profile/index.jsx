@@ -60,7 +60,7 @@ const ProfileScreen = () => {
           <ProfileOption
             icon={"chatbubbles-outline"}
             label={"Live Chat"}
-            onPress={() => router.push('/testgrounds/Rooms')}
+            onPress={() => router.push('/chat')}
           />
           <ProfileOption
             icon={"archive-outline"}

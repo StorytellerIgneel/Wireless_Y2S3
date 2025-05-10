@@ -46,7 +46,7 @@ if (Platform.OS === 'ios') {
   API_URL = `http://${localIp}:5000`;
 }
 
-const homePath = "/demo-user-context/home";
+const homePath = "/(tabs)/home";
 
 export default function Signup() {
   const router = useRouter();

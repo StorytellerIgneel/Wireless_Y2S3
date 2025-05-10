@@ -111,7 +111,7 @@ export default function ForgotPassword() {
   }
 
   return (
-    <PageView header="Reset Password">
+    <PageView header="Reset Password" type="back">
       <Text type="block">We just need your registered email address to reset your password</Text>
       
       <FormView>

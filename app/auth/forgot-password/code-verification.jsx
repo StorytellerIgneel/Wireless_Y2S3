@@ -132,7 +132,7 @@ export default function CodeRecovery() {
   }
 
   return (
-    <PageView header="Reset Password">
+    <PageView header="Reset Password" type="back">
       <Text type="block">We have sent a recovery code to <Text type="bold">{email}</Text></Text>
       
       <FormView>
