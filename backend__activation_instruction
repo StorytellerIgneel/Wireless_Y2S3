@@ -1,0 +1,126 @@
+The backend files are all python for now. I used python flask to run them. So, obviously, u need to have flask installed.
+The app.py contains routes to all other backend files. This is designed in a way such that when multiple functions are needed, only one file needs to be run.
+So, to activate the backend, open a new terminal session. then type
+
+python app.py
+
+u shud see this:
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.43.114:5000
+Press CTRL+C to quit
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 139-760-549
+this means that the backend is running now. The broadcast address setup is essential to run it on another device ie using expo go
+
+The following session is only needed if you need API services:
+Now, navigate into the frontend file that you wish to test/use and find the API_URL constant
+you can see that 
+//const API_URL = "http://10.0.2.2:5000"; // Change if using a device (use local IP)
+const API_URL = "http://192.168.1.8:5000"; //using expogo
+
+the top one is for emulators, and it should be constant
+the lower one is for physical devices ie running expo go on ur phone
+However, u need to channge the url and ensure that both your pc and ur phone is under the same LAN ie connected to same wifi
+If unable, use hotspot of ur phone and pc connect to it
+u need to find the ip of ur phone, do so by pressing M after npm start, you can find the device url, it shud be 192.168.x.x, then copy it and paste into the url and then add the :5000
+the :5000 is essential as it is the port for service. 
+if you see axios: network error then ur api url is wrong, or something set up wrongly 
+
+
+# Gutendex Activation 
+1. At `backend/gutendex`, pull the submodules if you haven't already via:
+    ```
+    git submodule update --init --recursive
+    ```
+
+2. Launch your psql
+    - At Windows' search menu, search for Services in System, find postgresql-x64-17 in the list of services and launch
+
+3. At `backend`, run:
+    ```
+    venv\Scripts\activate
+    ```
+    - This activates the virtual environment for django to run
+
+4. At `backend/gutendex`, run:
+    ```
+    python manage.py runserver
+    ```
+    - This activates the backend server
+
+If everything is fine, u shud see this:
+
+System check identified no issues (0 silenced).
+March 19, 2025 - 16:00:25
+Django version 5.1.7, using settings 'gutendex.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CTRL-BREAK.
+
+if u see error message
+django.db.utils.OperationalError: connection to server at "127.0.0.1", port 5432 failed: Connection refused (0x0000274D/10061)
+        Is the server running on that host and accepting TCP/IP connections?
+
+it means ur postgres is not running, find services in windows and find postgres then activate it
+
+Gutendex API access
+to get all books
+url/books
+
+to search for a certain property (e.g. author)
+url/books/?author=xxx
+(no "" is required to enclose the search string)
+
+return guide
+one book is returned in a json form like this
+{
+"id": 1342,
+"title": "Pride and Prejudice",
+"authors": [
+    {
+        "name": "Austen, Jane",
+        "birth_year": 1775,
+        "death_year": 1817
+    }
+],
+"summaries": [
+    "\"Pride and Prejudice\" by Jane Austen is a classic novel written in the early 19th century. The story delves into themes of love, social class, and individual agency, largely revolving around the life of Elizabeth Bennet, one of five sisters from a modest but genteel family navigating the complex social landscape of Regency England.  The opening of the novel introduces the seemingly universal truth that a single man of wealth is a target for matchmaking mothers in the neighborhood. Mrs. Bennet is eager to marry off her daughters and is excited to hear about the arrival of Mr. Bingley, a wealthy young man who has taken up residence at Netherfield Park. Mr. Bennet's teasing yet indifferent nature contrasts sharply with Mrs. Bennet's anxious and businesslike demeanor as she plans to visit Mr. Bingley to create an opportunity for her daughters. Their witty exchanges set the tone for the story's exploration of family dynamics and social expectations, while also hinting at deeper character developments and the challenges Elizabeth will face regarding love and prejudice in her interactions with Mr. Darcy and the Bingley family. (This is an automatically generated summary.)"
+],
+"translators": [],
+"subjects": [
+    "Courtship -- Fiction",
+    "Domestic fiction",
+    "England -- Fiction",
+    "Love stories",
+    "Sisters -- Fiction",
+    "Social classes -- Fiction",
+    "Young women -- Fiction"
+],
+"bookshelves": [
+    "Best Books Ever Listings",
+    "Browsing: Culture/Civilization/Society",
+    "Browsing: Fiction",
+    "Browsing: Literature",
+    "Harvard Classics"
+],
+"languages": [
+    "en"
+],
+"copyright": false,
+"media_type": "Text",
+"formats": {
+    "text/html": "https://www.gutenberg.org/ebooks/1342.html.images",
+    "application/epub+zip": "https://www.gutenberg.org/ebooks/1342.epub3.images",
+    "application/x-mobipocket-ebook": "https://www.gutenberg.org/ebooks/1342.kf8.images",
+    "text/plain; charset=us-ascii": "https://www.gutenberg.org/ebooks/1342.txt.utf-8",
+    "application/rdf+xml": "https://www.gutenberg.org/ebooks/1342.rdf",
+    "image/jpeg": "https://www.gutenberg.org/cache/epub/1342/pg1342.cover.medium.jpg",
+    "application/octet-stream": "https://www.gutenberg.org/cache/epub/1342/pg1342-h.zip"
+},
+"download_count": 59020
+}
+
+as such, attributes that can be extracted are:
+id, title, authors, summaries, translators, subjects, bookshelves, languages, copyright, media_type, formats, download_count
