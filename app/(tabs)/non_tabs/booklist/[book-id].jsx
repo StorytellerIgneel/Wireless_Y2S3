@@ -9,7 +9,6 @@ import {
   Dimensions,
   Pressable,
   Animated,
-  Button,
 } from 'react-native';
 import { useLocalSearchParams, useNavigation, useSear } from 'expo-router';
 import axios from 'axios';
