@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   StyleSheet,
   Pressable,
@@ -13,6 +13,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
+import { readFilesFromDocumentDirectory } from "../downloadBook";
 
 export default function Bookshelf() {
   const [bookshelves, setBookshelves] = useState([]);
@@ -20,10 +21,12 @@ export default function Bookshelf() {
   const [error, setError] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
+  const [downloadedBooks, setDownloadedBooks] = useState([]);
 
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingShelf, setEditingShelf] = useState(null);
   const [editInputValue, setEditInputValue] = useState("");
+  
 
   const icon = useThemeColor({}, "text");
   const router = useRouter();
@@ -98,6 +101,29 @@ export default function Bookshelf() {
       fetchBookshelvesCallback();
       return () => {};
     }, [fetchBookshelvesCallback])
+  );
+
+  
+  useEffect(() => {
+    const fetchDownloadedBooks = async () => {
+      try {
+        const files = await readFilesFromDocumentDirectory();
+        setDownloadedBooks(files.map((file) => ({ id: file, title: file }))); // Map file names to book objects
+      } catch (err) {
+        console.error("Failed to fetch downloaded books:", err);
+      }
+    };
+
+    fetchDownloadedBooks();
+  }, []);
+
+  const renderDownloadedBook = ({ item }) => (
+    <Pressable
+      key={item.id}
+      style={{ padding: 10, borderBottomWidth: 1, borderColor: "#ccc" }}
+    >
+      <ThemedText>{item.title}</ThemedText>
+    </Pressable>
   );
 
   const handleAddBookshelf = async () => {
@@ -242,6 +268,8 @@ export default function Bookshelf() {
   return (
     <View style={{ flex: 1 }}>
       <PageView header="My Shelf" bodyStyle={styles.container} type={"profile"}>
+        <ThemedText type='subtitle' style={styles.subtitle}>Downloaded Books</ThemedText>
+        <ThemedText type='subtitle' style={styles.subtitle}>Shelf Collections</ThemedText>
         {isLoading ? (
           <Loading item={'shelves'}/> 
         ) : (
@@ -468,5 +496,9 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "#fff",
+  },
+  subtitle: {
+    paddingHorizontal: 20,
+    paddingBottom: 10
   },
 });
