@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useRouter } from 'expo-router';
+import { useRouter, Redirect } from 'expo-router';
 import axios from 'axios';
 import {
   View,
@@ -55,7 +55,8 @@ export default function Signup() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("0123456789");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [phone, setPhone] = useState("");
   const [status, setStatus] = useState("");
   const [messages, setMessages] = useState([]);
 
@@ -63,6 +64,7 @@ export default function Signup() {
     setUsername("");
     setEmail("");
     setPassword("");
+    setConfirmPassword("");
     setStatus("");
     setMessages([]);
   }, []);
@@ -97,10 +99,30 @@ export default function Signup() {
     return false;
   };
 
-  const validPassword = (value) => {
-    if (value !== "") return true;
+  const validPhone = (value) => {
+    value = value.trim();
 
-    setMessages(msgs => ["Please enter password", ...msgs]);
+    if (value.match(/^(01[02-46-9][0-9]{7}|01[1][0-9]{8})$/)) return true;
+
+    if (value === "") {
+      setMessages(msgs => ["Please enter phone number", ...msgs]);
+    } else {
+      setMessages(msgs => ["Please enter valid phone number", ...msgs]);
+    }
+
+    return false;
+  };
+
+  const validPassword = (value1, value2) => {
+    if (value1 === value2 && value1 !== '') return true;
+
+    if (value1 === '')
+      setMessages(msgs => ["Please enter password", ...msgs]);
+    else if (value2 === '')
+      setMessages(msgs => ["Please enter confirmation password", ...msgs]);
+    else
+      setMessages(msgs => ["Passwords are not match", ...msgs]);
+
     return false;
   };
 
@@ -109,9 +131,10 @@ export default function Signup() {
 
     const isUsernameValid = validUsername(username);
     const isEmailValid = validEmail(email);
-    const isPasswordValid = validPassword(password);
+    const isPhoneValid = validPhone(phone);
+    const isPasswordValid = validPassword(password, confirmPassword);
 
-    if (!(isUsernameValid && isEmailValid && isPasswordValid)) {
+    if (!(isUsernameValid && isEmailValid && isPhoneValid && isPasswordValid)) {
       return;
     }
 
@@ -123,21 +146,27 @@ export default function Signup() {
         phone_number: phone
       });
 
-      loginUser({ username });
-      router.navigate(homePath);
+      loginUser({
+        username: username,
+        email: email,
+        phone: phone
+      });
     } catch (error) {
       const code = error?.response?.status;
       setStatus(code);
 
       switch (code) {
         case 409:
-          setMessages(["Username already exists"]);
+          setMessages([error.response.data.response.split(/\s*\:\s*/)[1]]);
           break;
         default:
           setMessages(["Something went wrong, try again later"]);
       }
     }
   };
+
+  if (user)
+      return <Redirect href={homePath} />
 
   return (
     <PageView header="Create Account">
@@ -148,7 +177,7 @@ export default function Signup() {
           placeholder="Bob"
           maxLength={30}
           value={username}
-          invalid={status || messages.find(msg => msg.toLowerCase().includes("username"))}
+          invalid={messages.find(msg => msg.toLowerCase().includes("username"))}
           onChangeText={setUsername}
         />
         <FormField
@@ -157,8 +186,18 @@ export default function Signup() {
           placeholder="bookworm@gmail.com"
           maxLength={30}
           value={email}
-          invalid={status || messages.find(msg => msg.toLowerCase().includes("mail"))}
+          invalid={messages.find(msg => msg.toLowerCase().includes("mail"))}
           onChangeText={setEmail}
+        />
+        <FormField
+          label="Phone number"
+          icon="call-outline"
+          placeholder="0123338888"
+          maxLength={11}
+          value={phone}
+          keyboardType="numeric"
+          invalid={messages.find(msg => msg.toLowerCase().includes("phone"))}
+          onChangeText={setPhone}
         />
         <FormField
           hideable
@@ -167,8 +206,18 @@ export default function Signup() {
           placeholder="*****"
           maxLength={30}
           value={password}
-          invalid={status || messages.find(msg => msg.toLowerCase().includes("password"))}
+          invalid={messages.find(msg => msg.toLowerCase().includes("password"))}
           onChangeText={setPassword}
+        />
+        <FormField
+          hideable
+          label="Confirm password"
+          icon="lock-closed-outline"
+          placeholder="*****"
+          maxLength={30}
+          value={confirmPassword}
+          invalid={messages.find(msg => msg.toLowerCase().includes("password"))}
+          onChangeText={setConfirmPassword}
         />
 
         <Text type="error" style={styles.error}>{messages[0]}</Text>
@@ -176,7 +225,7 @@ export default function Signup() {
         <Button
           title="Create account"
           type="primary"
-          active={![username, email, password].includes("")}
+          active={![username, email, phone, password, confirmPassword].includes("")}
           onPress={handleRegister}
         />
       </FormView>

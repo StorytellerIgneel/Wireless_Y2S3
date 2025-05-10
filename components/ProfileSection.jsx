@@ -7,12 +7,12 @@ import {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 16,
-        padding: 24,
-        marginTop: 0
+        padding: 16,
+        marginBottom: 24,
     }
 });
 
-const FormView = ({ style, ...props }) => {
+const ProfileSection = ({ style, ...props }) => {
     const backgroundColor = useThemeColor({}, 'bg_secondary');
 
     return (
@@ -27,4 +27,4 @@ const FormView = ({ style, ...props }) => {
     );
 }
 
-export default FormView;
+export default ProfileSection;
