@@ -4,6 +4,7 @@ from flask_socketio import SocketIO, emit, join_room, leave_room
 from datetime import datetime
 import os
 from db_operations import db
+import re
 
 app = Flask(__name__)
 CORS (app)
@@ -44,9 +45,28 @@ def init_community_socketio(io: SocketIO):
         print(f"{username} joined room: {room}")
 
     def get_chat_history(room):
-        query = 'SELECT username, msg FROM messages WHERE room = ? ORDER BY timestamp ASC LIMIT 50'
-        result = db.fetch_all(query, (room,))
-        print(result)
+        # Extract room_id from the string "room-1342"
+        match = re.search(r"room-(\d+)", room)
+
+        if match:
+            room_id = match.group(1)  # This will be the number part, e.g. '1342'
+            print(room_id)  # Output: 1342
+
+        # Use room_id for querying the database
+        query = """
+        SELECT users.username, messages.msg
+        FROM messages
+        JOIN users ON messages.user_id = users.id
+        WHERE messages.room_id = ?
+        ORDER BY timestamp ASC
+        LIMIT 50
+        """
+
+        # Fetch the chat history for the extracted room_id
+        result = db.fetch_all(query, (room_id,))  # Use room_id as the parameter
+        print(result)  # Optional, to see the result in the console
+
+        # Return a formatted response
         return [{"username": row[0], "msg": row[1]} for row in result]
 
     # Handle leaving a room
@@ -82,9 +102,8 @@ def init_community_socketio(io: SocketIO):
     def handle_message(data):
         msg = data['msg']
         username = data['username']
+        user_id = data["user_id"]
         room = user_rooms[request.sid]
-        print(user_rooms)
-        print(room)
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         emit('message', 
@@ -92,8 +111,14 @@ def init_community_socketio(io: SocketIO):
             'msg': msg
             },
             room=room)
+        
+        match = re.search(r"room-(\d+)", room)
 
-        db.execute_query('INSERT INTO messages (room, username, msg, timestamp) VALUES (?, ?, ?, ?)', (room, username, msg, timestamp))
+        if match:
+            room_id = match.group(1)
+            print(room_id) 
+
+        db.execute_query('INSERT INTO messages (room_id, user_id, msg, timestamp) VALUES (?, ?, ?, ?)', (room_id, user_id, msg, timestamp))
         print(f"Message: {msg}")
 
     # Handle client disconnect
