@@ -5,19 +5,17 @@ import {
   Text,
   View,
   ScrollView,
-  ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
 import { useRouter } from "expo-router";
 import ContinueReading from "@/components/home/ContinueReading";
 import { ThemedText } from "@/components/ThemedText";
-import PageView from "@/components/PageView";
-import { Colors } from "@/constants/Colors";
+import { PageView, Loading } from "@/components";
 import BookCard from "@/components/home/BookCard";
 
 const Home = () => {
-  const colors = Colors.light;
   const errorColor = useThemeColor({}, "error");
+  const text = useThemeColor({}, "text");
   const router = useRouter(); // Get router instance
   const [bestBooks, setBestBooks] = useState([]);
   const [fictionBooks, setFictionBooks] = useState([]);
@@ -66,18 +64,6 @@ const Home = () => {
     fetchBooks();
   }, []);
 
-  // show loading indicator while fetching data
-  if (isLoading) {
-    return (
-      <PageView header="For You" type={"profile"}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.light.btn_bg_primary} />
-          <Text style={[styles.loadingText]}>Loading books...</Text>
-        </View>
-      </PageView>
-    );
-  }
-
   // Show error message if fetch failed
   if (error) {
     return (
@@ -91,13 +77,15 @@ const Home = () => {
 
   return (
     <PageView header="For You" bodyStyle={{ flex: 1 }} type={"profile"}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {isLoading ? (
+        <Loading item={"the best books for you"} />
+      ) : (
         <View style={styles.contentContainer}>
           {/* Continue Reading section */}
           <View style={styles.featuredSection}>
             <ThemedText
               type="subtitle"
-              style={[styles.subtitle, { color: colors.text }]}
+              style={[styles.subtitle, { color: text }]}
             >
               Continue Reading
             </ThemedText>
@@ -115,7 +103,7 @@ const Home = () => {
           <View style={styles.featuredSection}>
             <ThemedText
               type="subtitle"
-              style={[styles.subtitle, { color: colors.text }]}
+              style={[styles.subtitle, { color: text }]}
             >
               Best Books Ever
             </ThemedText>
@@ -123,7 +111,7 @@ const Home = () => {
               horizontal={true}
               style={styles.sectionContainer}
               showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled" // Add this prop
+              keyboardShouldPersistTaps="handled" 
             >
               {bestBooks.map((book) => (
                 <TouchableOpacity
@@ -147,7 +135,7 @@ const Home = () => {
           <View style={styles.featuredSection}>
             <ThemedText
               type="subtitle"
-              style={[styles.subtitle, { color: colors.text }]}
+              style={[styles.subtitle, { color: text }]}
             >
               Fiction
             </ThemedText>
@@ -155,7 +143,7 @@ const Home = () => {
               horizontal={true}
               style={styles.sectionContainer}
               showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled" // Add this prop
+              keyboardShouldPersistTaps="handled" 
             >
               {fictionBooks.map((book) => (
                 <TouchableOpacity
@@ -177,7 +165,7 @@ const Home = () => {
             </ScrollView>
           </View>
         </View>
-      </ScrollView>
+      )}
     </PageView>
   );
 };

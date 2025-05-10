@@ -10,7 +10,6 @@ import {
     Pressable,
     TouchableOpacity,
     StyleSheet,
-    ScrollView
 } from 'react-native';
 import Text from '@/components/Text.jsx';
 import MenuSVG from '../assets/images/menu.svg';
@@ -59,7 +58,6 @@ const styles = StyleSheet.create({
     }
 });
 
-const TOP_BAR_HEIGHT = 81;
 const HEADER_HEIGHT = 63;
 
 const PageView = ({ type, style, children, ...props}) => {

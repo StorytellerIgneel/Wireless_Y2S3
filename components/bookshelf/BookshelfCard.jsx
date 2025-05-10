@@ -1,37 +1,160 @@
-import { View, Image, StyleSheet } from "react-native";
-import { PercentageBarInline } from "../PercentageBar";
+import React, { useState, useEffect } from "react";
+import { View, Image, StyleSheet } from "react-native"; // Added ActivityIndicator
+import { PercentageBarInline, Loading } from "@/components";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText } from "@/components/ThemedText";
+
+const defaultBookCover = require("@/assets/images/bookImage.jpg");
+// TO-DO: Remove this
+const userId = 2;
 
 export default function BookShelfCard(props) {
   const shelfBg = useThemeColor({}, "text");
   const shelfTitleColor = useThemeColor({}, "invert_text");
+  const bgColor = useThemeColor({}, "bg_primary");
+
+  const [books, setBooks] = useState([]);
+  const [shelfTitle, setShelfTitle] = useState(props.shelfTitle || "Bookshelf"); 
+  const [isLoading, setIsLoading] = useState(true); 
+  const [error, setError] = useState(null); 
+  const [overallProgress, setOverallProgress] = useState(0);
+
+  useEffect(() => {
+    if (props.id) {
+      fetchBooksForShelf(props.id);
+    } else {
+      setError("Shelf ID is missing.");
+      setIsLoading(false);
+      console.error("Shelf ID is missing from props:", props.id);
+    }
+  }, [props.id]);
+
+  const calculateOverallProgress = (booksArray) => {
+    if (!booksArray || booksArray.length === 0) {
+      return 0;
+    }
+    const totalProgress = booksArray.reduce((sum, book) => {
+      const progress = typeof book.progress === "number" ? book.progress : 0;
+      return sum + progress;
+    }, 0);
+    return Math.round(totalProgress / booksArray.length);
+  };
+
+  const fetchBooksForShelf = async (currentShelfId) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_books`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ shelf_id: currentShelfId, user_id: userId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({
+            response: `HTTP error! status: ${response.status}`,
+          }));
+        throw new Error(
+          errorData.response || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+
+      if (data.shelf_title) {
+        setShelfTitle(data.shelf_title);
+      }
+
+      if (data.books && Array.isArray(data.books)) {
+        const formattedBooks = data.books.map((book) => ({
+          id: book.id.toString(),
+          coverImage:
+            book.formats && book.formats["image/jpeg"]
+              ? { uri: book.formats["image/jpeg"] }
+              : defaultBookCover,
+          // TO-DO: replace thisss
+          progress: 15,
+        }));
+        setBooks(formattedBooks);
+        setOverallProgress(calculateOverallProgress(formattedBooks)); // CORRECT: Update progress here
+      } else {
+        setBooks([]);
+        setOverallProgress(0);
+        console.warn(
+          "No books array found in response or it's not an array:",
+          data
+        );
+      }
+    } catch (e) {
+      console.error("Failed to fetch books for shelf:", e);
+      setError(
+        e.message || "An unexpected error occurred while fetching books."
+      );
+      setOverallProgress(0);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (error) {
+    return (
+      <View style={[styles.shelfCard, styles.centered]}>
+        <ThemedText>Error: {error}</ThemedText>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.shelfCard}>
-      <View style={styles.bookRow}>
-        <View style={styles.books}>
-          {props.books.slice(0, 4).map((cover, index) => (
-            <Image key={index} source={cover} style={styles.bookCoverImage} />
-          ))}
-        </View>
-      </View>
-      <View style={[styles.shelfBg, { backgroundColor: shelfBg }]}>
-        <PercentageBarInline
-          percentage={props.percentage}
-          style={styles.percentageBar}
-        />
-        <View style={styles.shelfInfoContainer}>
-          <ThemedText
-            type="defaultSemiBold"
-            style={[styles.shelfTitle, { color: shelfTitleColor }]}
-          >
-            {props.shelfTitle}
-          </ThemedText>
-          <ThemedText style={[styles.bookCount, { color: shelfTitleColor }]}>
-            {props.books.length} Book{props.books.length>1? ('s'):('')}
-          </ThemedText>
-        </View>
-      </View>
+      {isLoading? (<Loading item={'books'}/>)
+      :
+      (
+        <><View style={styles.bookRow}>
+            <View style={styles.books}>
+              {/* Use the 'books' state variable and 'book.coverImage' */}
+              {books.slice(0, 4).map((book, index) => (
+                <Image
+                  key={book.id || index}
+                  source={book.coverImage} // Use the coverImage from the book object in state
+                  style={styles.bookCoverImage}
+                  onError={(e) => console.log(
+                    "Failed to load image:",
+                    book.coverImage,
+                    e.nativeEvent.error
+                  )} // Optional: for debugging image load errors
+                />
+              ))}
+              {books.length === 0 && !isLoading && (
+                <ThemedText style={styles.emptyShelfText}>
+                  No books on this shelf yet.
+                </ThemedText>
+              )}
+            </View>
+          </View><View style={[styles.shelfBg, { backgroundColor: shelfBg }]}>
+              <PercentageBarInline
+                percentage={overallProgress}
+                style={styles.percentageBar} />
+              <View style={styles.shelfInfoContainer}>
+                <ThemedText
+                  type="defaultSemiBold"
+                  style={[{ color: shelfTitleColor }]}
+                >
+                  {shelfTitle}
+                </ThemedText>
+                <ThemedText style={[styles.bookCount, { color: shelfTitleColor }]}>
+                  {books.length} Book{books.length !== 1 ? "s" : ""}
+                </ThemedText>
+              </View>
+            </View></>
+      )}
     </View>
   );
 }
@@ -44,18 +167,28 @@ const styles = StyleSheet.create({
     height: 185,
     position: "relative",
   },
+  centered: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
   bookRow: {
-    width: 315
+    width: 315,
   },
   books: {
     flexDirection: "row",
     zIndex: 1,
+    minHeight: 115, 
+  },
+  emptyShelfText: {
+    top: 80,
+    color: "white",
   },
   bookCoverImage: {
     width: 75,
     height: 115,
     borderRadius: 8,
     marginRight: 5,
+    backgroundColor: "#e0e0e0", // Placeholder color for images
   },
   shelfBg: {
     position: "absolute",

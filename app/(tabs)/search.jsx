@@ -66,7 +66,7 @@ export default function Search() {
   };
 
   return (
-    <PageView header="Search">
+    <PageView header="Search" type={'profile'}>
         <SafeAreaView style={{ flex: 1 }}>
           <View style={styles.searchBar}>
             <TextInput

@@ -20,7 +20,7 @@ init_community_socketio(socketio)
 app.register_blueprint(auth_bp, url_prefix="/auth")
 app.register_blueprint(download_bp, url_prefix="/download")
 app.register_blueprint(feedback_bp, url_prefix="/feedback")
-app.register_blueprint(shelves_bp, url_prefix="/shelves")
+app.register_blueprint(shelves_bp, url_prefix="/api/shelves")
 
 if __name__ == "__main__":
     import eventlet

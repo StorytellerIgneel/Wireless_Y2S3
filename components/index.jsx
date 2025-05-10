@@ -11,6 +11,7 @@ import ProfileOption from './ProfileOption';
 import ProfileSection from './ProfileSection';
 import Text from "./Text";
 import PercentageBar, { PercentageBarInline } from "./PercentageBar";
+import Loading from "./Loading";
 
 export {
   Button,
@@ -27,4 +28,5 @@ export {
   Text,
   PercentageBar,
   PercentageBarInline,
+  Loading
 };

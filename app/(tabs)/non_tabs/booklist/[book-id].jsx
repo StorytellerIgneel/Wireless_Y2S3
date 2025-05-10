@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
-  ScrollView,
   Image,
   StyleSheet,
   ActivityIndicator,
@@ -15,6 +14,7 @@ import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import DownloadButton from "../../../testgrounds"
+import { PageView } from "@/components";
 
 const { width } = Dimensions.get('window');
 
@@ -87,7 +87,7 @@ export default function BookDetailsScreen() {
   });
 
   return (
-    <View style={styles.container}>
+    <PageView style={styles.container} bodyStyle type={'back'} header={title}>
       <Animated.ScrollView
         contentContainerStyle={styles.scrollContent}
         scrollEventThrottle={16}
@@ -176,7 +176,7 @@ export default function BookDetailsScreen() {
 
         <DownloadButton id={id}/>
       </Animated.View>
-    </View>
+    </PageView>
   );
 }
 

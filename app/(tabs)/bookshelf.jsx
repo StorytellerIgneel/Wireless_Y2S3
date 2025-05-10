@@ -1,120 +1,199 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   Pressable,
   View,
   TextInput,
   Modal,
-  Platform,
-  UIManager,
-  LayoutAnimation,
 } from "react-native";
-import { PageView, Button } from "@/components";
+import { PageView, Button, Loading } from "@/components";
 import BookshelfCard from "@/components/bookshelf/BookshelfCard";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 
-// Enable animations for Android
-if (Platform.OS === "android") {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
-  }
-}
-
-// Sample book data - can be reused for all shelves or customized per shelf
-const sampleBooks = [
-  require("@/assets/images/bookImage.jpg"),
-  require("@/assets/images/bookImage.jpg"),
-  require("@/assets/images/bookImage.jpg"),
-  require("@/assets/images/bookImage.jpg"),
-  require("@/assets/images/bookImage.jpg"),
-];
-
-// Sample data for multiple bookshelves
-const initialBookshelfData = [
-  {
-    id: "1",
-    shelfTitle: "Currently Reading",
-    books: sampleBooks.slice(0, 3),
-    percentage: 75,
-  },
-  {
-    id: "2",
-    shelfTitle: "To Read",
-    books: sampleBooks.slice(0, 4),
-    percentage: 10,
-  },
-  {
-    id: "3",
-    shelfTitle: "Fantasy Collection",
-    books: sampleBooks.slice(0, 2),
-    percentage: 90,
-  },
-  {
-    id: "4",
-    shelfTitle: "Sci-Fi Adventures",
-    books: sampleBooks,
-    percentage: 45,
-  },
-];
-
 export default function Bookshelf() {
-  const [bookshelves, setBookshelves] = useState(initialBookshelfData);
+  const [bookshelves, setBookshelves] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
-  // New state variables for editing
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingShelf, setEditingShelf] = useState(null);
   const [editInputValue, setEditInputValue] = useState("");
 
   const icon = useThemeColor({}, "text");
   const router = useRouter();
+  const errorColor = useThemeColor({}, "error");
+  const userId = 2; // TO-DO: Replace thiss
 
-  const handleAddBookshelf = () => {
+  const fetchBookshelvesCallback = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_shelves`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userId }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          response: `HTTP error! status: ${response.status}`,
+        }));
+        throw new Error(
+          errorData.response || `HTTP error! status: ${response.status}`
+        );
+      }
+
+      const data = await response.json();
+      if (data.bookshelves && Array.isArray(data.bookshelves)) {
+        const formattedShelves = data.bookshelves
+          .map((shelfArray) => {
+            if (Array.isArray(shelfArray) && shelfArray.length >= 3) {
+              return {
+                id: shelfArray[0].toString(),
+              };
+            }
+            console.warn("Unexpected shelf format:", shelfArray);
+            return null;
+          })
+          .filter((shelf) => shelf !== null);
+
+        setBookshelves(formattedShelves);
+      } else {
+        setBookshelves([]);
+        if (
+          data.bookshelves === null ||
+          (Array.isArray(data.bookshelves) && data.bookshelves.length === 0)
+        ) {
+          // This is a valid empty response
+        } else {
+          console.warn(
+            "Received unexpected data.bookshelves format:",
+            data.bookshelves
+          );
+        }
+      }
+    } catch (e) {
+      console.error("Failed to fetch bookshelves:", e);
+      setError(
+        e.message || "An unexpected error occurred while fetching shelves."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchBookshelvesCallback();
+      return () => {};
+    }, [fetchBookshelvesCallback])
+  );
+
+  const handleAddBookshelf = async () => {
     if (inputValue.trim()) {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      const newShelf = {
-        id: `${Date.now()}`,
-        shelfTitle: inputValue,
-        books: [],
-        percentage: 0,
-      };
-      setBookshelves([...bookshelves, newShelf]);
-      setInputValue("");
-      setModalVisible(false);
+      try {
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/create`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId, name: inputValue.trim() }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({
+            response: `Failed to create shelf. Status: ${response.status}`,
+          }));
+          throw new Error(
+            errorData.response ||
+              `Failed to create shelf. Status: ${response.status}`
+          );
+        }
+        await fetchBookshelvesCallback();
+        setInputValue("");
+        setModalVisible(false);
+      } catch (apiError) {
+        console.error("Failed to add shelf via API", apiError);
+        setError(apiError.message || "Failed to add shelf.");
+      }
     }
   };
 
-  const deleteBookshelf = (id) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setBookshelves(bookshelves.filter((shelf) => shelf.id !== id));
+  const deleteBookshelf = async (id) => {
+    try {
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/delete`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId, id: id }),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          response: `Failed to delete shelf. Status: ${response.status}`,
+        }));
+        throw new Error(
+          errorData.response ||
+            `Failed to delete shelf. Status: ${response.status}`
+        );
+      }
+      await fetchBookshelvesCallback();
+    } catch (apiError) {
+      console.error("Failed to delete shelf via API", apiError);
+      setError(apiError.message || "Failed to delete shelf.");
+    }
   };
 
-  // New function to open edit modal
   const openEditModal = (shelf) => {
     setEditingShelf(shelf);
     setEditInputValue(shelf.shelfTitle);
     setEditModalVisible(true);
   };
 
-  // New function to save edited bookshelf name
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (editInputValue.trim() && editingShelf) {
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setBookshelves(
-        bookshelves.map((shelf) =>
-          shelf.id === editingShelf.id
-            ? { ...shelf, shelfTitle: editInputValue }
-            : shelf
-        )
-      );
-      setEditModalVisible(false);
-      setEditingShelf(null);
-      setEditInputValue("");
+      try {
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/update`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              user_id: userId,
+              id: editingShelf.id,
+              name: editInputValue.trim(),
+            }),
+          }
+        );
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({
+            response: `Failed to update shelf. Status: ${response.status}`,
+          }));
+          throw new Error(
+            errorData.response ||
+              `Failed to update shelf. Status: ${response.status}`
+          );
+        }
+        await fetchBookshelvesCallback();
+        setEditModalVisible(false);
+        setEditingShelf(null);
+        setEditInputValue("");
+      } catch (apiError) {
+        console.error("Failed to update shelf via API", apiError);
+        setError(apiError.message || "Failed to update shelf.");
+      }
     }
   };
 
@@ -122,18 +201,12 @@ export default function Bookshelf() {
     <Pressable
       key={item.id}
       android_ripple={{ color: "rgba(0, 0, 0, 0.20)", borderless: false }}
-      onPress={() => router.push(`/non_tabs/booklist/shelf/${item.id}`)}
+      onPress={() => router.push(`/(tabs)/non_tabs/booklist/shelf/${item.id}`)} // Corrected path
     >
-      <BookshelfCard
-        id={item.id}
-        books={item.books}
-        percentage={item.percentage}
-        shelfTitle={item.shelfTitle}
-      />
+      <BookshelfCard id={item.id} />
     </Pressable>
   );
 
-  // Updated to include both edit and delete buttons
   const renderHiddenItem = (data) => (
     <View style={styles.hiddenContainer}>
       <Pressable
@@ -151,20 +224,48 @@ export default function Bookshelf() {
     </View>
   );
 
+  if (error) {
+    return (
+      <PageView header="My Shelf" type={"profile"}>
+        <View style={styles.centeredMessageContainer}>
+          <ThemedText
+            style={{ color: errorColor, textAlign: "center", marginBottom: 10 }}
+          >
+            {error}
+          </ThemedText>
+          <Button title="Retry" onPress={fetchBookshelvesCallback} />
+        </View>
+      </PageView>
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <PageView header="My Shelf" bodyStyle={styles.container} type={"profile"}>
-        <SwipeListView
-          data={bookshelves}
-          renderItem={renderItem}
-          renderHiddenItem={renderHiddenItem}
-          keyExtractor={(item) => item.id}
-          rightOpenValue={-150}
-          disableLeftSwipe={false}
-          disableRightSwipe={true}
-          showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }}
-        />
+        {isLoading ? (
+          <Loading item={'shelves'}/> 
+        ) : (
+          bookshelves.length === 0 ? (
+            <View style={styles.centeredMessageContainer}>
+              <ThemedText>
+                No bookshelves found. Add one to get started!
+              </ThemedText>
+            </View>
+          ) : (
+            <SwipeListView
+              data={bookshelves}
+              renderItem={renderItem}
+              renderHiddenItem={renderHiddenItem}
+              keyExtractor={(item) => item.id}
+              rightOpenValue={-150}
+              disableLeftSwipe={false}
+              disableRightSwipe={true}
+              showsVerticalScrollIndicator={false}
+              style={{ flex: 1 }}
+            />
+          )
+        )}
+        
         {/* Modal for adding new bookshelf */}
         <Modal
           animationType="slide"
@@ -250,7 +351,7 @@ export default function Bookshelf() {
           </View>
         </Modal>
       </PageView>
-
+      
       <View style={styles.buttonWrapper}>
         <Button
           type={"secondary"}
@@ -268,6 +369,12 @@ export default function Bookshelf() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centeredMessageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
   },
   buttonWrapper: {
     position: "absolute",
@@ -325,7 +432,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    backgroundColor: "rgba(255, 255, 255, 1)",
+    backgroundColor: "white",
   },
   modalTitle: {
     fontSize: 18,
@@ -351,7 +458,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    margin: 5,
+    marginHorizontal: 5,
   },
   cancelButton: {
     backgroundColor: "#eee",

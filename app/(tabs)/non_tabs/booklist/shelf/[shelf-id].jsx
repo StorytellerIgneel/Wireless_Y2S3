@@ -1,153 +1,197 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react"; 
 import {
   View,
   StyleSheet,
   TouchableOpacity,
-  Platform,
-  UIManager,
-  LayoutAnimation,
+  Pressable, 
 } from "react-native";
-import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { PageView, Button, PercentageBarInline } from "@/components";
+import { useLocalSearchParams, useNavigation, useRouter, useFocusEffect } from "expo-router"; 
+import { PageView, Button, PercentageBarInline, Loading } from "@/components";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import BookListCard from "@/components/bookshelf/BookListCard";
 import { SwipeListView } from "react-native-swipe-list-view";
 
-// Enable animations for Android
-if (Platform.OS === "android") {
-  if (UIManager.setLayoutAnimationEnabledExperimental) {
-    UIManager.setLayoutAnimationEnabledExperimental(true);
+const calculateOverallProgress = (booksArray) => {
+  if (!booksArray || booksArray.length === 0) {
+    return 0; 
   }
-}
 
-const getBookshelfData = (shelfId) => {
-  // Sample data - replace with your actual data fetching logic
-  const sampleBooks = [
-    {
-      id: "1",
-      title: "Harry Potter and the Philosopher's Stone",
-      author: "J.K Rowling",
-      coverImage: require("@/assets/images/bookImage.jpg"),
-      progress: 40,
-    },
-    {
-      id: "2",
-      title: "Harry Potter and the Philosopher's Stone 2",
-      author: "J.K Rowling",
-      coverImage: require("@/assets/images/bookImage.jpg"),
-      progress: 30,
-    },
-    {
-      id: "3",
-      title: "Harry Potter and the Philosopher's Stone 3",
-      author: "J.K Rowling",
-      coverImage: require("@/assets/images/bookImage.jpg"),
-      progress: 10,
-    },
-    {
-      id: "4",
-      title: "Harry Potter and the Philosopher's Stone 4",
-      author: "J.K Rowling",
-      coverImage: require("@/assets/images/bookImage.jpg"),
-      progress: 20,
-    },
-    {
-      id: "5",
-      title: "Harry Potter and the Philosopher's Stone 4",
-      author: "J.K Rowling",
-      coverImage: require("@/assets/images/bookImage.jpg"),
-      progress: 20,
-    },
-  ];
+  const totalProgress = booksArray.reduce((sum, book) => {
+    const progress = typeof book.progress === 'number' ? book.progress : 0;
+    return sum + progress;
+  }, 0);
 
-  // Map shelf IDs to titles - replace with dynamic data as needed
-  const shelfTitles = {
-    1: "Currently Reading",
-    2: "To Read",
-    3: "Fantasy Collection",
-    4: "Sci-Fi Adventures",
-  };
-
-  return {
-    id: shelfId,
-    title: shelfTitles[shelfId] || "Bookshelf",
-    books: sampleBooks,
-    totalBooks: sampleBooks.length,
-    overallProgress: 30, // This would be calculated based on individual book progress
-  };
+  return Math.round(totalProgress / booksArray.length);
 };
 
 export default function BookshelfDetailScreen() {
-  const { "shelf-id": shelfId } = useLocalSearchParams();
+  const { "shelf-id": shelfIdParam, title: shelfTitleFromParams } = useLocalSearchParams();
   const navigation = useNavigation();
   const router = useRouter();
-  const [shelfData, setShelfData] = useState(null);
+
+  const [books, setBooks] = useState([]);
+  const [shelfTitle, setShelfTitle] = useState(shelfTitleFromParams || "Bookshelf");
+  const [isLoading, setIsLoading] = useState(true); // Set to true initially
+  const [error, setError] = useState(null);
+  const [overallProgress, setOverallProgress] = useState(0); 
+  
   const icon = useThemeColor({}, "text");
+  const errorColor = useThemeColor({}, "error");
+  const shelfId = parseInt(shelfIdParam); 
 
   useEffect(() => {
-    if (shelfId) {
-      const data = getBookshelfData(shelfId);
-      setShelfData(data);
-
-      navigation.setOptions({ title: data.title });
+    if (shelfTitle) {
+      navigation.setOptions({ title: shelfTitle });
     }
-  }, [shelfId]);
+  }, [shelfTitle, navigation]);
 
-  // Function to handle removing a book from the shelf
-  const handleRemoveBook = (bookId) => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+  const fetchBooksForShelfCallback = useCallback(async (currentShelfId) => {
+    if (!currentShelfId) {
+      setError("Shelf ID is missing for fetch.");
+      setIsLoading(false);
+      console.error("Shelf ID is missing for fetch:", currentShelfId);
+      return;
+    }
+    console.log(`Fetching books for shelf: ${currentShelfId} (from focus effect or direct call)`);
+    setIsLoading(true);
+    setError(null);
+    try {
+      const userId = 2; 
 
-    setShelfData((prevData) => {
-      const updatedBooks = prevData.books.filter((book) => book.id !== bookId);
-      return {
-        ...prevData,
-        books: updatedBooks,
-        totalBooks: updatedBooks.length,
-        // Recalculate overall progress when books change
-        overallProgress:
-          updatedBooks.length > 0
-            ? Math.round(
-                updatedBooks.reduce((sum, book) => sum + book.progress, 0) /
-                  updatedBooks.length
-              )
-            : 0,
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_books`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ shelf_id: currentShelfId, user_id: userId }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ response: `HTTP error! status: ${response.status}` }));
+        throw new Error(errorData.response || `HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.shelf_title && data.shelf_title !== shelfTitle) {
+        setShelfTitle(data.shelf_title);
+      }
+
+      if (data.books && Array.isArray(data.books)) {
+        const formattedBooks = data.books.map(book => ({
+          id: book.id.toString(),
+          title: book.title || "No Title",
+          author: book.authors && book.authors.length > 0 ? book.authors.map(a => a.name).join(', ') : "Unknown Author",
+          coverImage: book.formats && book.formats['image/jpeg'] ? { uri: book.formats['image/jpeg'] } : null, 
+          // TO-DO: Replace thissss
+          progress: book.progress || Math.floor(Math.random() * 101), 
+        }));
+        setBooks(formattedBooks);
+        setOverallProgress(calculateOverallProgress(formattedBooks)); 
+      } else {
+        setBooks([]);
+        setOverallProgress(0); 
+        console.warn("No books array found in response or it's not an array:", data);
+      }
+    } catch (e) {
+      console.error("Failed to fetch books for shelf:", e);
+      setError(e.message || "An unexpected error occurred while fetching books.");
+      setBooks([]); 
+      setOverallProgress(0);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [shelfTitle, navigation]); 
+
+  useFocusEffect(
+    useCallback(() => {
+      if (shelfId) {
+        fetchBooksForShelfCallback(shelfId);
+      } else {
+        setError("Shelf ID is missing.");
+        setIsLoading(false);
+        console.error("Shelf ID is missing from params on focus:", shelfIdParam);
+      }
+
+      return () => {
       };
+    }, [shelfId, fetchBooksForShelfCallback, shelfIdParam]) 
+  );
+
+  const handleRemoveBook = async (bookIdToRemove) => {
+    const originalBooks = [...books];
+    
+    const updatedBooks = originalBooks.filter(book => book.id !== bookIdToRemove);
+    setBooks(updatedBooks);
+    setOverallProgress(calculateOverallProgress(updatedBooks)); 
+
+    try {
+      const userId = 2; 
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/shelves/delete_books`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          shelf_id: shelfId, 
+          book_id: bookIdToRemove,
+          user_id: userId 
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ response: `Failed to remove book. Status: ${response.status}` }));
+        throw new Error(errorData.response || `Failed to remove book. Status: ${response.status}`);
+      }
+      
+      console.log("Book removed successfully from shelf:", shelfId, "book:", bookIdToRemove);
+
+    } catch (apiError) {
+      console.error("Failed to remove book via API:", apiError);
+      setBooks(originalBooks);
+      setOverallProgress(calculateOverallProgress(originalBooks)); 
+      alert(`Error removing book: ${apiError.message}`);
+    }
+  };
+
+  const handleAddBook = () => {
+    router.push({
+      pathname: "/(tabs)/non_tabs/booklist/shelf/addToShelf",
+      params: {
+        addingToShelfId: shelfId,
+        shelfTitle: shelfTitle 
+      }
     });
   };
 
-  // Navigate to search page when add button is pressed
-  const handleAddBook = () => {
-    // router.push("/non_tabs/search");
-    // add book
-  };
-
-  if (!shelfData) {
+  if (error) {
     return (
-      <PageView style={styles.container}>
-        <ThemedText>Loading...</ThemedText>
+      <PageView header={shelfTitle} type={"back"}>
+        <View style={styles.centeredMessageContainer}>
+          <ThemedText style={{ color: errorColor, textAlign: 'center', marginBottom: 10 }}>{error}</ThemedText>
+          <Button title="Retry" onPress={() => fetchBooksForShelf(shelfId)} />
+        </View>
       </PageView>
     );
   }
 
-  // Render each book item
   const renderItem = ({ item }) => (
-    <TouchableOpacity
-      onPress={() => router.push(`/non_tabs/booklist/${item.id}`)}
+    <Pressable
+      onPress={() => router.push(`(tabs)/non_tabs/booklist/${item.id}`)}
       style={{ width: "100%" }}
     >
       <BookListCard
         id={item.id}
         title={item.title}
         author={item.author}
-        coverImage={item.coverImage}
+        coverImage={item.coverImage} 
         progress={item.progress}
       />
-    </TouchableOpacity>
+    </Pressable>
   );
 
-  // Render the hidden delete button
   const renderHiddenItem = (data) => (
     <View style={styles.hiddenContainer}>
       <TouchableOpacity
@@ -159,16 +203,15 @@ export default function BookshelfDetailScreen() {
     </View>
   );
 
-  // Component to render as the header of the list
   const ListHeader = () => (
     <>
       <View style={styles.header}>
         <ThemedText type="defaultSemiBold" style={styles.bookCount}>
-          {shelfData.totalBooks} Book{shelfData.totalBooks > 1 ? "s" : ""}
+          {books.length} Book{books.length !== 1 ? "s" : ""}
         </ThemedText>
       </View>
       <View style={styles.progressBar}>
-        <PercentageBarInline percentage={shelfData.overallProgress} />
+        <PercentageBarInline percentage={overallProgress} /> 
       </View>
     </>
   );
@@ -177,22 +220,30 @@ export default function BookshelfDetailScreen() {
     <View style={{ flex: 1 }}>
       <PageView
         style={styles.container}
-        header={shelfData.title}
-        bodyStyle={{ flex: 1 }} // Ensures PageView's body area can expand
+        header={shelfTitle}
+        bodyStyle={{ flex: 1 }}
         type={"back"}
       >
+      {isLoading ? (
+        <Loading item={'bookshelf'}/>
+      ) : books.length === 0 ? (
+        <View style={styles.centeredMessageContainer}>
+          <ThemedText>This bookshelf is empty.</ThemedText>
+        </View>
+      ) : (
         <SwipeListView
-          data={shelfData.books}
+          data={books}
           renderItem={renderItem}
           renderHiddenItem={renderHiddenItem}
           keyExtractor={(item) => item.id}
-          ListHeaderComponent={ListHeader} // Add the header content here
+          ListHeaderComponent={ListHeader}
           rightOpenValue={-75}
-          disableLeftSwipe={false}
-          disableRightSwipe={true}
+          disableLeftSwipe={false} 
+          disableRightSwipe={true} 
           showsVerticalScrollIndicator={false}
-          style={{ flex: 1 }} // Make SwipeListView fill the available space in PageView's body
+          style={{ flex: 1 }}
         />
+      )}
       </PageView>
       <View style={styles.buttonWrapper}>
         <Button
@@ -212,52 +263,53 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  centeredMessageContainer: {
+    paddingHorizontal: 20,
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 5, // This margin will now be between bookCount and progressBar
-    // or below progressBar if it's the last item in ListHeader
+    paddingHorizontal: 16,
+    paddingVertical: 10,
   },
   bookCount: {
-    paddingHorizontal: 20, // Keep padding for content within the header
     fontSize: 16,
   },
   progressBar: {
-    paddingHorizontal: 20, // Keep padding for content within the header
-    marginBottom: 10, // Add some margin below the progress bar before the list starts
+    paddingHorizontal: 16,
+    marginBottom: 10,
   },
   hiddenContainer: {
-    alignItems: "flex-end",
+    alignItems: "center", 
+    backgroundColor: "red",
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
-    height: "100%",
-    marginBottom: 10,
+    height: '100%', 
   },
   deleteButton: {
-    height: 130,
     backgroundColor: "red",
     justifyContent: "center",
     alignItems: "center",
     width: 75,
+    height: '100%',
   },
   buttonWrapper: {
     position: "absolute",
     width: 55,
     height: 55,
     alignSelf: "center",
-    bottom: 10,
+    bottom: 20,
     borderRadius: 100,
-    overflow: "hidden",
+    elevation: 5,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 3,
-    elevation: 4,
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   addButton: {
-    marginTop: 0,
+    marginTop: 0, 
     width: 55,
     height: 55,
   },
