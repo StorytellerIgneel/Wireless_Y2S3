@@ -1,28 +1,12 @@
 import sqlite3
-from werkzeug.security import generate_password_hash
+
+with open("db.sql", "r") as f:
+    sql_script = f.read()
 
 conn = sqlite3.connect("database.sqlite3")
 cursor = conn.cursor()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    username TEXT UNIQUE NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    password TEXT NOT NULL,
-    phone_number TEXT NOT NULL
-)
-""")
-cursor.execute("""
-    CREATE TABLE IF NOT EXISTS feedbacks (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        feedback_type TEXT NOT NULL,
-        feedback_description TEXT NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
-    )
-""")
+cursor.executescript(sql_script)
 
 conn.commit()
 conn.close()

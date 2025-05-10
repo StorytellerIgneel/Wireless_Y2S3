@@ -175,3 +175,25 @@ def delete_book_from_shelf():
         return jsonify({"response": "Error: Database constraint violation"}), 400
     except sqlite3.Error as e:
         return jsonify({"response": f"Error: {e}"}), 400
+    
+@shelves_bp.route("/log_book", methods=["POST"])
+def log_book():
+    data = request.get_json()
+    if not data:
+        return jsonify({"response": "Error: Invalid request body"}), 400
+    
+    book_id = data.get("book_id")
+    user_id = data.get("user_id")
+
+    if not all([book_id, user_id]):
+        return jsonify({"response": "Error: Missing fields"}), 400
+
+    sql_insert = "INSERT INTO view_record (user_id, book_id) VALUES (?, ?)"
+
+    try:
+        db.execute_query(sql_insert, (book_id, ))
+        return jsonify({"response": "Book removed from shelf successfully"}), 201
+    except sqlite3.IntegrityError:
+        return jsonify({"response": "Error: Database constraint violation"}), 400
+    except sqlite3.Error as e:
+        return jsonify({"response": f"Error: {e}"}), 400
