@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useContext } from "react";
 import {
   StyleSheet,
   Pressable,
@@ -9,12 +9,15 @@ import {
 import { PageView, Button, Loading } from "@/components";
 import BookshelfCard from "@/components/bookshelf/BookshelfCard";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useRouter, useFocusEffect } from "expo-router";
+import { useRouter, useFocusEffect, Redirect } from "expo-router";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
+import UserContext from '@/context/UserContext';
 
 export default function Bookshelf() {
+  const { user } = useContext(UserContext);
+
   const [bookshelves, setBookshelves] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,11 +31,17 @@ export default function Bookshelf() {
   const icon = useThemeColor({}, "text");
   const router = useRouter();
   const errorColor = useThemeColor({}, "error");
-  const userId = 2; // TO-DO: Replace thiss
+  const userId = user ? user.id : -1; // TO-DO: Replace thiss
+
+  if (!user)
+    return <Redirect href="/auth/login" />
 
   const fetchBookshelvesCallback = useCallback(async () => {
     setIsLoading(true);
     setError(null);
+
+    console.log(`${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_shelves`);
+
     try {
       const response = await fetch(
         `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_shelves`,

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react"; 
+import React, { useState, useEffect, useCallback, useContext } from "react"; 
 import {
   View,
   StyleSheet,
@@ -12,6 +12,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Ionicons } from "@expo/vector-icons";
 import BookListCard from "@/components/bookshelf/BookListCard";
 import { SwipeListView } from "react-native-swipe-list-view";
+import UserContext from '@/context/UserContext';
 
 const calculateOverallProgress = (booksArray) => {
   if (!booksArray || booksArray.length === 0) {
@@ -30,6 +31,8 @@ export default function BookshelfDetailScreen() {
   const { "shelf-id": shelfIdParam, title: shelfTitleFromParams } = useLocalSearchParams();
   const navigation = useNavigation();
   const router = useRouter();
+
+  const { user } = useContext(UserContext);
 
   const [books, setBooks] = useState([]);
   const [shelfTitle, setShelfTitle] = useState(shelfTitleFromParams || "Bookshelf");
@@ -58,14 +61,12 @@ export default function BookshelfDetailScreen() {
     setIsLoading(true);
     setError(null);
     try {
-      const userId = 2; 
-
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_books`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ shelf_id: currentShelfId, user_id: userId }),
+        body: JSON.stringify({ shelf_id: currentShelfId, user_id: user.id }),
       });
 
       if (!response.ok) {
@@ -128,7 +129,6 @@ export default function BookshelfDetailScreen() {
     setOverallProgress(calculateOverallProgress(updatedBooks)); 
 
     try {
-      const userId = 2; 
       const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/api/shelves/delete_books`, {
         method: "POST",
         headers: {
@@ -137,7 +137,7 @@ export default function BookshelfDetailScreen() {
         body: JSON.stringify({ 
           shelf_id: shelfId, 
           book_id: bookIdToRemove,
-          user_id: userId 
+          user_id: user.id 
         }),
       });
 

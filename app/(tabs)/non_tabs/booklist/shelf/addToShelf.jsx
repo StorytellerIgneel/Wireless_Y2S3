@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useContext } from "react";
 import {
   View,
   Text,
@@ -16,8 +16,11 @@ import { useLocalSearchParams, useNavigation } from "expo-router";
 import { PageView, Button } from "@/components";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText } from "@/components/ThemedText";
+import UserContext from '@/context/UserContext';
 
 function AddToShelfBookItem({ item, shelfId, onBookAdded }) {
+  const { user } = useContext(UserContext);
+
   const [imageError, setImageError] = useState(false);
   const imageUrl = item.formats?.["image/jpeg"];
 
@@ -30,7 +33,6 @@ function AddToShelfBookItem({ item, shelfId, onBookAdded }) {
       return;
     }
     try {
-      const userId = 1; // TODO: Replaceeee this shiii
       console.log(
         `FRONTEND SENDING: Shelf ID: ${shelfId}, Book ID: ${item.id}, Title: ${item.title}`
       );
@@ -45,7 +47,7 @@ function AddToShelfBookItem({ item, shelfId, onBookAdded }) {
           body: JSON.stringify({
             shelf_id: parseInt(shelfId),
             book_id: item.id,
-            user_id: userId,
+            user_id: user.id,
           }),
         }
       );
