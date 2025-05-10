@@ -15,6 +15,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 3,
     elevation: 4,
+    justifyContent: "center", // center horizontally
+    alignItems: "center", // center vertically
   },
   text: {
     flex: 1,
@@ -38,6 +40,7 @@ const Button = ({
   icon,
   style,
   rounded,
+  circle,
   ...props
 }) => {
   const btn_primary = useThemeColor({}, "btn_primary");
@@ -65,7 +68,10 @@ const Button = ({
 
   return (
     <Pressable
-      android_ripple={{ color: "rgba(255, 255, 255, 0.25)", borderless: false }}
+      android_ripple={{
+        color: "rgba(255, 255, 255, 0.25)",
+        borderless: false,
+      }}
       disabled={false}
       style={[
         active
@@ -97,6 +103,10 @@ const Button = ({
           ? {
               borderRadius: 20,
             }
+          : circle
+          ? {
+              borderRadius: 100,
+            }
           : {
               borderRadius: 8,
             },
@@ -105,39 +115,41 @@ const Button = ({
       ]}
       {...props}
     >
-      {icon && <Icon name={icon} style={styles.icon} />}
-      <Text
-        style={[
-          active
-            ? {
-                color:
-                  activeColor ?? type == "primary"
-                    ? btn_primary
-                    : type == "secondary"
-                    ? btn_secondary
-                    : type == "link"
-                    ? btn_link
-                    : type == "danger"
+      {icon && <Icon name={icon} style={[styles.icon, { color }]} />}
+      {title && (
+        <Text
+          style={[
+            active
+              ? {
+                  color:
+                    activeColor ?? type == "primary"
+                      ? btn_primary
+                      : type == "secondary"
+                      ? btn_secondary
+                      : type == "link"
+                      ? btn_link
+                      : type == "danger"
                     ? btn_danger
                     : btn_primary,
-              }
-            : {
-                color:
-                  color ?? type == "primary"
-                    ? btn_primary_inactive
-                    : type == "secondary"
-                    ? btn_secondary_inactive
-                    : type == "link"
-                    ? btn_link_inactive
-                    : type == "danger"
+                }
+              : {
+                  color:
+                    color ?? type == "primary"
+                      ? btn_primary_inactive
+                      : type == "secondary"
+                      ? btn_secondary_inactive
+                      : type == "link"
+                      ? btn_link_inactive
+                      : type == "danger"
                     ? btn_danger_inactive
                     : btn_primary_inactive,
-              },
-          styles.text,
-        ]}
-      >
-        {title}
-      </Text>
+                },
+            styles.text,
+          ]}
+        >
+          {title}
+        </Text>
+      )}
     </Pressable>
   );
 };

@@ -1,9 +1,12 @@
 import { Stack } from 'expo-router';
+
 export default function BooklistLayout() {
   return(
-    <Stack screenOptions={{ 
-      headerShown: true,
-      headerBackTitleVisible: false,
-    }}/>
+    <Stack 
+      screenOptions={{ 
+        headerShown: false,
+        headerBackVisible: false, 
+      }}
+    />
   ); 
 }

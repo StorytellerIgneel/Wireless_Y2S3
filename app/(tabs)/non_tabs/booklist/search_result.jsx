@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  ActivityIndicator,
   FlatList,
   StyleSheet,
   SafeAreaView,
@@ -11,6 +10,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
+import Loading from '@/components';
 
 function BookItem({ item }) {
   const [imageError, setImageError] = useState(false);
@@ -110,7 +110,7 @@ export default function BookListScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {loading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+        <Loading item={'books'}/>
       ) : (
         <FlatList
           data={books}

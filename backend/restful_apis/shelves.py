@@ -31,15 +31,15 @@ def create_new_shelf():
         return jsonify({"response": "Error: Invalid request body"}), 400
 
     user_id = data.get("user_id")
-    shelf_name = data.get("shelf_name")
+    name = data.get("name")
 
-    if not all([user_id, shelf_name]):
+    if not all([user_id, name]):
         return jsonify({"response": "Error: Missing fields"}), 400
 
-    sql = "INSERT into shelves (user_id, shelf_name) VALUES (?, ?)"
+    sql = "INSERT into shelves (user_id, name) VALUES (?, ?)"
 
     try:
-        db.execute_query(sql, (user_id, shelf_name))
+        db.execute_query(sql, (user_id, name))
         return jsonify({"response": "Book shelf created successfully", "status": "success"}), 201
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
@@ -52,17 +52,17 @@ def update_shelf_name():
     if not data:
         return jsonify({"response": "Error: Invalid request body"}), 400
     
-    shelf_id = data.get("shelf_id")
+    id = data.get("id")
     user_id = data.get("user_id")
-    new_shelf_name = data.get("shelf_name")
+    name = data.get("name")
 
-    if not all([shelf_id, new_shelf_name, user_id]):
+    if not all([id, name, user_id]):
         return jsonify({"response": "Error: Missing fields"}), 400
 
     sql_check = "SELECT * FROM shelves WHERE id = ? and user_id = ?"
 
     try:
-        result = db.fetch_one(sql_check, (shelf_id, user_id))
+        result = db.fetch_one(sql_check, (id, user_id))
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
     except sqlite3.Error:
@@ -71,10 +71,10 @@ def update_shelf_name():
     if result is None:
         return jsonify({"response": "Error: Shelf does not exist"}), 404
 
-    sql = "UPDATE shelves SET shelf_name = ? WHERE id = ?"
+    sql = "UPDATE shelves SET name = ? WHERE id = ?"
 
     try:
-        db.execute_query(sql, (new_shelf_name, shelf_id))
+        db.execute_query(sql, (name, id))
         return jsonify({"response": "Shelf name updated successfully"}), 201
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
@@ -87,16 +87,16 @@ def delete_shelf():
     if not data:
         return jsonify({"response": "Error: Invalid request body"}), 400
     
-    shelf_id = data.get("shelf_id")
+    id = data.get("id")
     user_id = data.get("user_id")
 
-    if not all([shelf_id, user_id]):
+    if not all([id, user_id]):
         return jsonify({"response": "Error: Missing fields"}), 400
 
     sql_check = "SELECT * FROM shelves WHERE id = ? and user_id = ?"
 
     try:
-        result = db.fetch_one(sql_check, (shelf_id, user_id))
+        result = db.fetch_one(sql_check, (id, user_id))
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
     except sqlite3.Error:
@@ -108,7 +108,7 @@ def delete_shelf():
     sql = "DELETE from shelves WHERE id = ? and user_id = ?"
 
     try:
-        db.execute_query(sql, (shelf_id, user_id))
+        db.execute_query(sql, (id, user_id))
         return jsonify({"response": "Shelf deleted successfully"}), 201
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
@@ -118,36 +118,65 @@ def delete_shelf():
 @shelves_bp.route("/get_books", methods=["POST"])
 def get_shelf_books():
     shelf_id = request.get_json().get("shelf_id")
+    # user_id = request.get_json().get("user_id") # You might need this for auth or other logic
 
     if not shelf_id:
         return jsonify({"response": "Error: Invalid request body"}), 400
 
-    sql = "SELECT * FROM shelf_books WHERE shelf_id = ?"
+    sql = "SELECT * FROM shelf_books WHERE shelf_id = ?" 
 
     try:
-        books = db.fetch_all(sql, (shelf_id, ))
-        return jsonify({"books": books, "response": "Bookshelves retrieved succesfully"}), 201
-    except sqlite3.IntegrityError:
-        return jsonify({"response": "Error: Database constraint violation"}), 400
+        books_on_shelf_raw = db.fetch_all(sql, (shelf_id, )) # e.g., [(1, 101), (1, 102)] if columns are shelf_id, book_id
+
+        detailed_books = []
+        for row in books_on_shelf_raw:
+            book_id_from_db = row[2] 
+            
+            # Fetch from Gutendex
+            gutendex_url = f"https://gutendex.com/books/{book_id_from_db}"
+            try:
+                response = requests.get(gutendex_url)
+                response.raise_for_status() 
+                book_details = response.json()
+                detailed_books.append(book_details)
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching book {book_id_from_db} from Gutendex: {e}")
+                continue 
+            except ValueError:
+                print(f"Error decoding JSON for book {book_id_from_db} from Gutendex.")
+                continue
+
+
+        shelf_info_sql = "SELECT name FROM shelves WHERE id = ?"
+        shelf_info = db.fetch_one(shelf_info_sql, (shelf_id,))
+        shelf_name = shelf_info[0] if shelf_info else "Unknown Shelf"
+
+        return jsonify({"books": detailed_books, "shelf_title": shelf_name, "response": "Books retrieved successfully"}), 200 # Changed to 200 OK
     except sqlite3.Error as e:
-        return jsonify({"response": f"Error: {e}"}), 400
-    
+        print(f"Database error in get_shelf_books: {e}")
+        return jsonify({"response": f"Error: Database operation failed: {e}"}), 500
+    except Exception as e: 
+        print(f"Unexpected error in get_shelf_books: {e}")
+        return jsonify({"response": f"Error: An unexpected error occurred: {e}"}), 500
+
 @shelves_bp.route("/add_books", methods=["POST"])    
 def add_book_to_shelf():
     data = request.get_json()
-
     if not data:
-        return jsonify({"response": "Error: Invalid request body"}), 400
-    
+        return jsonify({"message": "Request must be JSON"}), 400
+
     shelf_id = data.get("shelf_id")
     book_id = data.get("book_id")
+    user_id = data.get("user_id") 
 
-    if not all([shelf_id, book_id]):
-        return jsonify({"response": "Error: Missing fields"}), 400
+    print(f"Received add_books request: shelf_id={shelf_id}, book_id={book_id}, user_id={user_id}") # Backend log
 
-    sql_insert = "INSERT INTO shelf_books (shelf_id, book_id) VALUES (?, ?)"
+    if not all([shelf_id, book_id, user_id]): # Or whatever fields are mandatory
+        return jsonify({"message": "Missing shelf_id, book_id, or user_id"}), 400
+
+    sql_insert = "INSERT INTO shelf_books (user_id, shelf_id, book_id) VALUES (?, ?, ?)"
     try:
-        db.execute_query(sql_insert, (shelf_id, book_id))
+        db.execute_query(sql_insert, (user_id, shelf_id, book_id))
         return jsonify({"response": "Book added to shelf successfully"}), 201
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
