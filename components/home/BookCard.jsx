@@ -10,9 +10,6 @@ const BookCard = (props) => {
 
   return (
     <View style={styles.cardWrapper}>
-      <Pressable
-        android_ripple={{ color: "#e0e0e0", borderless: false }}
-      >
         <View style={styles.contentContainer}>
           <Image 
             source={props.source || bookCoverImage} 
@@ -21,14 +18,13 @@ const BookCard = (props) => {
           <ThemedText type="default" style={[styles.title, { color: colors.text }]} numberOfLines={2}>{props.title}</ThemedText>
           <ThemedText type='subtitleGrey' numberOfLines={1}>{props.author}</ThemedText>
         </View>
-      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   cardWrapper: {
-    width: 167,
+    width: 150,
     borderRadius: 6,
     overflow: 'hidden',
   },

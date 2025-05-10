@@ -6,7 +6,9 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
+import { useRouter } from "expo-router";
 import ContinueReading from "@/components/home/ContinueReading";
 import { ThemedText } from "@/components/ThemedText";
 import PageView from "@/components/PageView";
@@ -16,6 +18,7 @@ import BookCard from "@/components/home/BookCard";
 const Home = () => {
   const colors = Colors.light;
   const errorColor = useThemeColor({}, "error");
+  const router = useRouter(); // Get router instance
   const [bestBooks, setBestBooks] = useState([]);
   const [fictionBooks, setFictionBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -66,7 +69,7 @@ const Home = () => {
   // show loading indicator while fetching data
   if (isLoading) {
     return (
-      <PageView header="For You">
+      <PageView header="For You" type={"profile"}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.light.btn_bg_primary} />
           <Text style={[styles.loadingText]}>Loading books...</Text>
@@ -78,7 +81,7 @@ const Home = () => {
   // Show error message if fetch failed
   if (error) {
     return (
-      <PageView header="For You">
+      <PageView header="For You" type={"profile"}>
         <View style={styles.errorContainer}>
           <Text style={[styles.errorText, { color: errorColor }]}>{error}</Text>
         </View>
@@ -87,7 +90,7 @@ const Home = () => {
   }
 
   return (
-    <PageView header="For You" bodyStyle={{ flex: 1 }} type={'profile'}>
+    <PageView header="For You" bodyStyle={{ flex: 1 }} type={"profile"}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.contentContainer}>
           {/* Continue Reading section */}
@@ -120,15 +123,22 @@ const Home = () => {
               horizontal={true}
               style={styles.sectionContainer}
               showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled" // Add this prop
             >
               {bestBooks.map((book) => (
-                <View key={book.id}>
+                <TouchableOpacity
+                  key={book.id}
+                  onPress={() => {
+                    const path = `/(tabs)/non_tabs/booklist/${book.id}`;
+                    router.push(path);
+                  }}
+                >
                   <BookCard
                     title={book.title}
                     author={book.author}
                     source={book.coverImage ? { uri: book.coverImage } : null}
                   />
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
@@ -145,15 +155,24 @@ const Home = () => {
               horizontal={true}
               style={styles.sectionContainer}
               showsHorizontalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled" // Add this prop
             >
               {fictionBooks.map((book) => (
-                <View key={book.id}>
+                <TouchableOpacity
+                  key={book.id}
+                  onPress={() => {
+                    console.log("Attempting to navigate. Book ID:", book.id);
+                    const path = `/(tabs)/non_tabs/booklist/${book.id}`;
+                    console.log("Constructed path:", path);
+                    router.push(path);
+                  }}
+                >
                   <BookCard
                     title={book.title}
                     author={book.author}
                     source={book.coverImage ? { uri: book.coverImage } : null}
                   />
-                </View>
+                </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
@@ -188,7 +207,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   loadingContainer: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
