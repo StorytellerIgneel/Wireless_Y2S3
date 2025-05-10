@@ -22,6 +22,7 @@ export const UserProvider = ({ children }, ...props) => {
     const saveUser = async (userInfo) => {
         try {
             await AsyncStorage.multiSet([
+                ['id', userInfo.id],
                 ['username', userInfo.username],
                 ['email', userInfo.email],
                 ['phone', userInfo.phone],
@@ -37,7 +38,7 @@ export const UserProvider = ({ children }, ...props) => {
 
     const clearUser = async () => {
         try {
-            await AsyncStorage.multiRemove('username', 'email', 'phone', 'password');
+            await AsyncStorage.multiRemove('id', 'username', 'email', 'phone', 'password');
 
             return true;
         } catch (err) {
@@ -49,15 +50,16 @@ export const UserProvider = ({ children }, ...props) => {
     // Load saved user details
     const loadUser = async () => {
         try {
-            const keys = await AsyncStorage.multiGet(['username', 'email', 'phone', 'password']);
+            const keys = await AsyncStorage.multiGet(['id', 'username', 'email', 'phone', 'password']);
 
             if (keys.find(pair => pair[1] == null))
                 return false;
 
-            const username = keys[0][1];
-            const email = keys[1][1];
-            const phone = keys[2][1];
-            const password = keys[3][1];
+            const id = keys[0][1];
+            const username = keys[1][1];
+            const email = keys[2][1];
+            const phone = keys[3][1];
+            const password = keys[4][1];
 
             const response = await axios.post(`${API_URL}/auth/login`, {
                 username,
@@ -65,6 +67,9 @@ export const UserProvider = ({ children }, ...props) => {
             });
 
             // Make sure client not trying to bypass
+            if (response.data.id !== id)
+                return false;
+
             if (response.data.email !== email)
                 return false;
 
@@ -72,6 +77,7 @@ export const UserProvider = ({ children }, ...props) => {
                 return false;
 
             loginUser({
+                id,
                 username,
                 email,
                 phone

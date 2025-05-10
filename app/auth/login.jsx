@@ -96,6 +96,7 @@ export default function Login() {
       });
 
       loginUser({
+        id: response.data.id,
         username: username,
         email: response.data.email,
         phone: response.data.phone
@@ -103,6 +104,7 @@ export default function Login() {
 
       if (rememberMe) {
         saveUser({
+          id: response.data.id,
           username: username,
           email: response.data.email,
           phone: response.data.phone,
