@@ -4,13 +4,12 @@ import {
   Text,
   FlatList,
   StyleSheet,
-  SafeAreaView,
   Image,
   Pressable,
 } from 'react-native';
 import axios from 'axios';
 import { useLocalSearchParams, useNavigation, useRouter } from 'expo-router';
-import Loading from '@/components';
+import {Loading, PageView} from '@/components';
 
 function BookItem({ item }) {
   const [imageError, setImageError] = useState(false);
@@ -108,7 +107,7 @@ export default function BookListScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <PageView style={styles.container} header={genre} type={'back'}>
       {loading ? (
         <Loading item={'books'}/>
       ) : (
@@ -119,7 +118,7 @@ export default function BookListScreen() {
           ListEmptyComponent={<Text>No books found.</Text>}
         />
       )}
-    </SafeAreaView>
+    </PageView>
   );
 }
 
