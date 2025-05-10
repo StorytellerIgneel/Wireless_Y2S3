@@ -45,13 +45,7 @@ def init_community_socketio(io: SocketIO):
         print(f"{username} joined room: {room}")
 
     def get_chat_history(room):
-        # Extract room_id from the string "room-1342"
-        match = re.search(r"room-(\d+)", room)
-
-        if match:
-            room_id = match.group(1)  # This will be the number part, e.g. '1342'
-            print(room_id)  # Output: 1342
-
+        print("argument passed: ", room[5:])
         # Use room_id for querying the database
         query = """
         SELECT users.username, messages.msg
@@ -63,8 +57,8 @@ def init_community_socketio(io: SocketIO):
         """
 
         # Fetch the chat history for the extracted room_id
-        result = db.fetch_all(query, (room_id,))  # Use room_id as the parameter
-        print(result)  # Optional, to see the result in the console
+        result = db.fetch_all(query, (room[5:],))  # Use room_id as the parameter
+        print("chat history: ", result)  # Optional, to see the result in the console
 
         # Return a formatted response
         return [{"username": row[0], "msg": row[1]} for row in result]
@@ -103,6 +97,7 @@ def init_community_socketio(io: SocketIO):
         msg = data['msg']
         username = data['username']
         user_id = data["user_id"]
+        print(user_rooms)
         room = user_rooms[request.sid]
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 

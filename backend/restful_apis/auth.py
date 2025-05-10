@@ -10,12 +10,6 @@ from werkzeug.security import generate_password_hash, check_password_hash  # Sec
 
 auth_bp = Blueprint("auth", __name__)
 
-# Database connection function
-DATABASE = os.path.join(os.getcwd(), "database.sqlite3")
-
-def get_db_connection():
-    return sqlite3.connect(DATABASE, check_same_thread=False)
-
 # Login route
 @auth_bp.route("/login", methods=["POST"])
 def login():
@@ -30,11 +24,7 @@ def login():
         return jsonify({"response": "Error: Missing fields"}), 400
 
     sql = "SELECT password, user_id, email, phone_number FROM users WHERE username = ?"
-    
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(sql, (username,)) #prevent sql injection
-        result = cursor.fetchone()
+    result = db.fetch_one(sql, (username,))
 
     if result is None:
         return jsonify({"response": "Error: User does not exist"}), 404
@@ -61,30 +51,24 @@ def register():
     sql_check = "SELECT password, username, email, phone_number FROM users WHERE username = ? OR email = ? OR phone_number = ?"
     sql_insert = "INSERT INTO users (username, email, password, phone_number) VALUES (?, ?, ?, ?)"
 
-    with get_db_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute(sql_check, (username, email, phone_number))
-        result = cursor.fetchone()
+    result = db.fetch_one(sql_check, (username, email, phone_number))
+    if result:
+        if result[1] == username:
+            return jsonify({"response": "Error: Username already registered"}), 409
+        elif result[2] == email:
+            return jsonify({"response": "Error: E-mail already registered"}), 409
+        else:
+            return jsonify({"response": "Error: Phone number already registered"}), 409
 
-        if result:
-            if result[1] == username:
-                return jsonify({"response": "Error: Username already registered"}), 409
-            elif result[2] == email:
-                return jsonify({"response": "Error: E-mail already registered"}), 409
-            else:
-                return jsonify({"response": "Error: Phone number already registered"}), 409
-
-        try:
-            hashed_password = generate_password_hash(password)  # Hash password
-            values = (username, email, hashed_password, phone_number)
-            cursor.execute(sql_insert, values)
-            id = cursor.lastrowid
-            conn.commit()
-            return jsonify({"response": "Registration successful", "id": str(id)}), 201
-        except sqlite3.IntegrityError:
-            return jsonify({"response": "Error: Database constraint violation"}), 400
-        except sqlite3.Error as e:
-            return jsonify({"response": f"Error: {e}"}), 400
+    try:
+        hashed_password = generate_password_hash(password)  # Hash password
+        values = (username, email, hashed_password, phone_number)
+        id = db.get_last_row(sql_insert, values)
+        return jsonify({"response": "Registration successful", "id": str(id)}), 201
+    except sqlite3.IntegrityError:
+        return jsonify({"response": "Error: Database constraint violation"}), 400
+    except sqlite3.Error as e:
+        return jsonify({"response": f"Error: {e}"}), 400
 
 # set up for recovery codes
 recovery_codes = {}
@@ -208,21 +192,14 @@ def reset_password():
     recovery_timers.clear()
     recovery_timers.pop(email, None)
     recovery_codes.pop(email, None)
-
-    sql_update = "UPDATE users SET password = ? WHERE email = ?"
-
     try:
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-
-            hashed_password = generate_password_hash(newPassword)  # Hash password
-            cursor.execute(sql_update, (hashed_password, email))
-            conn.commit()
-
-            if cursor.rowcount > 0:
-                return jsonify({"response": "New password updated"}), 200
-            else:
-                return jsonify({"response": "Error: Email not found"}), 404
+        rows_updated = db.update_password(email, newPassword)
+        if rows_updated > 0:
+            return jsonify({"response": "New password updated"}), 200
+        elif rows_updated == 0:
+            return jsonify({"response": "Error: Email not found"}), 404
+        else:
+            return jsonify({"response": "Error: Email not found"}), 404
     except sqlite3.IntegrityError as e:
         print(e)
         return jsonify({"response": "Error: Database constraint violation"}), 400

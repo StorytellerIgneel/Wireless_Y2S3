@@ -42,7 +42,7 @@ export default function Rooms() {
   const joinRoom = () => {
     const parsedUserID = parseInt(user.id);
     if (room && user.username && !isNaN(parsedUserID)) {
-      socket.emit('join_room', { room, username: user.username, user_id: parsedUserID });
+      socket.emit('join_room', { room_id: room, username: user.username, user_id: parsedUserID });
       setJoined(true);
     }
   };

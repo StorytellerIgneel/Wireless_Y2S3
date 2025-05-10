@@ -12,6 +12,7 @@ export default function Rooms({user_id, username, book_id}) {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
+    joinRoom();
     socket.on('chat_history', (data) => {
       setMessages(data.history);
     });

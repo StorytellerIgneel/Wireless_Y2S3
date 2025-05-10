@@ -2,7 +2,6 @@ from flask import Flask
 from flask_cors import CORS
 from flask_socketio import SocketIO
 from restful_apis.auth import auth_bp
-from restful_apis.download import download_bp
 from restful_apis.feedback import feedback_bp
 from restful_apis.shelves import shelves_bp
 from websocket_apis.chatbot import init_chatbot_socketio
@@ -18,7 +17,6 @@ init_community_socketio(socketio)
 
 #register blueprint for RESTfuls
 app.register_blueprint(auth_bp, url_prefix="/auth")
-app.register_blueprint(download_bp, url_prefix="/download")
 app.register_blueprint(feedback_bp, url_prefix="/feedback")
 app.register_blueprint(shelves_bp, url_prefix="/shelves")
 
