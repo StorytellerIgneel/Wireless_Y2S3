@@ -29,7 +29,7 @@ def login():
     if not all([username, password]):
         return jsonify({"response": "Error: Missing fields"}), 400
 
-    sql = "SELECT password, email, phone_number FROM users WHERE username = ?"
+    sql = "SELECT password, id, email, phone_number FROM users WHERE username = ?"
     
     with get_db_connection() as conn:
         cursor = conn.cursor()
@@ -39,7 +39,7 @@ def login():
     if result is None:
         return jsonify({"response": "Error: User does not exist"}), 404
     elif check_password_hash(result[0], password):  # Secure password check
-        return jsonify({"response": "Login successful", "email": result[1], "phone": result[2]}), 200
+        return jsonify({"response": "Login successful", "id": str(result[1]), "email": result[2], "phone": result[3]}), 200
     else:
         return jsonify({"response": "Error: Incorrect password"}), 401
 
@@ -78,8 +78,9 @@ def register():
             hashed_password = generate_password_hash(password)  # Hash password
             values = (username, email, hashed_password, phone_number)
             cursor.execute(sql_insert, values)
+            id = cursor.lastrowid
             conn.commit()
-            return jsonify({"response": "Registration successful"}), 201
+            return jsonify({"response": "Registration successful", "id": str(id)}), 201
         except sqlite3.IntegrityError:
             return jsonify({"response": "Error: Database constraint violation"}), 400
         except sqlite3.Error as e:
