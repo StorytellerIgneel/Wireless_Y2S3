@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Pressable, View, TextInput, Modal, Platform, UIManager, LayoutAnimation } from "react-native";
+import {
+  StyleSheet,
+  Pressable,
+  View,
+  TextInput,
+  Modal,
+  Platform,
+  UIManager,
+  LayoutAnimation,
+} from "react-native";
 import { PageView, Button } from "@/components";
 import BookshelfCard from "@/components/bookshelf/BookshelfCard";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -9,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { ThemedText } from "@/components/ThemedText";
 
 // Enable animations for Android
-if (Platform.OS === 'android') {
+if (Platform.OS === "android") {
   if (UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
   }
@@ -54,14 +63,14 @@ const initialBookshelfData = [
 
 export default function Bookshelf() {
   const [bookshelves, setBookshelves] = useState(initialBookshelfData);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
-  
+
   // New state variables for editing
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [editingShelf, setEditingShelf] = useState(null);
-  const [editInputValue, setEditInputValue] = useState('');
-  
+  const [editInputValue, setEditInputValue] = useState("");
+
   const icon = useThemeColor({}, "text");
   const router = useRouter();
 
@@ -75,14 +84,14 @@ export default function Bookshelf() {
         percentage: 0,
       };
       setBookshelves([...bookshelves, newShelf]);
-      setInputValue('');
+      setInputValue("");
       setModalVisible(false);
     }
   };
 
   const deleteBookshelf = (id) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setBookshelves(bookshelves.filter(shelf => shelf.id !== id));
+    setBookshelves(bookshelves.filter((shelf) => shelf.id !== id));
   };
 
   // New function to open edit modal
@@ -96,14 +105,16 @@ export default function Bookshelf() {
   const handleSaveEdit = () => {
     if (editInputValue.trim() && editingShelf) {
       LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setBookshelves(bookshelves.map(shelf => 
-        shelf.id === editingShelf.id 
-          ? { ...shelf, shelfTitle: editInputValue } 
-          : shelf
-      ));
+      setBookshelves(
+        bookshelves.map((shelf) =>
+          shelf.id === editingShelf.id
+            ? { ...shelf, shelfTitle: editInputValue }
+            : shelf
+        )
+      );
       setEditModalVisible(false);
       setEditingShelf(null);
-      setEditInputValue('');
+      setEditInputValue("");
     }
   };
 
@@ -141,18 +152,105 @@ export default function Bookshelf() {
   );
 
   return (
-    <PageView header="My Shelf" bodyStyle={styles.container}>
-      <SwipeListView
-        data={bookshelves}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        keyExtractor={(item) => item.id}
-        rightOpenValue={-150}  // Updated to make space for both buttons
-        disableLeftSwipe={false}
-        disableRightSwipe={true}
-        showsVerticalScrollIndicator={false}
-      />
-      
+    <View style={{ flex: 1 }}>
+      <PageView header="My Shelf" bodyStyle={styles.container} type={"profile"}>
+        <SwipeListView
+          data={bookshelves}
+          renderItem={renderItem}
+          renderHiddenItem={renderHiddenItem}
+          keyExtractor={(item) => item.id}
+          rightOpenValue={-150}
+          disableLeftSwipe={false}
+          disableRightSwipe={true}
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }}
+        />
+        {/* Modal for adding new bookshelf */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={[styles.modalContent]}>
+              <ThemedText style={styles.modalTitle}>
+                Add New Bookshelf
+              </ThemedText>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Bookshelf name"
+                value={inputValue}
+                onChangeText={setInputValue}
+                placeholderTextColor="#999"
+              />
+
+              <View style={styles.modalButtons}>
+                <Pressable
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => {
+                    setModalVisible(false);
+                    setInputValue("");
+                  }}
+                >
+                  <ThemedText>Cancel</ThemedText>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.modalButton, styles.addButton2]}
+                  onPress={handleAddBookshelf}
+                >
+                  <ThemedText style={styles.addButtonText}>Add</ThemedText>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* New modal for editing bookshelf name */}
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={editModalVisible}
+          onRequestClose={() => setEditModalVisible(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={[styles.modalContent]}>
+              <ThemedText style={styles.modalTitle}>Edit Bookshelf</ThemedText>
+
+              <TextInput
+                style={styles.input}
+                placeholder="Bookshelf name"
+                value={editInputValue}
+                onChangeText={setEditInputValue}
+                placeholderTextColor="#999"
+              />
+
+              <View style={styles.modalButtons}>
+                <Pressable
+                  style={[styles.modalButton, styles.cancelButton]}
+                  onPress={() => {
+                    setEditModalVisible(false);
+                    setEditingShelf(null);
+                    setEditInputValue("");
+                  }}
+                >
+                  <ThemedText>Cancel</ThemedText>
+                </Pressable>
+
+                <Pressable
+                  style={[styles.modalButton, styles.addButton2]}
+                  onPress={handleSaveEdit}
+                >
+                  <ThemedText style={styles.addButtonText}>Save</ThemedText>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </Modal>
+      </PageView>
+
       <View style={styles.buttonWrapper}>
         <Button
           type={"secondary"}
@@ -163,90 +261,7 @@ export default function Bookshelf() {
           onPress={() => setModalVisible(true)}
         />
       </View>
-
-      {/* Modal for adding new bookshelf */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent]}>
-            <ThemedText style={styles.modalTitle}>Add New Bookshelf</ThemedText>
-            
-            <TextInput
-              style={styles.input}
-              placeholder="Bookshelf name"
-              value={inputValue}
-              onChangeText={setInputValue}
-              placeholderTextColor="#999"
-            />
-            
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => {
-                  setModalVisible(false);
-                  setInputValue('');
-                }}
-              >
-                <ThemedText>Cancel</ThemedText>
-              </Pressable>
-              
-              <Pressable
-                style={[styles.modalButton, styles.addButton2]}
-                onPress={handleAddBookshelf}
-              >
-                <ThemedText style={styles.addButtonText}>Add</ThemedText>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-
-      {/* New modal for editing bookshelf name */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={editModalVisible}
-        onRequestClose={() => setEditModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={[styles.modalContent]}>
-            <ThemedText style={styles.modalTitle}>Edit Bookshelf</ThemedText>
-            
-            <TextInput
-              style={styles.input}
-              placeholder="Bookshelf name"
-              value={editInputValue}
-              onChangeText={setEditInputValue}
-              placeholderTextColor="#999"
-            />
-            
-            <View style={styles.modalButtons}>
-              <Pressable
-                style={[styles.modalButton, styles.cancelButton]}
-                onPress={() => {
-                  setEditModalVisible(false);
-                  setEditingShelf(null);
-                  setEditInputValue('');
-                }}
-              >
-                <ThemedText>Cancel</ThemedText>
-              </Pressable>
-              
-              <Pressable
-                style={[styles.modalButton, styles.addButton2]}
-                onPress={handleSaveEdit}
-              >
-                <ThemedText style={styles.addButtonText}>Save</ThemedText>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </PageView>
+    </View>
   );
 }
 
@@ -274,77 +289,77 @@ const styles = StyleSheet.create({
     height: 55,
   },
   hiddenContainer: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    height: '100%',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    height: "100%",
     marginBottom: 10,
   },
   deleteButton: {
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center', 
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
     width: 75,
     height: 135,
   },
   editButton: {
-    backgroundColor: '#3498db', 
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#3498db",
+    justifyContent: "center",
+    alignItems: "center",
     width: 75,
     height: 135,
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: '80%',
+    width: "80%",
     padding: 20,
     borderRadius: 10,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    backgroundColor: 'rgba(255, 255, 255, 1)',
+    backgroundColor: "rgba(255, 255, 255, 1)",
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 5,
     marginBottom: 15,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   modalButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     margin: 5,
   },
   cancelButton: {
-    backgroundColor: '#eee',
+    backgroundColor: "#eee",
   },
   addButton2: {
-    backgroundColor: '#07314A',
+    backgroundColor: "#07314A",
   },
   addButtonText: {
-    color: '#fff',
+    color: "#fff",
   },
 });

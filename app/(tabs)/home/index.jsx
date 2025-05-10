@@ -87,7 +87,7 @@ const Home = () => {
   }
 
   return (
-    <PageView header="For You" bodyStyle={{ flex: 1 }}>
+    <PageView header="For You" bodyStyle={{ flex: 1 }} type={'profile'}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.contentContainer}>
           {/* Continue Reading section */}

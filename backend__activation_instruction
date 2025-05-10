@@ -30,19 +30,28 @@ the :5000 is essential as it is the port for service.
 if you see axios: network error then ur api url is wrong, or something set up wrongly 
 
 
-//gutendex activation manual
-If u wish to activate gutendex in backend
-1. launch your psql
-- if u dk how, search ur pc for services in system, find postgresql-x64-17 in the list of services and launch
+# Gutendex Activation 
+1. At `backend/gutendex`, pull the submodules if you haven't already via:
+    ```
+    git submodule update --init --recursive
+    ```
 
-2. cd into the backend/gutendex
+2. Launch your psql
+    - At Windows' search menu, search for Services in System, find postgresql-x64-17 in the list of services and launch
 
-3. run venv\Scripts\activate in ur cmd on windows
-- this activate the virtual environment for django to run
+3. At `backend`, run:
+    ```
+    venv\Scripts\activate
+    ```
+    - This activates the virtual environment for django to run
 
-4. inside the virtual environment, run python manage.py runserver
-- this activates the backend server
-- if everything is fine, u shud see this:
+4. At `backend/gutendex`, run:
+    ```
+    python manage.py runserver
+    ```
+    - This activates the backend server
+
+If everything is fine, u shud see this:
 
 System check identified no issues (0 silenced).
 March 19, 2025 - 16:00:25

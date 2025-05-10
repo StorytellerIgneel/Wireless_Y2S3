@@ -135,7 +135,7 @@ export default function BookshelfDetailScreen() {
   const renderItem = ({ item }) => (
     <TouchableOpacity
       onPress={() => router.push(`/non_tabs/booklist/${item.id}`)}
-      style={{ width: '100%'}}
+      style={{ width: "100%" }}
     >
       <BookListCard
         id={item.id}
@@ -159,33 +159,41 @@ export default function BookshelfDetailScreen() {
     </View>
   );
 
-  return (
-    <PageView
-      style={styles.container}
-      header={shelfData.title}
-      bodyStyle={{ flex: 1 }}
-    >
+  // Component to render as the header of the list
+  const ListHeader = () => (
+    <>
       <View style={styles.header}>
         <ThemedText type="defaultSemiBold" style={styles.bookCount}>
           {shelfData.totalBooks} Book{shelfData.totalBooks > 1 ? "s" : ""}
         </ThemedText>
       </View>
-
       <View style={styles.progressBar}>
         <PercentageBarInline percentage={shelfData.overallProgress} />
       </View>
+    </>
+  );
 
-      <SwipeListView
-        data={shelfData.books}
-        renderItem={renderItem}
-        renderHiddenItem={renderHiddenItem}
-        keyExtractor={(item) => item.id}
-        rightOpenValue={-75} // Width of delete button
-        disableLeftSwipe={false}
-        disableRightSwipe={true}
-        showsVerticalScrollIndicator={false}
-      />
-
+  return (
+    <View style={{ flex: 1 }}>
+      <PageView
+        style={styles.container}
+        header={shelfData.title}
+        bodyStyle={{ flex: 1 }} // Ensures PageView's body area can expand
+        type={"back"}
+      >
+        <SwipeListView
+          data={shelfData.books}
+          renderItem={renderItem}
+          renderHiddenItem={renderHiddenItem}
+          keyExtractor={(item) => item.id}
+          ListHeaderComponent={ListHeader} // Add the header content here
+          rightOpenValue={-75}
+          disableLeftSwipe={false}
+          disableRightSwipe={true}
+          showsVerticalScrollIndicator={false}
+          style={{ flex: 1 }} // Make SwipeListView fill the available space in PageView's body
+        />
+      </PageView>
       <View style={styles.buttonWrapper}>
         <Button
           type={"secondary"}
@@ -196,7 +204,7 @@ export default function BookshelfDetailScreen() {
           onPress={handleAddBook}
         />
       </View>
-    </PageView>
+    </View>
   );
 }
 
@@ -208,28 +216,30 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 5,
+    marginBottom: 5, // This margin will now be between bookCount and progressBar
+    // or below progressBar if it's the last item in ListHeader
   },
   bookCount: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, // Keep padding for content within the header
     fontSize: 16,
   },
   progressBar: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 20, // Keep padding for content within the header
+    marginBottom: 10, // Add some margin below the progress bar before the list starts
   },
   hiddenContainer: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    height: '100%',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    height: "100%",
     marginBottom: 10,
   },
   deleteButton: {
     height: 130,
-    backgroundColor: 'red',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
     width: 75,
   },
   buttonWrapper: {
