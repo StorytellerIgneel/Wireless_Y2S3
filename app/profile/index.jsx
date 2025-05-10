@@ -17,11 +17,8 @@ import {
 
 const ProfileScreen = () => {
   const router = useRouter();
-  const userContext = useContext(UserContext);
 
-  if (!userContext) {
-    return <Text>Error: UserContext not found</Text>;
-  }
+  const userContext = useContext(UserContext);
 
   const { user, logoutUser } = userContext;
 
