@@ -15,7 +15,6 @@ import { Ionicons } from '@expo/vector-icons';
 import UserContext from '@/context/UserContext';
 import { useRouter } from 'expo-router';
 import DownloadButton from "../../../downloadBook"
-import Rooms from "../../../rooms"
 import {
   PageView,
   Button
