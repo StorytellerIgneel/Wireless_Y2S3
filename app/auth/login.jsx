@@ -46,7 +46,7 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '/(tabs)/home';
+const homePath = '/(tabs)/index';
 
 export default function Login() {
   const router = useRouter();
@@ -154,7 +154,7 @@ export default function Login() {
     return <Redirect href={homePath} />
 
   return (
-    <PageView header="Login">
+    <PageView header="Login" type={'back'}>
       <FormView>
         <FormField
           label="Username"

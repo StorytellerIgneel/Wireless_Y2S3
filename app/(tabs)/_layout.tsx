@@ -41,10 +41,9 @@ const TabLayout = () => {
       })}
     >
       <Tabs.Screen
-        name="home/index"
+        name="index"
         options={{
           title: 'Home',
-          // Already handled by tabBarIcon above
         }}
       />
       

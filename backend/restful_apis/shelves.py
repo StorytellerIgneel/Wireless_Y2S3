@@ -259,7 +259,7 @@ def get_latest_record():
             progress, viewed_at = record
             return jsonify({
                 "response": "Latest record retrieved successfully",
-                "user_id": user_id
+                "user_id": user_id,
                 "progress": progress,
                 "book_id": book_id,
                 "viewed_at": viewed_at
