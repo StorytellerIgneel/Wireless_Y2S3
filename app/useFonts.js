@@ -6,9 +6,9 @@ export function useCustomFonts() {
 
   useEffect(() => {
     Font.loadAsync({
-      Arial: require('./assets/fonts/Arimo-VariableFont_wght.ttf'),
-      SpaceMono: require('./assets/fonts/SpaceMono-Regular.ttf'),
-      Courier: require('./assets/fonts/CourierPrime-Regular.ttf'),
+      Arial: require('../assets/fonts/Arimo-VariableFont_wght.ttf'),
+      SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+      Courier: require('../assets/fonts/CourierPrime-Regular.ttf'),
     }).then(() => setFontsLoaded(true));
   }, []);
 

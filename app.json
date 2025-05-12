@@ -66,7 +66,7 @@
       }
     },
     "android": {
-      "permissions": ["INTERNET"]
+      "package": "com.teohweihong.chatfeat"
     },
     "plugins": [
       "expo-router",
@@ -75,7 +75,8 @@
         {
           "iosUrlScheme": "com.googleusercontent.apps.143395840986-03hj8l1a6gjntgq4pmv0q00atus6kmau"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "extra": {
       "router": {
@@ -84,9 +85,6 @@
       "eas": {
         "projectId": "09ca4b0a-55f1-4aef-a505-9f24e99db3d5"
       }
-    },
-    "android": {
-      "package": "com.teohweihong.chatfeat"
     }
   }
 }

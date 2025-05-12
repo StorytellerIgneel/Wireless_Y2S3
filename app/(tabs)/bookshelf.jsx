@@ -31,7 +31,7 @@ export default function Bookshelf() {
   const icon = useThemeColor({}, "text");
   const router = useRouter();
   const errorColor = useThemeColor({}, "error");
-  const userId = user ? user.id : -1; // TO-DO: Replace thiss
+  const userId = user ? user.id : -1; 
 
   if (!user)
     return <Redirect href="/auth/login" />

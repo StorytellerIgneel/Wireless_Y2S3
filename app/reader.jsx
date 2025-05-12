@@ -22,6 +22,9 @@ export default function ReaderScreen() {
   const [currentPage, setCurrentPage] = useState(0);
   const [showHeader, setShowHeader] = useState(false);
   const fadeAnim = useRef(new Animated.Value(0)).current;
+  const { user } = useContext(UserContext);
+
+  const userId = user ? user.id : -1
 
   const showControls = () => {
     setShowHeader(true);
@@ -43,6 +46,7 @@ export default function ReaderScreen() {
   useEffect(() => {
     if (id) {
       fetchBookText();
+      fetchReadingProgress();
     }
   }, [id]);
 
@@ -86,6 +90,34 @@ export default function ReaderScreen() {
       setCurrentPage(currentPage - 1);
     }
   };
+
+  const fetchReadingProgress = async () => {
+  try {
+    const res = await axios.post("http://<your-backend-url>/get_book_latest_record", {
+      book_id: id,
+      user_id: userId,
+    });
+    if (res.data.progress) {
+      const savedProgress = res.data.progress;
+      const savedPage = Math.floor((savedProgress / 100) * pages.length);
+      setCurrentPage(savedPage);
+    }
+  } catch (error) {
+    console.error("Error fetching reading progress:", error);
+  }
+};
+
+  const updateReadingProgress = async (progress) => {
+  try {
+    await axios.post("http://<your-backend-url>/log_book", {
+      book_id: id,
+      user_id: userId,
+      progress: Math.round(progress),
+    });
+  } catch (error) {
+    console.error("Error updating reading progress:", error);
+  }
+};
 
   const pageText = pages[currentPage] || '';
   const progress = ((currentPage + 1) / pages.length) * 100;

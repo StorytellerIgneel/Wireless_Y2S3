@@ -171,7 +171,7 @@ def add_book_to_shelf():
 
     print(f"Received add_books request: shelf_id={shelf_id}, book_id={book_id}, user_id={user_id}") # Backend log
 
-    if not all([shelf_id, book_id, user_id]): # Or whatever fields are mandatory
+    if not all([shelf_id, book_id, user_id]): 
         return jsonify({"message": "Missing shelf_id, book_id, or user_id"}), 400
 
     sql_insert = "INSERT INTO shelf_books (user_id, shelf_id, book_id) VALUES (?, ?, ?)"
@@ -213,16 +213,92 @@ def log_book():
     
     book_id = data.get("book_id")
     user_id = data.get("user_id")
+    progress = data.get("progress", 0)
 
     if not all([book_id, user_id]):
         return jsonify({"response": "Error: Missing fields"}), 400
 
-    sql_insert = "INSERT INTO view_record (user_id, book_id) VALUES (?, ?)"
+    sql_insert = """
+        INSERT INTO view_record (user_id, book_id, progress)
+        VALUES (?, ?, ?)
+        ON CONFLICT(user_id, book_id)
+        DO UPDATE SET progress = excluded.progress, viewed_at = datetime('now')
+    """
 
     try:
-        db.execute_query(sql_insert, (book_id, ))
-        return jsonify({"response": "Book removed from shelf successfully"}), 201
+        db.execute_query(sql_insert, (user_id, book_id, progress))
+        return jsonify({"response": "Record added successfully"}), 201
     except sqlite3.IntegrityError:
         return jsonify({"response": "Error: Database constraint violation"}), 400
     except sqlite3.Error as e:
         return jsonify({"response": f"Error: {e}"}), 400
+
+@shelves_bp.route("/get_book_latest_record", methods=["POST"])
+def get_latest_record():
+    data = request.get_json()
+    if not data:
+        return jsonify({"response": "Error: Invalid request body"}), 400
+
+    book_id = data.get("book_id")
+    user_id = data.get("user_id")
+
+    if not all([book_id, user_id]):
+        return jsonify({"response": "Error: Missing fields"}), 400
+
+    sql_query = """
+        SELECT progress, viewed_at
+        FROM view_record
+        WHERE user_id = ? AND book_id = ?
+        ORDER BY viewed_at DESC
+        LIMIT 1
+    """
+
+    try:
+        record = db.fetch_one(sql_query, (user_id, book_id))
+        if record:
+            progress, viewed_at = record
+            return jsonify({
+                "response": "Latest record retrieved successfully",
+                "user_id": user_id
+                "progress": progress,
+                "book_id": book_id,
+                "viewed_at": viewed_at
+            }), 200
+        else:
+            return jsonify({"response": "No reading record found for this book"}), 404
+    except sqlite3.Error as e:
+        return jsonify({"response": f"Error: {e}"}), 500
+
+@shelves_bp.route("/get_latest_reading_record", methods=["POST"])
+def get_latest_reading_record():
+    data = request.get_json()
+    if not data:
+        return jsonify({"response": "Error: Invalid request body"}), 400
+
+    user_id = data.get("user_id")
+
+    if not user_id:
+        return jsonify({"response": "Error: Missing user_id"}), 400
+
+    sql_query = """
+        SELECT book_id, progress, viewed_at
+        FROM view_record
+        WHERE user_id = ?
+        ORDER BY viewed_at DESC
+        LIMIT 1
+    """
+
+    try:
+        record = db.fetch_one(sql_query, (user_id,))
+        if record:
+            book_id, progress, viewed_at = record
+            return jsonify({
+                "response": "Latest reading record retrieved successfully",
+                "book_id": book_id,
+                "progress": progress,
+                "viewed_at": viewed_at
+            }), 200
+        else:
+            return jsonify({"response": "No reading records found"}), 404
+    except sqlite3.Error as e:
+        return jsonify({"response": f"Error: {e}"}), 500

@@ -80,19 +80,19 @@ const Button = ({
           ? {
               backgroundColor:
                 activeBackgroundColor ?? type == "primary"
-                ? btn_bg_primary
+                  ? btn_bg_primary
                   : type == "secondary"
                   ? btn_bg_secondary
                   : type == "link"
                   ? btn_bg_link
                   : type == "danger"
-                   ? btn_bg_danger
+                  ? btn_bg_danger
                   : btn_bg_primary,
-                   }
+            }
           : {
               backgroundColor:
                 backgroundColor ?? type == "primary"
-                 ? btn_bg_primary_inactive
+                  ? btn_bg_primary_inactive
                   : type == "secondary"
                   ? btn_bg_secondary_inactive
                   : type == "link"
@@ -100,19 +100,19 @@ const Button = ({
                   : type == "danger"
                   ? btn_bg_danger_inactive
                   : btn_bg_primary_inactive,
-                  },
-                  rounded
+            },
+        rounded
           ? {
               borderRadius: 20,
             }
-            : circle
+          : circle
           ? {
               borderRadius: 100,
             }
           : {
               borderRadius: 8,
             },
-            styles.button,
+        styles.button,
         style,
       ]}
       {...props}
@@ -125,26 +125,35 @@ const Button = ({
               ? {
                   color:
                     activeColor ?? type == "primary"
-                     ? btn_primary
+                      ? btn_primary
                       : type == "secondary"
                       ? btn_secondary
                       : type == "link"
                       ? btn_link
                       : type == "danger"
-                    ? btn_danger
-                    : btn_primary,
-                    }
+                      ? btn_danger
+                      : btn_primary,
+                }
               : {
                   color:
                     color ?? type == "primary"
-                    ? btn_primary_inactive
+                      ? btn_primary_inactive
                       : type == "secondary"
                       ? btn_secondary_inactive
                       : type == "link"
                       ? btn_link_inactive
                       : type == "danger"
-                    ? btn_danger_inactive
-                    : btn_primary_inactive,
-                    },            styles.text,          ]}        >          {title}        </Text>      )}    </Pressable>  );};
-                    
+                      ? btn_danger_inactive
+                      : btn_primary_inactive,
+                },
+            styles.text,
+          ]}
+        >
+          {title}
+        </Text>
+      )}
+    </Pressable>
+  );
+};
+
 export default Button;
