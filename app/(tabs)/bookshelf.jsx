@@ -36,6 +36,13 @@ export default function Bookshelf() {
   if (!user)
     return <Redirect href="/auth/login" />
 
+   useFocusEffect(
+    useCallback(() => {
+      fetchBookshelvesCallback();
+      return () => {};
+    }, [fetchBookshelvesCallback])
+  );
+  
   const fetchBookshelvesCallback = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -102,12 +109,7 @@ export default function Bookshelf() {
     }
   }, []);
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchBookshelvesCallback();
-      return () => {};
-    }, [fetchBookshelvesCallback])
-  );
+ 
 
   const handleAddBookshelf = async () => {
     if (inputValue.trim()) {
@@ -204,13 +206,11 @@ export default function Bookshelf() {
         setError(apiError.message || "Failed to update shelf.");
       }
     }
-  };
-
-  const renderItem = ({ item }) => (
+  };  const renderItem = ({ item }) => (
     <Pressable
       key={item.id}
       android_ripple={{ color: "rgba(0, 0, 0, 0.20)", borderless: false }}
-      onPress={() => router.push(`/(tabs)/non_tabs/booklist/shelf/${item.id}`)} // Corrected path
+      onPress={() => router.push(`/(tabs)/non_tabs/shelf/${item.id}`)}
     >
       <BookshelfCard id={item.id} />
     </Pressable>

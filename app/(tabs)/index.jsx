@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import {
   StyleSheet,
@@ -10,8 +11,10 @@ import {
 import { useRouter } from "expo-router";
 import ContinueReading from "@/components/home/ContinueReading";
 import { ThemedText } from "@/components/ThemedText";
-import { PageView, Loading } from "@/components";
+import { PageView, Loading, Button } from "@/components";
 import BookCard from "@/components/home/BookCard";
+import UserContext from "@/context/UserContext";
+import axios from "axios";
 
 const Home = () => {
   const errorColor = useThemeColor({}, "error");
@@ -20,7 +23,53 @@ const Home = () => {
   const [bestBooks, setBestBooks] = useState([]);
   const [fictionBooks, setFictionBooks] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [latestRecord, setLatestRecord] = useState(null);
+
+  const { user } = useContext(UserContext);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchLatestReadingRecord = async () => {
+        // Only fetch if user is logged in
+        if (!user) {
+          setLatestRecord(null);
+          setLoading(false);
+          return;
+        }
+
+        try {
+          console.log("Fetching latest reading record...");
+          const response = await axios.post(
+            `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_latest_reading_record`,
+            { user_id: user.id }
+          );
+          if (response.data.response === "No reading records found") {
+            setLatestRecord(null); // Set to null if no records are found
+          } else {
+            setLatestRecord(response.data);
+          }
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            console.error("Endpoint not found:", error.response.data);
+            setLatestRecord(null);
+          } else {
+            console.error("Error fetching latest reading record:", error);
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchLatestReadingRecord();
+
+      // Return a cleanup function if needed
+      return () => {
+        // Any cleanup code
+      };
+    }, [user]) // Only re-run if user changes
+  );
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -90,12 +139,32 @@ const Home = () => {
               Continue Reading
             </ThemedText>
             <View style={styles.continueReading}>
-              <ContinueReading
-                title={"The Lord of The Rings"}
-                author={"J.R.R Tolkien"}
-                percentage={30}
-                source={""}
-              />
+              {user ? (
+                latestRecord ? (
+                  <ContinueReading
+                    bookId={latestRecord.book_id}
+                    title={latestRecord.book_title}
+                    author={latestRecord.author_name}
+                    progress={latestRecord.progress}
+                    source={latestRecord.cover_image}
+                  />
+                ) : (
+                  <ThemedText>
+                    You have no reading records, start reading by searching or
+                    choosing a book below!
+                  </ThemedText>
+                )
+              ) : (
+                <View>
+                  <ThemedText>Login to track your reading progress!</ThemedText>
+                  <Button
+                    title="Login"
+                    active
+                    rounded
+                    onPress={() => router.navigate("/auth/login")}
+                  />
+                </View>
+              )}
             </View>
           </View>
 
@@ -111,7 +180,7 @@ const Home = () => {
               horizontal={true}
               style={styles.sectionContainer}
               showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled" 
+              keyboardShouldPersistTaps="handled"
             >
               {bestBooks.map((book) => (
                 <TouchableOpacity
@@ -143,7 +212,7 @@ const Home = () => {
               horizontal={true}
               style={styles.sectionContainer}
               showsHorizontalScrollIndicator={false}
-              keyboardShouldPersistTaps="handled" 
+              keyboardShouldPersistTaps="handled"
             >
               {fictionBooks.map((book) => (
                 <TouchableOpacity

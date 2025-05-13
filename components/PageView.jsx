@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 32,
-        fontWeight: "bold"
+        fontWeight: "bold",
     },
     separatorHeader: {
         backgroundColor: "rgba(237, 180, 59, 1)",
@@ -90,6 +90,7 @@ const PageView = ({ type, style, children, ...props}) => {
                 },
                 {
                     scale: interpolate(Math.min(HEADER_HEIGHT, scrollOffset.value), [0, 0, HEADER_HEIGHT], [1, 1, 0.7])
+                    
                 }
             ]
         };

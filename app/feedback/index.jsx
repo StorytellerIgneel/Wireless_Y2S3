@@ -57,7 +57,7 @@ export default function FeedbackScreen() {
   };
 
   return (
-    <PageView header="Feedback">
+    <PageView header="Feedback" type={'back'}>
         <ThemedText>
             This is the default text.
         </ThemedText>

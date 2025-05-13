@@ -66,6 +66,12 @@ const TabLayout = () => {
           href: null,
       }}
       />
+      <Tabs.Screen
+      name="non_tabs/shelf"
+      options={{
+          href: null,
+      }}
+      />
       {/* 
         Admendment by Jing Hoe, 6/3/2025 11:11AM
         Action: Commented out codes below

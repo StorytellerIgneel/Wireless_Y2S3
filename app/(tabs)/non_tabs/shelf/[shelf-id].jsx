@@ -86,8 +86,7 @@ export default function BookshelfDetailScreen() {
           title: book.title || "No Title",
           author: book.authors && book.authors.length > 0 ? book.authors.map(a => a.name).join(', ') : "Unknown Author",
           coverImage: book.formats && book.formats['image/jpeg'] ? { uri: book.formats['image/jpeg'] } : null, 
-          // TO-DO: Replace thissss
-          progress: book.progress || Math.floor(Math.random() * 101), 
+          progress: book.progress || 0,  
         }));
         setBooks(formattedBooks);
         setOverallProgress(calculateOverallProgress(formattedBooks)); 
@@ -158,7 +157,7 @@ export default function BookshelfDetailScreen() {
 
   const handleAddBook = () => {
     router.push({
-      pathname: "/(tabs)/non_tabs/booklist/shelf/addToShelf",
+      pathname: "/(tabs)/non_tabs/shelf/addToShelf",
       params: {
         addingToShelfId: shelfId,
         shelfTitle: shelfTitle 

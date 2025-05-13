@@ -118,7 +118,7 @@ def delete_shelf():
 @shelves_bp.route("/get_books", methods=["POST"])
 def get_shelf_books():
     shelf_id = request.get_json().get("shelf_id")
-    # user_id = request.get_json().get("user_id") # You might need this for auth or other logic
+    user_id = request.get_json().get("user_id")  # Get user_id for progress lookup
 
     if not shelf_id:
         return jsonify({"response": "Error: Invalid request body"}), 400
@@ -126,11 +126,20 @@ def get_shelf_books():
     sql = "SELECT * FROM shelf_books WHERE shelf_id = ?" 
 
     try:
-        books_on_shelf_raw = db.fetch_all(sql, (shelf_id, )) # e.g., [(1, 101), (1, 102)] if columns are shelf_id, book_id
+        books_on_shelf_raw = db.fetch_all(sql, (shelf_id, ))
 
         detailed_books = []
         for row in books_on_shelf_raw:
             book_id_from_db = row[2] 
+            
+            # Fetch reading progress for this book and user
+            progress_sql = """
+                SELECT progress FROM view_record 
+                WHERE user_id = ? AND book_id = ?
+                ORDER BY viewed_at DESC LIMIT 1
+            """
+            progress_record = db.fetch_one(progress_sql, (user_id, book_id_from_db))
+            progress = progress_record[0] if progress_record else 0
             
             # Fetch from Gutendex
             gutendex_url = f"https://gutendex.com/books/{book_id_from_db}"
@@ -138,6 +147,10 @@ def get_shelf_books():
                 response = requests.get(gutendex_url)
                 response.raise_for_status() 
                 book_details = response.json()
+                
+                # Add progress to book details
+                book_details["progress"] = progress
+                
                 detailed_books.append(book_details)
             except requests.exceptions.RequestException as e:
                 print(f"Error fetching book {book_id_from_db} from Gutendex: {e}")
@@ -146,12 +159,11 @@ def get_shelf_books():
                 print(f"Error decoding JSON for book {book_id_from_db} from Gutendex.")
                 continue
 
-
         shelf_info_sql = "SELECT name FROM shelves WHERE id = ?"
         shelf_info = db.fetch_one(shelf_info_sql, (shelf_id,))
         shelf_name = shelf_info[0] if shelf_info else "Unknown Shelf"
 
-        return jsonify({"books": detailed_books, "shelf_title": shelf_name, "response": "Books retrieved successfully"}), 200 # Changed to 200 OK
+        return jsonify({"books": detailed_books, "shelf_title": shelf_name, "response": "Books retrieved successfully"}), 200
     except sqlite3.Error as e:
         print(f"Database error in get_shelf_books: {e}")
         return jsonify({"response": f"Error: Database operation failed: {e}"}), 500
@@ -292,13 +304,36 @@ def get_latest_reading_record():
         record = db.fetch_one(sql_query, (user_id,))
         if record:
             book_id, progress, viewed_at = record
+
+            # Fetch book details from Gutendex
+            gutendex_url = f"https://gutendex.com/books/{book_id}"
+            try:
+                response = requests.get(gutendex_url)
+                response.raise_for_status()
+                book_details = response.json()
+                book_title = book_details.get("title", "Unknown Title")
+                authors = book_details.get("authors", [])
+                author_name = authors[0]["name"] if authors else "Unknown Author"
+
+                # Extract book cover image
+                formats = book_details.get("formats", {})
+                cover_image = formats.get("image/jpeg")
+
+            except requests.exceptions.RequestException as e:
+                print(f"Error fetching book details from Gutendex: {e}")
+                book_title = "Unknown Title"
+                author_name = "Unknown Author"
+
             return jsonify({
                 "response": "Latest reading record retrieved successfully",
                 "book_id": book_id,
+                "book_title": book_title,
+                "author_name": author_name,
+                "cover_image": cover_image,
                 "progress": progress,
                 "viewed_at": viewed_at
             }), 200
         else:
-            return jsonify({"response": "No reading records found"}), 404
+            return jsonify({"response": "No reading records found", "data": {}}), 200
     except sqlite3.Error as e:
         return jsonify({"response": f"Error: {e}"}), 500

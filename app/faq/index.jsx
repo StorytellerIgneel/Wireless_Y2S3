@@ -33,7 +33,7 @@ export default function FAQ() {
   };
 
   return (
-    <PageView header="FAQ">
+    <PageView header="FAQ" type={'back'}>
       <View style={styles.container}>
           {FAQs.map((faq, index) => (
             <View key={index} style={styles.faqItem}>
