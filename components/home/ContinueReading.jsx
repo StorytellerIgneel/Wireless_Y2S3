@@ -5,16 +5,22 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors } from "@/constants/Colors";
 import Button from "@/components/Button";
 import PercentageBar from "../PercentageBar";
+import { useRouter } from "expo-router";
 
 const bookCoverImage = require("@/assets/images/bookImage.jpg");
 
 const ContinueReading = (props) => {
   const colors = Colors.light;
+  const router = useRouter();
 
   return (
     <ThemedView style={styles.card}>
       <Image
-        source={props.source || bookCoverImage}
+        source={
+          props.source && typeof props.source === "string"
+            ? { uri: props.source }
+            : bookCoverImage
+        }
         style={styles.coverImage}
       />
       <View style={styles.contentContainer}>
@@ -29,7 +35,7 @@ const ContinueReading = (props) => {
           {props.author}
         </ThemedText>
 
-        <PercentageBar percentage={30} />
+        <PercentageBar percentage={props.progress || 0} />
 
         <Button
           type="primary"
@@ -38,10 +44,16 @@ const ContinueReading = (props) => {
           title="Continue"
           style={{
             width: 130,
-            alignSelf: 'flex-end'
+            alignSelf: "flex-end",
           }}
           onPress={() => {
-            /* TO-DO: Handle continue reading */
+            router.push({
+              pathname: "/reader",
+              params: {
+                id: props.bookId,
+                title: props.title,
+              },
+            });
           }}
         />
       </View>

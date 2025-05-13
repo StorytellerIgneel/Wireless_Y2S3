@@ -58,7 +58,7 @@ function AddToShelfBookItem({ item, shelfId, onBookAdded }) {
           .catch(() => ({ message: `HTTP error! status: ${response.status}` }));
         console.error("Backend error when adding book:", errorData);
         throw new Error(
-          errorData.message || `Failed to add book. Status: ${response.status}`
+          errorData.message || `You cannot add the same book again!`
         );
       }
 

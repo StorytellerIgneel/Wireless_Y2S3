@@ -46,5 +46,7 @@ CREATE TABLE IF NOT EXISTS view_record (
     user_id INTEGER NOT NULL,
     book_id INTEGER NOT NULL,
     viewed_at TEXT DEFAULT (datetime('now')),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    progress INTEGER DEFAULT(0) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    UNIQUE (user_id, book_id)
 );

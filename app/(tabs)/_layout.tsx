@@ -41,10 +41,9 @@ const TabLayout = () => {
       })}
     >
       <Tabs.Screen
-        name="home/index"
+        name="index"
         options={{
           title: 'Home',
-          // Already handled by tabBarIcon above
         }}
       />
       
@@ -63,6 +62,12 @@ const TabLayout = () => {
       />
       <Tabs.Screen
       name="non_tabs/booklist"
+      options={{
+          href: null,
+      }}
+      />
+      <Tabs.Screen
+      name="non_tabs/shelf"
       options={{
           href: null,
       }}

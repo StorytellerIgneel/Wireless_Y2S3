@@ -1,6 +1,6 @@
 import * as FileSystem from 'expo-file-system';
 
-export const readFilesFromDocumentDirectory = async () => {
+const readFilesFromDocumentDirectory = async () => {
   try {
     // Get the path to the document directory
     const path = FileSystem.documentDirectory + "downloadedBooks/";
@@ -34,3 +34,5 @@ export const readFilesFromDocumentDirectory = async () => {
 readFilesFromDocumentDirectory().then(fileNames => {
   console.log('Files in Document Directory:', fileNames);
 });
+
+export default readFilesFromDocumentDirectory;

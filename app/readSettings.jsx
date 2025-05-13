@@ -129,16 +129,6 @@ export default function ReadSettings({
           <Text style={styles.closeText}>Close</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Bottom arrows for page navigation */}
-      <View style={styles.arrowContainer}>
-        <TouchableOpacity onPress={onPrevPage} style={styles.arrowButton}>
-          <Ionicons name="chevron-back" size={28} color="#333" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={onNextPage} style={styles.arrowButton}>
-          <Ionicons name="chevron-forward" size={28} color="#333" />
-        </TouchableOpacity>
-      </View>
     </SafeAreaView>
   );
 }

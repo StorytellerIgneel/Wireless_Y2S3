@@ -1,13 +1,13 @@
 import React from "react";
 import { StyleSheet, View, Text, Pressable, Image } from "react-native";
 import { ThemedText } from "@/components/ThemedText"; 
-import { Colors } from "@/constants/Colors"; 
+import { useThemeColor } from "@/hooks/useThemeColor";
+
 
 const bookCoverImage = require("@/assets/images/bookImage.jpg");
 
 const BookCard = (props) => {
-  const colors = Colors.light;
-
+  const textColor = useThemeColor({}, 'text');
   return (
     <View style={styles.cardWrapper}>
         <View style={styles.contentContainer}>
@@ -15,7 +15,7 @@ const BookCard = (props) => {
             source={props.source || bookCoverImage} 
             style={styles.coverImage} 
           />
-          <ThemedText type="default" style={[styles.title, { color: colors.text }]} numberOfLines={2}>{props.title}</ThemedText>
+          <ThemedText type="default" style={[styles.title, { color: textColor }]} numberOfLines={2}>{props.title}</ThemedText>
           <ThemedText type='subtitleGrey' numberOfLines={1}>{props.author}</ThemedText>
         </View>
     </View>

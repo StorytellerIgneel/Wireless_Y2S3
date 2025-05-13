@@ -4,7 +4,7 @@ import { PageView } from '@/components';
 const PrivacyPolicy = () => {
   return (
     <>
-    <PageView header="Privacy Policy">
+    <PageView header="Privacy Policy" type={'back'}>
       <Text style={styles.sectionTitle}>1. Information Collection</Text>
       <Text style={styles.paragraph}>
         We collect your name, email, and reading history to provide a personalized experience. We do not collect sensitive information.

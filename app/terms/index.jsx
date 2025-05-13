@@ -4,7 +4,7 @@ import { PageView } from '@/components';
 const TermsAndConditions = () => {
   return (
     <>
-    <PageView header="Terms & Conditions">
+    <PageView header="Terms & Conditions" type={'back'}>
       <Text style={styles.sectionTitle}>1. Introduction</Text>
       <Text style={styles.paragraph}>
         Welcome to BookReader! By using this app, you agree to the following terms and conditions. Please read them carefully.

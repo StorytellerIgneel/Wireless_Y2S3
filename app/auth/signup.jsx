@@ -46,7 +46,7 @@ if (Platform.OS === 'ios') {
   API_URL = `http://${localIp}:5000`;
 }
 
-const homePath = "/(tabs)/home";
+const homePath = "/(tabs)/index";
 
 export default function Signup() {
   const router = useRouter();
@@ -170,7 +170,7 @@ export default function Signup() {
       return <Redirect href={homePath} />
 
   return (
-    <PageView header="Create Account">
+    <PageView header="Create Account" type={'back'}>
       <FormView>
         <FormField
           label="Username"

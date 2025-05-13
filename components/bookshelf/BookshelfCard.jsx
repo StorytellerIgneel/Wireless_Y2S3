@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
-import { View, Image, StyleSheet } from "react-native"; // Added ActivityIndicator
+import React, { useState, useEffect, useContext } from "react";
+import { View, Image, StyleSheet } from "react-native";
 import { PercentageBarInline, Loading } from "@/components";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { ThemedText } from "@/components/ThemedText";
+import UserContext from '@/context/UserContext';
 
 const defaultBookCover = require("@/assets/images/bookImage.jpg");
-// TO-DO: Remove this
-const userId = 2;
 
 export default function BookShelfCard(props) {
+  const { user } = useContext(UserContext);
   const shelfBg = useThemeColor({}, "text");
   const shelfTitleColor = useThemeColor({}, "invert_text");
   const bgColor = useThemeColor({}, "bg_primary");
@@ -18,16 +18,18 @@ export default function BookShelfCard(props) {
   const [isLoading, setIsLoading] = useState(true); 
   const [error, setError] = useState(null); 
   const [overallProgress, setOverallProgress] = useState(0);
-
   useEffect(() => {
-    if (props.id) {
+    if (props.id && user) {
       fetchBooksForShelf(props.id);
+    } else if (!user) {
+      setError("User not logged in.");
+      setIsLoading(false);
     } else {
       setError("Shelf ID is missing.");
       setIsLoading(false);
       console.error("Shelf ID is missing from props:", props.id);
     }
-  }, [props.id]);
+  }, [props.id, user]);
 
   const calculateOverallProgress = (booksArray) => {
     if (!booksArray || booksArray.length === 0) {
@@ -52,7 +54,7 @@ export default function BookShelfCard(props) {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ shelf_id: currentShelfId, user_id: userId }),
+          body: JSON.stringify({ shelf_id: currentShelfId, user_id: user.id }),
         }
       );
 
@@ -74,14 +76,12 @@ export default function BookShelfCard(props) {
       }
 
       if (data.books && Array.isArray(data.books)) {
-        const formattedBooks = data.books.map((book) => ({
-          id: book.id.toString(),
+        const formattedBooks = data.books.map((book) => ({          id: book.id.toString(),
           coverImage:
             book.formats && book.formats["image/jpeg"]
               ? { uri: book.formats["image/jpeg"] }
               : defaultBookCover,
-          // TO-DO: replace thisss
-          progress: 15,
+          progress: book.progress || 0,
         }));
         setBooks(formattedBooks);
         setOverallProgress(calculateOverallProgress(formattedBooks)); // CORRECT: Update progress here
