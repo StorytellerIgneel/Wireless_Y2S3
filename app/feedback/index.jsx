@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Alert, View, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { PageView, FormTextView, FormView, FormField, Button, Text } from '@/components';
-import { ThemedText } from '@/components/ThemedText'; 
 import { send } from '@emailjs/react-native';
 import UserContext from '@/context/UserContext';
 
@@ -14,14 +13,14 @@ export default function FeedbackScreen() {
 
   // Redirect to login if not logged in
   useEffect(() => {
-    if (!user?.email || !user?.name) {
+    if (!user?.email || !user?.username) {
       Alert.alert(
         'Login Required',
         'Please log in to submit feedback.',
         [
           {
             text: 'OK',
-            // onPress: () => router.replace('/auth/login'),
+            onPress: () => router.replace('/auth/login'),
           },
         ],
         { cancelable: false }
@@ -30,7 +29,7 @@ export default function FeedbackScreen() {
   }, [user]);
 
   const onSubmit = async () => {
-    if (!user?.email || !user?.name || !message || !feedbackType) {
+    if (!user?.email || !user?.username || !message || !feedbackType) {
       Alert.alert('Validation Error', 'All fields are required!');
       return;
     }
@@ -40,7 +39,7 @@ export default function FeedbackScreen() {
         'service_v442tdd',
         'template_yqxtmac',
         {
-          name: user.name,
+          name: user.username,
           email: user.email,
           message: `${feedbackType}: ${message}`,
         },
@@ -58,32 +57,21 @@ export default function FeedbackScreen() {
 
   return (
     <PageView header="Feedback" type={'back'}>
-        <ThemedText>
-            This is the default text.
-        </ThemedText>
-        <ThemedText type="title">
-            This is a title.
-        </ThemedText>
-        <ThemedText type="subtitle">
-            This is a subtitle.
-        </ThemedText>
-        <ThemedText type="subtitleGrey">
-            This is a grey subtitle.
-        </ThemedText>
       <FormView>
         <FormField
           label="Username"
-          placeholder={user?.name}  
+          value={user?.username}  
           editable={false}
           icon="person-outline"
-          unstyled
+          transparent={true}
         />
+
         <FormField
           label="E-mail address"
-          placeholder={user?.email}
+          value={user?.email}
           editable={false}
           icon="mail-outline"
-          unstyled
+          transparent={true}
         />
         <Text style={styles.label}>Feedback Type</Text>
         <View style={styles.buttonRow}>
@@ -97,7 +85,6 @@ export default function FeedbackScreen() {
                 feedbackType === type && styles.selectedButton,
               ]}
               textStyle={[
-                // styles.buttonText,
                 feedbackType === type && styles.selectedText,
               ]}
             />
@@ -110,13 +97,12 @@ export default function FeedbackScreen() {
           onChangeText={setMessage}
           placeholder="Describe your issue or feedback..."
           multiline
-          numberOfLines={5}
+          numberOfLines={10}
           icon="pencil-outline"
         />
 
         <Button
           title="Submit"
-          noBorder
           onPress={onSubmit}
           style={[
             styles.submitButton,
@@ -147,10 +133,13 @@ const styles = StyleSheet.create({
   },
   feedbackButton: {
     flex: 1,
-    backgroundColor: 'transparent',
+    minWidth: 105, 
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    // borderColor: '#ccc',
-    paddingVertical: 8,
+    paddingVertical: 10,
+    alignItems: 'center',
+    justifyContent: 'center', 
+    minHeight: 40,
   },
   selectedButton: {
     backgroundColor: '#FFD700', // Yellow
@@ -165,6 +154,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: 'transparent',
+    backgroundColor: '#d3d3d3',
   },
 });

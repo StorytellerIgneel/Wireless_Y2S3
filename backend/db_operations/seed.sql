@@ -20,8 +20,8 @@ INSERT INTO messages (room_id, user_id, msg, timestamp) VALUES
 (102, 3, 'This book is on my list!', '2025-05-10 10:10:00');
 
 INSERT INTO feedbacks (user_id, feedback_type, feedback_description) VALUES
-(1, 'Bug', 'The app crashes when I add a new shelf.'),
-(2, 'Suggestion', 'Can we have dark mode?');
+(1, 'Problems', 'The app crashes when I add a new shelf.'),
+(2, 'Suggestions', 'Can we have dark mode?');
 
 INSERT INTO view_record (user_id, book_id) VALUES
 (1, 101),
