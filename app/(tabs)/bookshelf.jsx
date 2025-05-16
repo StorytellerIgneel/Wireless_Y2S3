@@ -34,8 +34,7 @@ export default function Bookshelf() {
   const userId = user ? user.id : -1; 
 
   if (!user) {
-    router.push("/(tabs)");
-    router.push("/auth/login");
+    return <Redirect href="/auth/login" />
   }
 
   useFocusEffect(

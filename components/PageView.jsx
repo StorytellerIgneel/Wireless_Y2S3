@@ -128,7 +128,7 @@ const PageView = ({ type, style, children, ...props}) => {
                             </>
                         ) : type == "back" ? (
                             <>
-                                <TouchableOpacity onPress={() => router.back() } style={[{ backgroundColor: color }, styles.circle]}>
+                                <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : router.replace("/(tabs)") } style={[{ backgroundColor: color }, styles.circle]}>
                                     <ArrowLeftSVG
                                         width={25}
                                         height={25}

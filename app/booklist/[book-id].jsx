@@ -20,7 +20,7 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import UserContext from "@/context/UserContext";
 import { useRouter } from "expo-router";
-import DownloadButton from "../../../downloadBook";
+import DownloadButton from "../downloadBook";
 import { Button, PageView } from "@/components";
 import { useFocusEffect } from "@react-navigation/native";
 
