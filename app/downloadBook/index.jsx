@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { View, Button, ActivityIndicator } from 'react-native';
 import * as FileSystem from 'expo-file-system';
-import { WebView } from 'react-native-webview';
+import { useRouter } from "expo-router";
 
 export default function DownloadButton({ book_id }) {
+  const router = useRouter();
+
   const [downloaded, setDownloaded] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showBook, setShowBook] = useState(false);  // State to control when to show the book
 
   const htmlUrl = `https://www.gutenberg.org/files/${book_id}//${book_id}-h//${book_id}-h.htm`;
   const localHtmlPath = FileSystem.documentDirectory + "downloadedBooks/" + `${book_id}.html`;
@@ -36,24 +37,23 @@ export default function DownloadButton({ book_id }) {
   };
 
   const handleShowBook = () => {
-    setShowBook(true);  // User presses the button to view the book
+    router.push({
+      pathname: '/downloadBook/view-container',
+      params: { uri: localHtmlPath },
+    });
   };
 
   if (loading) return <ActivityIndicator size="large" color="blue" />;
 
   return (
     <View style={{ flex: 1 }}>
-      {showBook ? (
-        <WebView source={{ uri: `file://${localHtmlPath}` }} />
-      ) : (
-        <View>
-          {downloaded ? (
-            <Button title="View Book" onPress={handleShowBook} />
-          ) : (
-            <Button title="Download & View Book" onPress={downloadHtml} />
-          )}
-        </View>
-      )}
+      <View>
+        {downloaded ? (
+          <Button title="View Book" onPress={handleShowBook} />
+        ) : (
+          <Button title="Download & View Book" onPress={downloadHtml} />
+        )}
+      </View>
     </View>
   );
 }
