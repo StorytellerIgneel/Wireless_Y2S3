@@ -1,3 +1,15 @@
+// // Add at the top of your main file
+// import { LogBox } from 'react-native';
+
+// // Disable all warnings
+// LogBox.ignoreAllLogs();
+
+// // Or disable specific warnings
+// LogBox.ignoreLogs([
+//   'Warning: ...',  // Specific warning to ignore
+//   /another warning/i,  // Can use regex too
+// ]);
+
 import React, { useState, useEffect, useContext } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { useThemeColor } from "@/hooks/useThemeColor";
