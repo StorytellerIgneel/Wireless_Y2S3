@@ -347,6 +347,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 6,
+    marginRight: 10,
   },
   readButtonText: {
     fontSize: 16,

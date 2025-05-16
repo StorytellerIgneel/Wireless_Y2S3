@@ -128,7 +128,6 @@ const styles = StyleSheet.create({
   buttonRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 8,
     marginBottom: 20,
   },
   feedbackButton: {
@@ -140,6 +139,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', 
     minHeight: 40,
+    marginHorizontal: 3,  // Add horizontal margin to create space between buttons
   },
   selectedButton: {
     backgroundColor: '#FFD700', // Yellow
