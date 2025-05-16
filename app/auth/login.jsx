@@ -46,7 +46,7 @@ if (Platform.OS === 'ios') {
 
 console.log('API_URL:', API_URL);
 
-const homePath = '/(tabs)/index';
+const homePath = '/(tabs)';
 
 export default function Login() {
   const router = useRouter();

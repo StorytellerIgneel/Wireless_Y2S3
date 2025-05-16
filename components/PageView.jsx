@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     },
     header: {
         fontSize: 32,
-        fontWeight: "bold",
+        fontWeight: "bold"
     },
     separatorHeader: {
         backgroundColor: "rgba(237, 180, 59, 1)",
@@ -90,7 +90,6 @@ const PageView = ({ type, style, children, ...props}) => {
                 },
                 {
                     scale: interpolate(Math.min(HEADER_HEIGHT, scrollOffset.value), [0, 0, HEADER_HEIGHT], [1, 1, 0.7])
-                    
                 }
             ]
         };
@@ -103,14 +102,14 @@ const PageView = ({ type, style, children, ...props}) => {
                     <Animated.View style={[{ backgroundColor }, styles.topBar, topBarAnimantedStyle]}>
                         {type == "profile" ? (
                             <>
-                                <Pressable onPress={() => router.navigate() }>
+                                <Pressable onPress={() => router.navigate("/profile") }>
                                     <MenuSVG
                                         width={30}
                                         height={30}
                                         stroke={color}
                                     />
                                 </Pressable>
-                                <Pressable onPress={() => router.navigate() } style={{ marginLeft: "60%" }}>
+                                <Pressable onPress={() => router.navigate("/profile") } style={{ marginLeft: "60%" }}>
                                     <NotifSVG
                                         width={24}
                                         height={24}

@@ -33,10 +33,12 @@ export default function Bookshelf() {
   const errorColor = useThemeColor({}, "error");
   const userId = user ? user.id : -1; 
 
-  if (!user)
-    return <Redirect href="/auth/login" />
+  if (!user) {
+    router.push("/(tabs)");
+    router.push("/auth/login");
+  }
 
-   useFocusEffect(
+  useFocusEffect(
     useCallback(() => {
       fetchBookshelvesCallback();
       return () => {};

@@ -18,7 +18,7 @@ function BookItem({ item }) {
 
   return (
     <Pressable onPress={() => {
-      alert(`Navigating to book ID: ${item.id}`);
+      // alert(`Navigating to book ID: ${item.id}`);
       router.push(`non_tabs/booklist/${item.id}`);
     }}>
       <View style={styles.bookItem}>
@@ -107,7 +107,7 @@ export default function BookListScreen() {
   };
 
   return (
-    <PageView style={styles.container} header={genre} type={'back'}>
+    <PageView style={styles.container} header={genre ?? query} type={'back'}>
       {loading ? (
         <Loading item={'books'}/>
       ) : (

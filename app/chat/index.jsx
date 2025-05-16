@@ -2,14 +2,26 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { GiftedChat, IMessage } from 'react-native-gifted-chat';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, Platform } from 'react-native';
+import Constants from 'expo-constants';
 import io from 'socket.io-client';
 import {
   PageView,
 } from "@/components";
 
 // const SOCKET_URL = 'http://192.168.1.22:5000'; // Replace with your LAN IP
-const SOCKET_URL = 'http://192.168.43.114:5000'; // Replace with your LAN IP
+// const SOCKET_URL = 'http://192.168.43.114:5000'; // Replace with your LAN IP
+// Setup API URL depending on the platform
+let SOCKET_URL;
+if (Platform.OS === 'ios') {
+  SOCKET_URL = 'http://localhost:5000'; // iOS Simulator
+} else if (Platform.OS === 'android') {
+  SOCKET_URL = 'http://10.0.2.2:5000'; // Android Emulator
+} else {
+  const localIp = Constants.manifest?.debuggerHost?.split(':').shift();
+  SOCKET_URL = `http://${localIp}:5000`;
+}
+
 const socket = io(SOCKET_URL);
 
 const ChatScreen = () => {
