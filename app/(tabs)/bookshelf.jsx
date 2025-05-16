@@ -5,6 +5,7 @@ import {
   View,
   TextInput,
   Modal,
+  Alert
 } from "react-native";
 import { PageView, Button, Loading } from "@/components";
 import BookshelfCard from "@/components/bookshelf/BookshelfCard";
@@ -115,6 +116,41 @@ export default function Bookshelf() {
   const handleAddBookshelf = async () => {
     if (inputValue.trim()) {
       try {
+        // First check if a bookshelf with the same name already exists
+        const checkResponse = await fetch(
+          `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_shelves`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId }),
+          }
+        );
+        
+        if (!checkResponse.ok) {
+          throw new Error(`Failed to check shelves. Status: ${checkResponse.status}`);
+        }
+        
+        const data = await checkResponse.json();
+        let nameExists = false;
+        
+        if (data.bookshelves && Array.isArray(data.bookshelves)) {
+          nameExists = data.bookshelves.some(shelf => 
+            Array.isArray(shelf) && 
+            shelf.length >= 3 && 
+            shelf[2].toLowerCase() === inputValue.trim().toLowerCase()
+          );
+        }
+        
+        if (nameExists) {
+          Alert.alert(
+            "Duplicate Name",
+            "A bookshelf with this name already exists. Please choose a different name.",
+            [{ text: "OK" }]
+          );
+          return;
+        }
+        
+        // If no duplicate, proceed with creation
         const response = await fetch(
           `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/create`,
           {
@@ -175,39 +211,77 @@ export default function Bookshelf() {
   };
 
   const handleSaveEdit = async () => {
-    if (editInputValue.trim() && editingShelf) {
-      try {
-        const response = await fetch(
-          `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/update`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              user_id: userId,
-              id: editingShelf.id,
-              name: editInputValue.trim(),
-            }),
-          }
-        );
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({
-            response: `Failed to update shelf. Status: ${response.status}`,
-          }));
-          throw new Error(
-            errorData.response ||
-              `Failed to update shelf. Status: ${response.status}`
-          );
+  if (editInputValue.trim() && editingShelf) {
+    try {
+      // First check if a bookshelf with the same name already exists
+      const checkResponse = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/get_shelves`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: userId }),
         }
-        await fetchBookshelvesCallback();
-        setEditModalVisible(false);
-        setEditingShelf(null);
-        setEditInputValue("");
-      } catch (apiError) {
-        console.error("Failed to update shelf via API", apiError);
-        setError(apiError.message || "Failed to update shelf.");
+      );
+      
+      if (!checkResponse.ok) {
+        throw new Error(`Failed to check shelves. Status: ${checkResponse.status}`);
       }
+      
+      const data = await checkResponse.json();
+      let nameExists = false;
+      
+      if (data.bookshelves && Array.isArray(data.bookshelves)) {
+        nameExists = data.bookshelves.some(shelf => 
+          Array.isArray(shelf) && 
+          shelf.length >= 3 && 
+          shelf[0].toString() !== editingShelf.id && // Skip checking current shelf
+          shelf[2].toLowerCase() === editInputValue.trim().toLowerCase()
+        );
+      }
+      
+      if (nameExists) {
+        Alert.alert(
+          "Duplicate Name",
+          "A bookshelf with this name already exists. Please choose a different name.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      
+      // If no duplicate, proceed with update
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/api/shelves/update`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_id: userId,
+            id: editingShelf.id,
+            name: editInputValue.trim(),
+          }),
+        }
+      );
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({
+          response: `Failed to update shelf. Status: ${response.status}`,
+        }));
+        throw new Error(
+          errorData.response ||
+            `Failed to update shelf. Status: ${response.status}`
+        );
+      }
+      await fetchBookshelvesCallback();
+      setEditModalVisible(false);
+      setEditingShelf(null);
+      setEditInputValue("");
+    } catch (apiError) {
+      console.error("Failed to update shelf via API", apiError);
+      setError(apiError.message || "Failed to update shelf.");
     }
-  };  const renderItem = ({ item }) => (
+  }
+};
+  
+  const renderItem = ({ item }) => (
     <Pressable
       key={item.id}
       android_ripple={{ color: "rgba(0, 0, 0, 0.20)", borderless: false }}
@@ -412,6 +486,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     height: "100%",
     marginBottom: 10,
+    
   },
   deleteButton: {
     backgroundColor: "red",
