@@ -1,17 +1,39 @@
-import { View, Text } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import { WebView } from 'react-native-webview';
 import { useLocalSearchParams } from 'expo-router';
+import * as FileSystem from 'expo-file-system';
 
-const App = () => {
-    const { uri } = useLocalSearchParams();
+export default function ViewContainer() {
+  const { path } = useLocalSearchParams();
+  const [htmlContent, setHtmlContent] = useState('');
 
-    return (
-        <View>
-            <Text>{uri}</Text>
-            <Text>{uri}</Text>
-            <WebView source={{ uri: uri }} />
-        </View>
-    );
+  useEffect(() => {
+    const loadHtml = async () => {
+      try {
+        const content = await FileSystem.readAsStringAsync(path);
+        setHtmlContent(content);
+      } catch (e) {
+        console.error("Failed to read file:", e);
+      }
+    };
+
+    if (path) loadHtml();
+  }, [path]);
+
+  useEffect(() => {
+    console.log(path)
+  })
+  if (!htmlContent) return <ActivityIndicator size="large" color="blue" />;
+
+  return (
+    <View style={{ flex: 1 }}>
+      <WebView 
+            source={{ html: htmlContent }} 
+            originWhitelist={['*']}
+            style={{ flex: 1 }}
+            startInLoadingState={true}
+        />
+    </View>
+  );
 }
-
-export default App;

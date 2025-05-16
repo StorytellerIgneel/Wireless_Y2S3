@@ -1,3 +1,10 @@
+DROP table users if exists;
+DROP table feedbacks if exists;
+DROP table messages if exists;
+DROP table shelves if exists;
+DROP table shelf_books if exists;
+DROP table view_record if exists;
+
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
