@@ -263,17 +263,6 @@ export default function BookDetailsScreen() {
             <Text style={styles.progressText}>{progress}% completed</Text>
           )}
         </View>
-        <Pressable
-          onPress={() => setBookmarked((prev) => !prev)}
-          style={styles.iconButton}
-        >
-          <Ionicons
-            name={bookmarked ? "bookmark" : "bookmark-outline"}
-            size={24}
-            color="gold"
-          />
-        </Pressable>
-
         <DownloadButton book_id={id} />
       </Animated.View>
     </View>

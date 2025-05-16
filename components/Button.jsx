@@ -41,7 +41,7 @@ const Button = ({
   style,
   rounded,
   circle,
-  noBorder = false, // ✅ Add this
+  noBorder = false, 
   ...props
 }) => {
   const btn_primary = useThemeColor({}, "btn_primary");
