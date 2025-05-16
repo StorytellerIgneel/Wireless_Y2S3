@@ -186,7 +186,7 @@ const Home = () => {
                 <TouchableOpacity
                   key={book.id}
                   onPress={() => {
-                    const path = `/(tabs)/non_tabs/booklist/${book.id}`;
+                    const path = `/booklist/${book.id}`;
                     router.push(path);
                   }}
                 >
@@ -219,7 +219,7 @@ const Home = () => {
                   key={book.id}
                   onPress={() => {
                     console.log("Attempting to navigate. Book ID:", book.id);
-                    const path = `/(tabs)/non_tabs/booklist/${book.id}`;
+                    const path = `/booklist/${book.id}`;
                     console.log("Constructed path:", path);
                     router.push(path);
                   }}

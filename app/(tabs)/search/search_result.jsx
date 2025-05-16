@@ -19,7 +19,7 @@ function BookItem({ item }) {
   return (
     <Pressable onPress={() => {
       // alert(`Navigating to book ID: ${item.id}`);
-      router.push(`non_tabs/booklist/${item.id}`);
+      router.push(`/booklist/${item.id}`);
     }}>
       <View style={styles.bookItem}>
         {imageUrl && !imageError ? (

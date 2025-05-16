@@ -52,7 +52,7 @@ export default function Search() {
   const handleSearch = () => {
     if (searchQuery.trim()) {
       router.push({
-        pathname: 'non_tabs/booklist/search_result',
+        pathname: '/(tabs)/search/search_result',
         params: { query: searchQuery.trim() },
       });
     }
@@ -60,7 +60,7 @@ export default function Search() {
 
   const handleGenreSelect = (genre) => {
     router.push({
-      pathname: 'non_tabs/booklist/search_result',
+      pathname: '/(tabs)/search/search_result',
       params: { genre }, // Use raw string (untrimmed)
     });
   };
