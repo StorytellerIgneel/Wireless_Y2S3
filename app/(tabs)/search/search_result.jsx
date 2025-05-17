@@ -51,17 +51,17 @@ export default function BookListScreen() {
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
+  // This will set the title based on the current query or genre
+  const title =
+    query && query !== 'undefined'
+      ? `Results for "${query}"`
+      : genre && genre !== 'undefined'
+      ? `${genre.replace(/^Browsing\s*:\s*/i, '').trim()} Books`
+      : 'Books';
+
   useEffect(() => {
     setLoading(true);        // Reset loading
     setBooks([]);            // Clear current books
-  
-    // This will set the title based on the current query or genre
-    const title =
-      query && query !== 'undefined'
-        ? `Results for "${query}"`
-        : genre && genre !== 'undefined'
-        ? `${genre.replace(/^Browsing\s*:\s*/i, '').trim()} Books`
-        : 'Books';
   
     navigation.setOptions({ title });
     fetchBooks(query, genre); // Pass query and genre explicitly to the fetchBooks function
@@ -107,7 +107,7 @@ export default function BookListScreen() {
   };
 
   return (
-    <PageView style={styles.container} header={genre ?? query} type={'back'}>
+    <PageView style={styles.container} header={title} type={'back'}>
       {loading ? (
         <Loading item={'books'}/>
       ) : (

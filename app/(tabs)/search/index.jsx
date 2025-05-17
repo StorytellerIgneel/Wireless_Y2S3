@@ -13,6 +13,9 @@ import {
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 import { PageView } from '@/components';
+import { Alert } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,9 +23,11 @@ export default function Search() {
   const [loadingGenres, setLoadingGenres] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    fetchGenres();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchGenres();
+    }, [])
+  );
 
   const fetchGenres = async () => {
     try {
@@ -50,12 +55,17 @@ export default function Search() {
   };
 
   const handleSearch = () => {
-    if (searchQuery.trim()) {
-      router.push({
-        pathname: '/(tabs)/search/search_result',
-        params: { query: searchQuery.trim() },
-      });
+    const trimmedQuery = searchQuery.trim();
+
+    if (!trimmedQuery) {
+      Alert.alert('Empty Search', 'Please enter a search query.');
+      return;
     }
+
+    router.push({
+      pathname: '/(tabs)/search/search_result',
+      params: { query: trimmedQuery },
+    });
   };
 
   const handleGenreSelect = (genre) => {
@@ -151,7 +161,7 @@ const styles = StyleSheet.create({
   },
   genreButton: {
     width: '30%',
-    height: 60,
+    height: 80,
     backgroundColor: '#e0e0e0',
     borderRadius: 12,
     justifyContent: 'center',

@@ -1,9 +1,9 @@
-DROP table if EXISTS users;
-DROP table if EXISTS feedbacks;
-DROP table if EXISTS messages;
-DROP table if EXISTS shelves;
-DROP table if EXISTS shelf_books;
-DROP table if EXISTS view_record;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS feedbacks;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS shelves;
+DROP TABLE IF EXISTS shelf_books;
+DROP TABLE IF EXISTS view_record;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
