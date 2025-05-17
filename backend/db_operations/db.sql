@@ -1,9 +1,9 @@
-DROP table users if exists;
-DROP table feedbacks if exists;
-DROP table messages if exists;
-DROP table shelves if exists;
-DROP table shelf_books if exists;
-DROP table view_record if exists;
+DROP table if EXISTS users;
+DROP table if EXISTS feedbacks;
+DROP table if EXISTS messages;
+DROP table if EXISTS shelves;
+DROP table if EXISTS shelf_books;
+DROP table if EXISTS view_record;
 
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -57,3 +57,27 @@ CREATE TABLE IF NOT EXISTS view_record (
     FOREIGN KEY (user_id) REFERENCES users(user_id),
     UNIQUE (user_id, book_id)
 );
+
+INSERT INTO shelves (user_id, name) VALUES
+(1, 'Favorites'),
+(2, 'To Read'),
+(3, 'Finished');
+
+INSERT INTO shelf_books (user_id, book_id, shelf_id) VALUES
+(1, 101, 1),
+(2, 102, 2),
+(3, 103, 3);
+
+INSERT INTO messages (room_id, user_id, msg, timestamp) VALUES
+(101, 1, 'Just finished reading this book!', '2025-05-10 10:00:00'),
+(101, 2, 'What did you think of the ending?', '2025-05-10 10:05:00'),
+(102, 3, 'This book is on my list!', '2025-05-10 10:10:00');
+
+INSERT INTO feedbacks (user_id, feedback_type, feedback_description) VALUES
+(1, 'Bug', 'The app crashes when I add a new shelf.'),
+(2, 'Suggestion', 'Can we have dark mode?');
+
+INSERT INTO view_record (user_id, book_id) VALUES
+(1, 101),
+(2, 102),
+(3, 103);
