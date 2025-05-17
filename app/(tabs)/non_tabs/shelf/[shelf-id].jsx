@@ -178,7 +178,7 @@ export default function BookshelfDetailScreen() {
 
   const renderItem = ({ item }) => (
     <Pressable
-      onPress={() => router.push(`(tabs)/non_tabs/booklist/${item.id}`)}
+      onPress={() => router.push(`/booklist/${item.id}`)}
       style={{ width: "100%" }}
     >
       <BookListCard
