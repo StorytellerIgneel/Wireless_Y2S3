@@ -104,15 +104,15 @@ const PageView = ({ type, style, children, ...props}) => {
                             <>
                                 <Pressable onPress={() => router.navigate("/profile") }>
                                     <MenuSVG
-                                        width={30}
-                                        height={30}
+                                        width={0}
+                                        height={0}
                                         stroke={color}
                                     />
                                 </Pressable>
                                 <Pressable onPress={() => router.navigate("/profile") } style={{ marginLeft: "60%" }}>
                                     <NotifSVG
-                                        width={24}
-                                        height={24}
+                                        width={0}
+                                        height={0}
                                         stroke={color}
                                     />
                                 </Pressable>

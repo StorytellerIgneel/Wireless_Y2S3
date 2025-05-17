@@ -90,7 +90,8 @@ export default function BookDetailsScreen() {
 
   const fetchBookDetails = async () => {
     try {
-      const res = await axios.get(`https://gutendex.com/books/${id}`);
+      //const res = await axios.get(`https://gutendex.com/books/${id}`);
+      const res = await axios.get(`http://192.168.43.114:8000/books/${id}`);
       setBook(res.data);
       navigation.setOptions({ title: res.data.title });
     } catch (error) {

@@ -31,7 +31,8 @@ export default function Search() {
 
   const fetchGenres = async () => {
     try {
-      const response = await axios.get('https://gutendex.com/books/');
+      //const response = await axios.get('https://gutendex.com/books/');
+      const response = await axios.get('http://192.168.43.114:8000/books/');
       const genreSet = new Set();
 
       response.data.results.forEach((book) => {

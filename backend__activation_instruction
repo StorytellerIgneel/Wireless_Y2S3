@@ -39,13 +39,33 @@ if you see axios: network error then ur api url is wrong, or something set up wr
 2. Launch your psql
     - At Windows' search menu, search for Services in System, find postgresql-x64-17 in the list of services and launch
 
-3. At `backend`, run:
+At `backend/gutendex`:
+3. run
+    ```
+    pip install virtualenv
+    ```
+    for the necessary packages
+
+4. then, run
+    ```
+    python -m venv venv
+    ```
+    for new virtual environment in which django will run in
+
+5. after that, run
     ```
     venv\Scripts\activate
     ```
-    - This activates the virtual environment for django to run
+    - This activates the virtual environment for django
 
-4. At `backend/gutendex`, run:
+At `(venv) backend/gutendex`: 
+6. run:
+    ```
+    pip install -r requirements.txt
+    ```
+    to install all dependencies within the virtual env
+
+7. finally, run: 
     ```
     python manage.py runserver
     ```

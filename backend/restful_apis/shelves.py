@@ -142,7 +142,8 @@ def get_shelf_books():
             progress = progress_record[0] if progress_record else 0
             
             # Fetch from Gutendex
-            gutendex_url = f"https://gutendex.com/books/{book_id_from_db}"
+            #gutendex_url = f"https://gutendex.com/books/{book_id_from_db}"
+            gutendex_url = f"http://192.168.43.114:8000/books/{book_id_from_db}"
             try:
                 response = requests.get(gutendex_url)
                 response.raise_for_status() 
@@ -306,7 +307,8 @@ def get_latest_reading_record():
             book_id, progress, viewed_at = record
 
             # Fetch book details from Gutendex
-            gutendex_url = f"https://gutendex.com/books/{book_id}"
+            #gutendex_url = f"https://gutendex.com/books/{book_id}"
+            gutendex_url = f"http://192.168.43.114:8000/books/{book_id}"
             try:
                 response = requests.get(gutendex_url)
                 response.raise_for_status()

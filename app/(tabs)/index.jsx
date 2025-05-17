@@ -89,10 +89,12 @@ const Home = () => {
         setIsLoading(true);
 
         const bestBooksResponse = await fetch(
-          "https://gutendex.com/books/?sort=popular"
+          "http://192.168.43.114:8000/books/?sort=popular"
+          //"https://gutendex.com/books/?sort=popular"
         );
         const fictionBooksResponse = await fetch(
-          "https://gutendex.com/books/?topic=fiction"
+          "http://192.168.43.114:8000/books/?topic=fiction"
+          //"https://gutendex.com/books/?topic=fiction"
         );
 
         const bestBooksData = await bestBooksResponse.json();
