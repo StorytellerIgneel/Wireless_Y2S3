@@ -114,19 +114,30 @@ This project is licensed under the MIT License.
 
 ### 📷 Screenshots
 Home Page
-![image](https://github.com/user-attachments/assets/94fa75e5-0aae-4cde-a25e-8be3df1824a1)
+
+<img src="https://github.com/user-attachments/assets/94fa75e5-0aae-4cde-a25e-8be3df1824a1" height="520">
+
 
 Book Details Page
-![image](https://github.com/user-attachments/assets/645729bc-96bd-4da8-b262-4b9f82c0abd7)
+
+<img src="https://github.com/user-attachments/assets/645729bc-96bd-4da8-b262-4b9f82c0abd7" height="520">
+
 
 Search Page
-![image](https://github.com/user-attachments/assets/20e62454-e89b-48ae-a45c-02a62473c2b8)
+
+<img src="https://github.com/user-attachments/assets/20e62454-e89b-48ae-a45c-02a62473c2b8" height="520">
+
 
 Search filtering
-![image](https://github.com/user-attachments/assets/c81d36e0-ce99-4969-aa8d-b65a0a2cf2da)
+
+<img src="https://github.com/user-attachments/assets/c81d36e0-ce99-4969-aa8d-b65a0a2cf2da" height="520">
+
 
 Login Page
-![image](https://github.com/user-attachments/assets/58bf00db-b8f1-4563-b5a3-b899aa335814)
+
+<img src="https://github.com/user-attachments/assets/58bf00db-b8f1-4563-b5a3-b899aa335814" height="520">
+
 
 Profile Page
-![image](https://github.com/user-attachments/assets/bb00dea8-4c7f-4019-b54f-5a2be6fe5e09)
+
+<img src="https://github.com/user-attachments/assets/bb00dea8-4c7f-4019-b54f-5a2be6fe5e09" height="520">
